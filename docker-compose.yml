@@ -1,0 +1,26 @@
+services:
+  spark-master:
+    image: apache/spark:latest
+    environment:
+      - SPARK_MODE=master
+    ports:
+      - "8080:8080"  # UI Spark Master
+      - "7077:7077"  # Porta per il cluster Spark
+    volumes:
+      - ./app:/app
+
+  spark-worker:
+    image: apache/spark:latest
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+    depends_on:
+      - spark-master
+
+  spark-client:
+    image: apache/spark:latest
+    depends_on:
+      - spark-master
+    entrypoint: ["tail", "-f", "/dev/null"]  # Tiene il container in vita
+    volumes:
+      - ./app:/app 
