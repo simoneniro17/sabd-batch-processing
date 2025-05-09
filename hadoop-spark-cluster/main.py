@@ -6,7 +6,7 @@ HDFS_FILE = f"{HDFS_DIR}/input1.txt"
 LOCAL_FILE = "input1.txt"
 HDFS_HOST = "namenode"
 SPARK_HOST = "spark-master"
-SPARK_SCRIPT = "/opt/spark-app/spark_job.py"  # Path corretto nel container Spark
+SPARK_SCRIPT = "/app/spark_job.py"  # Path corretto nel container Spark
 
 def run(cmd, check=True):
     """Esegue un comando di sistema e gestisce gli errori"""
