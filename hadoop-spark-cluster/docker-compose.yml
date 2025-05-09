@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 services:
   namenode:
@@ -13,7 +13,7 @@ services:
       - ./hadoop_config:/opt/hadoop/etc/hadoop
       - ./start-hdfs.sh:/start-hdfs.sh
     ports:
-      - "9870:9870"
+      - "9870:9870"  # Web UI NameNode
     command: [ "/bin/bash", "/start-hdfs.sh" ]
     networks:
       hdfs_network:
@@ -37,7 +37,6 @@ services:
       hdfs_network:
         ipv4_address: 172.20.0.3
 
-
   datanode2:
     image: apache/hadoop:3.3.5
     container_name: datanode2
@@ -55,6 +54,42 @@ services:
     networks:
       hdfs_network:
         ipv4_address: 172.20.0.4
+
+
+  spark-master:
+    image: apache/spark:latest
+    container_name: spark-master
+    hostname: spark-master
+    environment:
+      - SPARK_MODE=master
+    ports:
+      - "7077:7077"     # RPC Spark master
+      - "8080:8080"     # Spark master web UI
+    volumes:
+      - ./hadoop_config:/opt/hadoop/etc/hadoop
+      - ./app:/app  # nuovo path più chiaro
+    entrypoint: ["tail", "-f", "/dev/null"]  # Mantiene vivo il container
+    networks:
+      hdfs_network:
+        ipv4_address: 172.20.0.10
+
+  spark-worker-1:
+    image: apache/spark:latest
+    container_name: spark-worker-1
+    hostname: spark-worker-1
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+    depends_on:
+      - spark-master
+    ports:
+      - "8081:8081"  # Spark Worker UI
+    entrypoint: ["tail", "-f", "/dev/null"]  # Tiene il container in vita
+    volumes:
+      - ./hadoop_config:/opt/hadoop/etc/hadoop
+    networks:
+      hdfs_network:
+        ipv4_address: 172.20.0.11
 
 networks:
   hdfs_network:
