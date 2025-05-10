@@ -1,10 +1,9 @@
 import requests
 import os
-import json
 import argparse
 
-# https://portal.electricitymaps.com/docs/api
-# https://data.electricitymaps.com/2025-04-03/IT-SIC_2021_hourly.csv
+# DOCUMENTAZIONE API    --> https://portal.electricitymaps.com/docs/api --> 
+# DOWNLOAD DIRETTO      --> https://data.electricitymaps.com/2025-04-03/IT-SIC_2021_hourly.csv    
 
 def download_electricity_data(zone_code, year, granularity, output_path):
     os.makedirs(output_path, exist_ok=True)
@@ -21,7 +20,6 @@ def download_electricity_data(zone_code, year, granularity, output_path):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Download di dati sull'elettricità da Electricity Maps")
     parser.add_argument("--country", required=True, choices=["IT", "SE"], help="Paese: 'IT' per Italia, 'SE' per Svezia")
-    parser.add_argument("--year", help="Anno per il download dei dati")
     parser.add_argument("--granularity", default="hourly", choices=["hourly", "daily", "weekly", "monthly", "quarterly", "yearly"], help="Granularità dei dati")
     parser.add_argument("--output", default="./data/raw", help="Percorso della cartella di output")
     args = parser.parse_args()
@@ -31,7 +29,6 @@ if __name__ == "__main__":
         "SE": ["SE-SE1", "SE-SE2", "SE-SE3", "SE-SE4"]
     }
     years = ["2021", "2022", "2023", "2024"]
-    granularity = ["hourly", "daily", "weekly", "monthly", "quarterly", "yearly"]
 
     for zone in zones[args.country]:
         for year in years:
