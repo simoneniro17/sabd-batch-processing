@@ -1,4 +1,6 @@
 .venv
 .env
 /data/raw
-hadoop-spark-cluster/data/raw
+hdfs/namenode
+hdfs/datanode1
+hdfs/datanode2

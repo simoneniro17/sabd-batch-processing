@@ -1,9 +1,28 @@
 #!/bin/bash
+
+# Format del NameNode solo se necessario
 if [ ! -d "/opt/hadoop/data/nameNode/current" ]; then
     echo "Formatting NameNode..."
     hdfs namenode -format
 fi
 
-hdfs namenode
+# Avvio del NameNode in background
+echo "Starting NameNode..."
+hdfs namenode &
 
-echo "Do i permessi"
+# Salva il PID per eventuali cleanup
+NAMENODE_PID=$!
+
+# Funzione per controllare se HDFS è pronto
+until hdfs dfs -ls / &> /dev/null; do
+    echo "Waiting for HDFS to be ready..."
+    sleep 2
+done
+
+# Crea la directory data e imposta i permessi per permettere la scrittura
+echo "Setting up /data directory in HDFS..."
+hdfs dfs -test -e /data || hdfs dfs -mkdir /data
+hdfs dfs -chmod -R 777 /data
+
+# Attende il processo del NameNode (così il container resta attivo)
+wait $NAMENODE_PID
