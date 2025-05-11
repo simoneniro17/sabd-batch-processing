@@ -23,14 +23,22 @@ if __name__ == "__main__":
     parser.add_argument("--granularity", default="hourly", choices=["hourly", "daily", "weekly", "monthly", "quarterly", "yearly"], help="Granularità dei dati")
     parser.add_argument("--output", default="./data/raw", help="Percorso della cartella di output")
     args = parser.parse_args()
-    
+     # Estensione percorso output in base alla modalità
+    final_output_path = os.path.join(args.output, args.mode)
+
     countries = []
     if args.mode == "SHORT":
         countries = ["IT", "SE"]
+        years = ["2021", "2022", "2023", "2024"]
     else:
-        countries = ["IT", "SE", "FR", "DE", "ES"]
+        countries = [
+            "AT", "BE", "FR", "FI", "DE", "GB", "IE", "IT", "NO", "PL",
+            "CZ", "SI", "ES", "SE", "CH", "PT", "NL", "SK", "DK", "GR",
+            "RO", "BG", "HU", "HR", "EE", "LV", "LT",  # altri paesi UE per arrivare a 27
+            "US", "AE", "CN", "IN"  # extra-europei
+        ]
+        years=["2024"]
     
-    years = ["2021", "2022", "2023", "2024"]
 
     for country in countries:
         print(f"\nElaborazione del paese: {country}")
@@ -39,11 +47,11 @@ if __name__ == "__main__":
                 country_code = country,
                 year = year,
                 granularity = args.granularity,
-                output_path = args.output,
+                output_path = final_output_path,
             )
 
     print(f"\n\nDownload completato per tutte le zone. Dati salvati in {args.output}")
 
 # Esempio di utilizzo:
-# python download_data.py --mode SHORT [--granularity hourly] [--output ./data/raw]
-# python download_data.py --mode LONG [--granularity hourly] [--output ./data/raw]
+# python download_data.py --mode SHORT [--granularity hourly] [--output ./data/raw/SHORT]
+# python download_data.py --mode LONG [--granularity hourly] [--output ./data/raw/LONG]
