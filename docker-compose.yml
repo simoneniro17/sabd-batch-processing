@@ -1,32 +1,100 @@
 services:
+  namenode:
+    image: apache/hadoop:3.3.5
+    container_name: namenode
+    hostname: namenode
+    user: root
+    environment:
+      - HADOOP_HOME=/opt/hadoop
+    volumes:
+      - ./hdfs/namenode:/opt/hadoop/data/nameNode
+      - ./hdfs/conf:/opt/hadoop/etc/hadoop
+      - ./hdfs/start-hdfs.sh:/start-hdfs.sh
+    ports:
+      - "9870:9870"  # Web UI NameNode
+    command: [ "/bin/bash", "/start-hdfs.sh" ]
+    networks:
+      sabd_network:
+        ipv4_address: 172.20.0.2
+
+  datanode1:
+    image: apache/hadoop:3.3.5
+    container_name: datanode1
+    hostname: datanode1
+    user: root
+    environment:
+      - HADOOP_HOME=/opt/hadoop
+    volumes:
+      - ./hdfs/datanode1:/opt/hadoop/data/dataNode
+      - ./hdfs/conf:/opt/hadoop/etc/hadoop
+      - ./hdfs/init-datanode.sh:/init-datanode.sh
+    depends_on:
+      - namenode
+    command: [ "/bin/bash", "/init-datanode.sh" ]
+    networks:
+      sabd_network:
+        ipv4_address: 172.20.0.3
+
+  datanode2:
+    image: apache/hadoop:3.3.5
+    container_name: datanode2
+    hostname: datanode2
+    user: root
+    environment:
+      - HADOOP_HOME=/opt/hadoop
+    volumes:
+      - ./hdfs/datanode2:/opt/hadoop/data/dataNode
+      - ./hdfs/conf:/opt/hadoop/etc/hadoop
+      - ./hdfs/init-datanode.sh:/init-datanode.sh
+    depends_on:
+      - namenode
+    command: [ "/bin/bash", "/init-datanode.sh" ]
+    networks:
+      sabd_network:
+        ipv4_address: 172.20.0.4
+
+
   spark-master:
     image: apache/spark:latest
+    container_name: spark-master
+    hostname: spark-master
     environment:
       - SPARK_MODE=master
     ports:
-      - "8080:8080"  # UI Spark Master
-      - "7077:7077"  # Porta per il cluster Spark
+      - "7077:7077"     # RPC Spark master
+      - "8080:8080"     # Spark master web UI
     volumes:
-      - ./app:/app
+      - ./hdfs/conf:/opt/hadoop/etc/hadoop
+      - ./spark/app/spark_job.py:/app/spark_job.py  # nuovo path più chiaro
+    entrypoint: ["tail", "-f", "/dev/null"]  # Mantiene vivo il container
+    networks:
+      sabd_network:
+        ipv4_address: 172.20.0.10
 
-  spark-worker:
+  spark-worker-1:
     image: apache/spark:latest
+    container_name: spark-worker-1
+    hostname: spark-worker-1
     environment:
       - SPARK_MODE=worker
       - SPARK_MASTER_URL=spark://spark-master:7077
     depends_on:
       - spark-master
-
-  spark-client:
-    image: apache/spark:latest
-    depends_on:
-      - spark-master
+    ports:
+      - "8081:8081"  # Spark Worker UI
     entrypoint: ["tail", "-f", "/dev/null"]  # Tiene il container in vita
     volumes:
-      - ./app:/app 
+      - ./hdfs/conf:/opt/hadoop/etc/hadoop
+    networks:
+      sabd_network:
+        ipv4_address: 172.20.0.11
+
+
 
   nifi:
-    image: apache/nifi:1.24.0
+    build:
+      context: .
+      dockerfile: nifi/Dockerfile.nifi
     container_name: nifi
     ports:
       - "8443:8443"
@@ -36,7 +104,18 @@ services:
       - NIFI_WEB_HTTPS_HOST=0.0.0.0
       - SINGLE_USER_CREDENTIALS_USERNAME=admin
       - SINGLE_USER_CREDENTIALS_PASSWORD=adminpassword
+    networks:
+      sabd_network:
+        ipv4_address: 172.20.0.12
+    volumes:        
+      - ./hdfs/conf:/opt/hadoop/etc/hadoop
+      - ./nifi/app/nifi_url_feeder.py:/app/nifi_url_feeder.py
+      - ./nifi/nifi_bootstrap.sh:/app/nifi_bootstrap.sh
+    
 
 networks:
-  spark-network:
-    driver: bridge
+  sabd_network:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16

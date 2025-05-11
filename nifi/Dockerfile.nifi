@@ -1,0 +1,12 @@
+FROM apache/nifi:1.24.0
+
+USER root
+
+# Installa Python
+RUN apt-get update && \
+    apt-get install -y python3 python3-pip && \
+    apt-get clean
+
+RUN pip install requests
+
+USER nifi
