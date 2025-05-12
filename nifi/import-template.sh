@@ -11,7 +11,7 @@ echo "==============================="
 
 # === CONFIGURAZIONE ===
 NIFI_API_URL="https://localhost:8443/nifi-api"
-TEMPLATE_NAME="pippox"
+TEMPLATE_NAME="ingestion_and_preprocessing"
 TEMPLATE_FILE="/opt/nifi/conf/${TEMPLATE_NAME}.xml"
 TOOLKIT_PATH="/opt/nifi/nifi-toolkit-current/bin/cli.sh"
 
