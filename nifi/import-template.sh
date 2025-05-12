@@ -75,6 +75,18 @@ if [[ -z "$TEMPLATE_ID" ]]; then
 fi
 echo "Template ID: $TEMPLATE_ID"
 
+#evita istanze duplicate
+echo "🔎 Controllo se esiste già un Process Group istanziato da '$TEMPLATE_NAME'..."
+PG_CANDIDATES=$(curl -sk -H "Authorization: Bearer $TOKEN" "$NIFI_API_URL/process-groups/root/process-groups" | jq -r '.processGroups[].component.id')
+
+for PG_ID in $PG_CANDIDATES; do
+  PROC_NAMES=$(curl -sk -H "Authorization: Bearer $TOKEN" "$NIFI_API_URL/process-groups/$PG_ID/processors" | jq -r '.processors[].component.name')
+  if echo "$PROC_NAMES" | grep -q "ListenHTTP"; then
+    echo "⚠️  Process Group già presente (contiene 'ListenHTTP'). Istanza saltata."
+    exit 0
+  fi
+done 
+
 # Istanzia il template nel canvas alla posizione (300,100)
 echo "Istanzio template nel canvas..."
 INSTANCE_RESPONSE=$(curl -sk -H "Authorization: Bearer $TOKEN" -X POST "$NIFI_API_URL/process-groups/root/template-instance" \
@@ -85,7 +97,7 @@ INSTANCE_RESPONSE=$(curl -sk -H "Authorization: Bearer $TOKEN" -X POST "$NIFI_AP
     \"originY\": 100.0
 }")
 
-# === RECUPERO ID DEL PROCESS GROUP CREATO ===
+
 NEW_PG_ID=$(echo "$INSTANCE_RESPONSE" | jq -r '.flow.processGroups[0].component.id')
 
 if [[ -z "$NEW_PG_ID" || "$NEW_PG_ID" == "null" ]]; then
