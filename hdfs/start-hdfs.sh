@@ -24,5 +24,8 @@ echo "Setting up /data directory in HDFS..."
 hdfs dfs -test -e /data || hdfs dfs -mkdir /data
 hdfs dfs -chmod -R 777 /data
 
+hdfs dfs -test -e /results || hdfs dfs -mkdir /results
+hdfs dfs -chmod -R 777 /results
+
 # Attende il processo del NameNode (così il container resta attivo)
 wait $NAMENODE_PID

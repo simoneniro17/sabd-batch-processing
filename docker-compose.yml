@@ -55,39 +55,42 @@ services:
 
 
   spark-master:
-    image: apache/spark:latest
+    image: apache/spark:3.5.0
     container_name: spark-master
     hostname: spark-master
     environment:
       - SPARK_MODE=master
     ports:
-      - "7077:7077"     # RPC Spark master
-      - "8080:8080"     # Spark master web UI
+      - "7077:7077"   # Spark master port
+      - "8080:8080"   # Spark master web UI
     volumes:
-      - ./hdfs/conf:/opt/hadoop/etc/hadoop
-      - ./spark/app/spark_job.py:/app/spark_job.py  # nuovo path più chiaro
-    entrypoint: ["tail", "-f", "/dev/null"]  # Mantiene vivo il container
+      - ./hdfs/conf:/opt/hadoop/etc/hadoop  # Per accedere ai file core-site.xml e hdfs-site.xml
+      - ./spark/app:/app  # Per i tuoi job Spark
+    command: >
+      bash -c "/opt/spark/bin/spark-class org.apache.spark.deploy.master.Master --host spark-master"
     networks:
       sabd_network:
-        ipv4_address: 172.20.0.10
+        ipv4_address: 172.20.0.15
+    depends_on:
+      - namenode
+      - datanode1
+      - datanode2
 
-  spark-worker-1:
-    image: apache/spark:latest
-    container_name: spark-worker-1
-    hostname: spark-worker-1
+  spark-worker:
+    image: apache/spark:3.5.0
+    container_name: spark-worker
+    hostname: spark-worker
     environment:
       - SPARK_MODE=worker
-      - SPARK_MASTER_URL=spark://spark-master:7077
-    depends_on:
-      - spark-master
-    ports:
-      - "8081:8081"  # Spark Worker UI
-    entrypoint: ["tail", "-f", "/dev/null"]  # Tiene il container in vita
     volumes:
       - ./hdfs/conf:/opt/hadoop/etc/hadoop
+    command: >
+      bash -c "/opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077"
     networks:
       sabd_network:
-        ipv4_address: 172.20.0.11
+        ipv4_address: 172.20.0.16
+    depends_on:
+      - spark-master
 
 
 
@@ -110,7 +113,7 @@ services:
     volumes:        
       - ./hdfs/conf:/opt/hadoop/etc/hadoop
       - ./nifi/app/nifi_url_feeder.py:/app/nifi_url_feeder.py
-      - ./nifi/conf/prova.xml:/opt/nifi/conf/prova.xml
+      - ./nifi/conf/ingestion_and_preprocessing.xml:/opt/nifi/conf/ingestion_and_preprocessing.xml
       - ./nifi/import-template.sh:/opt/nifi/scripts/import-template.sh
       - ./nifi/entrypoint.sh:/opt/nifi/scripts/entrypoint.sh
     command: [ "/bin/bash", "/opt/nifi/scripts/entrypoint.sh" ]
