@@ -5,4 +5,4 @@ chmod +x /opt/nifi/scripts/import-template.sh
 /opt/nifi/scripts/import-template.sh &
 
 # Avvia NiFi in foreground (così Docker non spegne il container)
-exec /opt/nifi/bin/nifi.sh run
+exec /opt/nifi/nifi-current/bin/nifi.sh run 
