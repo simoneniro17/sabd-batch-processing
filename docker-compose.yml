@@ -114,7 +114,30 @@ services:
       - ./nifi/import-template.sh:/opt/nifi/scripts/import-template.sh
       - ./nifi/entrypoint.sh:/opt/nifi/scripts/entrypoint.sh
     command: [ "/bin/bash", "/opt/nifi/scripts/entrypoint.sh" ]
-    
+  
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      sabd_network:
+        ipv4_address: 172.20.0.13
+    volumes:
+      - redis_data:/data
+
+
+  redis-loader:
+    build:
+      context: ./redis
+    container_name: redis-loader
+    depends_on:
+      - redis
+      - namenode
+    networks:
+      sabd_network:
+        ipv4_address: 172.20.0.14
+
 
 networks:
   sabd_network:
@@ -122,3 +145,6 @@ networks:
       driver: default
       config:
         - subnet: 172.20.0.0/16
+
+volumes:
+  redis_data:

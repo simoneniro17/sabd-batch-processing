@@ -1,7 +1,7 @@
 import subprocess
 import os
 
-HDFS_DIR = "/input"
+HDFS_DIR = "/data"
 HDFS_FILE = f"{HDFS_DIR}/input1.txt"
 LOCAL_FILE = "input1.txt"
 HDFS_HOST = "namenode"
@@ -75,11 +75,11 @@ def main():
     create_hdfs_dir()
     put_file_on_hdfs()
 
-    try:
-        spark_submit_path = find_spark_submit()
-        run_spark_job(spark_submit_path)
-    except FileNotFoundError as e:
-        print(e)
+    # try:
+    #     spark_submit_path = find_spark_submit()
+    #     run_spark_job(spark_submit_path)
+    # except FileNotFoundError as e:
+    #     print(e)
 
 if __name__ == "__main__":
     main()
