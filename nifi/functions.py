@@ -11,34 +11,42 @@ def send_url_to_nifi(url, endpoint):
         if hasattr(response, 'text'):
             print(f"Risposta errore: {response.text[:100]}")
 
-def feed_nifi_urls(mode, granularity="hourly", nifi_endpoint="http://localhost:1406/contentListener"):
+def feed_nifi_urls(granularity="hourly", nifi_endpoint="http://localhost:1406/contentListener"):
     """
     Invia URL di dataset di Electricity Maps a NiFi.
 
     Args:
-        mode (str): 'SHORT' (IT e SE) oppure 'LONG' (30 paesi)
         granularity (str): Una delle granularità supportate: 'hourly', 'daily', etc.
         nifi_endpoint (str): Endpoint HTTP di NiFi
 
     Example:
-        feed_nifi_urls("SHORT")
-        feed_nifi_urls("LONG", granularity="daily", nifi_endpoint="http://nifi:1406/contentListener")
+        feed_nifi_urls()
+        feed_nifi_urls(granularity="daily", nifi_endpoint="http://nifi:1406/contentListener")
     """
-    if mode == "SHORT":
-        countries = ["IT", "SE"]
-        years = ["2021", "2022", "2023", "2024"]
-    elif mode == "LONG":
-        countries = [
-            "AT", "BE", "FR", "FI", "DE", "GB", "IE", "IT", "NO", "PL",
-            "CZ", "SI", "ES", "SE", "CH", "PT", "NL", "SK", "DK", "GR",
-            "RO", "BG", "HU", "HR", "EE", "LV", "LT",
-            "US", "AE", "CN", "IN"
-        ]
-        years = ["2024"]
-    else:
-        raise ValueError("Modalità non supportata: usa 'SHORT' o 'LONG'.")
 
-    for country in countries:
-        for year in years:
+    short_countries = ["IT", "IT-CNO", "IT-CSO", "IT-NO", "IT-SAR", "IT-SIC", "IT-SO", "SE", "SE-SE1", "SE-SE2", "SE-SE3", "SE-SE4"]
+    short_years = ["2021", "2022", "2023", "2024"]
+    
+    long_countries = [
+        # Paesi europei
+        "AT", "BE", "FR", "FI", "DE", "GB", "IE", "IT", "NO", "PL",
+        "CZ", "SI", "ES", "SE", "CH",  
+    ]
+    long_years = ["2024"]
+
+    # Paesi con tutti gli anni
+    for country in short_countries:
+        for year in short_years:
             url = f"https://data.electricitymaps.com/2025-04-03/{country}_{year}_{granularity}.csv"
             send_url_to_nifi(url, nifi_endpoint)
+    
+    # Paesi solo con il 2024
+    for country in long_countries:
+        for year in long_years:
+            url = f"https://data.electricitymaps.com/2025-04-03/{country}_{year}_yearly.csv"
+            send_url_to_nifi(url, nifi_endpoint)
+
+
+# # Paesi extra-europei
+#             "US", "AE", "CN", "IN", "JP", "BR", "MX", "CA", "AU", "ZA",
+#             "KR", "ID", "SG", "AR", "EG"

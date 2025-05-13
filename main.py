@@ -24,7 +24,7 @@ import argparse
 # print("Return code:", result.returncode)
 
 # manda i dati da processare a nifi
-feed_nifi_urls("LONG")
+feed_nifi_urls()
 
 #--------SPARK-------
 app = "/app/spark_job.py"
