@@ -1,5 +1,6 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import year, avg, min, max, to_timestamp, col, lit
+import argparse
 
 # *   Aggregare i dati su base annua (yearly basis). Calcolare la media (average), il minimo (minimum)
 #     e il massimo (maximum) dell'**intensità di carbonio** (diretta) e della **percentuale di energia a zero emissioni (CFE%)**
@@ -18,51 +19,66 @@ from pyspark.sql.functions import year, avg, min, max, to_timestamp, col, lit
 # 2022, SE, 3.875823, 0.54, 50.58, 99.551723, 94.16, 99.97
 # ```
 
-# 1. Avviare Spark Session
-spark = SparkSession.builder \
-    .appName("ElectricityMaps-Batch-Processing") \
-    .getOrCreate()
+def process_file(spark, path, zone_id):
+    df = spark.read.csv(path, header=True, inferSchema=True)
 
-# 2. Caricare i dati da HDFS
-path_to_hdfs_file = "hdfs://namenode:9000/data/IT_2022_hourly.csv"
-df = spark.read.csv(path_to_hdfs_file, header=True, inferSchema=True)
+    df = df.withColumn("Datetime (UTC)", to_timestamp(col("Datetime (UTC)"), "yyyy-MM-dd HH:mm:ss"))
+    df = df.withColumn("Year", year("Datetime (UTC)"))
 
-# 3. Parsing timestamp per convertire "Datetime (UTC)" in formato timestamp
-df = df.withColumn("Datetime (UTC)", to_timestamp(col("Datetime (UTC)"), "yyyy-MM-dd HH:mm:ss"))
+    agg_df = df.groupBy("Year").agg(
+        avg(col("Carbon intensity gCO₂eq/kWh (direct)")).alias("carbon-mean"),
+        min(col("Carbon intensity gCO₂eq/kWh (direct)")).alias("carbon-min"),
+        max(col("Carbon intensity gCO₂eq/kWh (direct)")).alias("carbon-max"),
 
-# 4. Estrazione anno
-df = df.withColumn("Year", year("Datetime (UTC)"))
+        avg(col("Carbon-free energy percentage (CFE%)")).alias("cfe-mean"),
+        min(col("Carbon-free energy percentage (CFE%)")).alias("cfe-min"),
+        max(col("Carbon-free energy percentage (CFE%)")).alias("cfe-max")
+    )
 
-# 5. Calcolo media, minimo e massimo per carbon intensity e CFE%
-agg_df = df.groupBy("Year").agg(
-    avg(col("Carbon intensity gCO₂eq/kWh (direct)")).alias("carbon-mean"),
-    min(col("Carbon intensity gCO₂eq/kWh (direct)")).alias("carbon-min"),
-    max(col("Carbon intensity gCO₂eq/kWh (direct)")).alias("carbon-max"),
+    # Aggiungi zona (IT o SE)
+    return agg_df.withColumn("Zone id", lit(zone_id))
 
-    avg(col("Carbon-free energy percentage (CFE%)")).alias("cfe-mean"),
-    min(col("Carbon-free energy percentage (CFE%)")).alias("cfe-min"),
-    max(col("Carbon-free energy percentage (CFE%)")).alias("cfe-max")
-)
 
-# 6. Aggiunta colonna con "Zone id"
-agg_df = agg_df.withColumn("Zone id", lit("IT"))
+def main(input_paths, output_path, zone_id):
+    spark = SparkSession.builder.appName("ElectricityMaps-Batch-Processing").getOrCreate()
 
-# 7. Output dei risultati
-agg_df.select("Zone id", "Year",
-              "carbon-mean", "carbon-min", "carbon-max",
-              "cfe-mean", "cfe-min", "cfe-max").show()
+    # Split manuale dei percorsi
+    file_list = input_paths.split(",")
 
-# 8. Salvataggio dei risultati su HDFS
-agg_df.write.mode("overwrite").csv("hdfs://namenode:9000/results/query1") # Questo salva i dati su più partizioni
+    # Processa ogni file e unisci i risultati
+    results = [process_file(spark, path.strip(), zone_id) for path in file_list]
+    combined_df = results[0]
+    for df in results[1:]:
+        combined_df = combined_df.unionByName(df)
 
-# Questo salva i dati su una sola partizione, più comodo nel nostro caso visto che i dati sono pochi e piccoli
-# agg_df.coalesce(1).write.mode("overwrite").csv("hdfs://namenode:9000/results/query1") 
+    # Aggrega ancora (per sicurezza), nel caso più file dello stesso anno
+    final_df = combined_df.groupBy("Zone id", "Year").agg(
+        avg("carbon-mean").alias("carbon-mean"),
+        min("carbon-min").alias("carbon-min"),
+        max("carbon-max").alias("carbon-max"),
 
+        avg("cfe-mean").alias("cfe-mean"),
+        min("cfe-min").alias("cfe-min"),
+        max("cfe-max").alias("cfe-max")
+    )
+
+    final_df.show()
+
+    # Scrivi in una sola partizione per ottenere un solo file
+    final_df.coalesce(1).write.mode("overwrite").option("header", True).csv(output_path)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Aggrega i dati elettrici su base annua.")
+    parser.add_argument("--input", required=True, help="Percorsi CSV separati da virgola su HDFS")
+    parser.add_argument("--output", required=True, help="Cartella di output su HDFS")
+    parser.add_argument("--zone", required=True, help="ID della zona (es: IT, SE)")
+
+    args = parser.parse_args()
+    main(args.input, args.output, args.zone)
 
 
 # TODO:
-# 1 - vedere come evitare l'overwrite se si usano file diversi
 # 2 - ottenere tutti gli output relativi a IT o a SE in un unico file (scegliamo poi se inserirli in IT.csv o SE.csv, oppure in un solo file)
-# 3 - rendere tutto più dinamico e meno hard-coded
 # 4 - attualmente Spark scrive su HDFS e lo fa usando una notazione come part-BLABLA.csv, dobbiamo vedere se ci conviene cambiarlo
 # 5 - aggiungere i grafici

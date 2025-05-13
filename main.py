@@ -13,27 +13,30 @@ import argparse
 
 #-------NIFI-------
 
-# TODO: fase di controllo che veda se i dati sono già presenti e quindi non riesegua (utilizza quello che sono già in hdfs/functions.py come base)
-
-# TODO: dobbiamo vedere import template per fargli almeno caricare il template
 # carica il tamplate e avvialo
-# result = subprocess.run(["/bin/bash", "nifi/nifi_start.sh"], capture_output=True, text=True)
+# cmd = f"docker exec nifi ../scripts/import-template.sh"
+# result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 # print("STDOUT:", result.stdout)
 # print("STDERR:", result.stderr)
 # print("Return code:", result.returncode)
 
-# manda i dati da processare a nifi
+# # manda i dati da processare a nifi
 # feed_nifi_urls()
 
 #--------SPARK-------
 app = "/app/query1.py"
-input_file = "hdfs://namenode:9000/data/IT-SIC_2024_hourly.csv"
-# output_dir = "hdfs://namenode:9000/results/line_count"
-output_dir = "hdfs://namenode:9000/results/query1"
+input_files = (
+    "hdfs://namenode:9000/data/IT_2021_hourly.csv,"
+    "hdfs://namenode:9000/data/IT_2022_hourly.csv"
+)
+output_dir = "hdfs://namenode:9000/results/query1-IT"
+zone_id = "IT"
 
-# TODO: dobbiamo modificare per far si che possa prendere più argomenti di input/output
-execute_spark_query(app, input_file, output_dir)
+print(input_files)
+
+execute_spark_query(app, input_files, output_dir, zone_id)
+
 
 #--------REDIS-------
 #load_to_redis()
