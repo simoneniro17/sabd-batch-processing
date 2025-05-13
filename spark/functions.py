@@ -27,8 +27,9 @@ def run_spark_job(spark_submit_path, script, input_path, output_path):
 
 def execute_spark_query(script, input_path, output_path):
     """Esegue una query Spark passando i parametri di input, output e script"""
-    spark_submit_path = find_spark_submit()  # Trova il percorso di spark-submit
-    run_spark_job(spark_submit_path, script, input_path, output_path)
+    # spark_submit_path = find_spark_submit()  # Trova il percorso di spark-submit
+    # run_spark_job(spark_submit_path, script, input_path, output_path)
+    run_spark_job("/opt/spark/bin/spark-submit", script, input_path, output_path)
 
 
 

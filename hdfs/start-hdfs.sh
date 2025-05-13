@@ -19,11 +19,14 @@ until hdfs dfs -ls / &> /dev/null; do
     sleep 2
 done
 
+sleep 60
+
 # Crea la directory data e imposta i permessi per permettere la scrittura
 echo "Setting up /data directory in HDFS..."
 hdfs dfs -test -e /data || hdfs dfs -mkdir /data
 hdfs dfs -chmod -R 777 /data
 
+echo "Setting up /results directory in HDFS..."
 hdfs dfs -test -e /results || hdfs dfs -mkdir /results
 hdfs dfs -chmod -R 777 /results
 

@@ -24,12 +24,14 @@ import argparse
 # print("Return code:", result.returncode)
 
 # manda i dati da processare a nifi
-feed_nifi_urls()
+# feed_nifi_urls()
 
 #--------SPARK-------
-app = "/app/spark_job.py"
-input_file = "hdfs://namenode:9000/data/AE_2024_hourly.csv"
-output_dir = "hdfs://namenode:9000/results/line_count"
+app = "/app/query1.py"
+input_file = "hdfs://namenode:9000/data/IT-SIC_2024_hourly.csv"
+# output_dir = "hdfs://namenode:9000/results/line_count"
+output_dir = "hdfs://namenode:9000/results/query1"
+
 # TODO: dobbiamo modificare per far si che possa prendere più argomenti di input/output
 execute_spark_query(app, input_file, output_dir)
 
