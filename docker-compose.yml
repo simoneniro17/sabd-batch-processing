@@ -113,7 +113,7 @@ services:
     volumes:        
       - ./hdfs/conf:/opt/hadoop/etc/hadoop
       - ./nifi/app/nifi_url_feeder.py:/app/nifi_url_feeder.py
-      - ./nifi/conf/ingestion_and_preprocessing.xml:/opt/nifi/conf/ingestion_and_preprocessing.xml
+      - ./nifi/conf/prova.xml:/opt/nifi/conf/prova.xml
       - ./nifi/import-template.sh:/opt/nifi/scripts/import-template.sh
       - ./nifi/entrypoint.sh:/opt/nifi/scripts/entrypoint.sh
     command: [ "/bin/bash", "/opt/nifi/scripts/entrypoint.sh" ]

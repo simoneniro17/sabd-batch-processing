@@ -3,7 +3,7 @@
 echo "[WAIT] Aspetto che NiFi sia pronto..."
 
 until curl -sk https://localhost:8443/nifi-api/system-diagnostics >/dev/null 2>&1; do
-  echo "⏳ NiFi non è ancora pronto. Attendo 5s..."
+  echo " NiFi non è ancora pronto. Attendo 5s..."
   sleep 5
 done
 echo " NiFi è pronto!"
@@ -11,7 +11,7 @@ echo "==============================="
 
 # === CONFIGURAZIONE ===
 NIFI_API_URL="https://localhost:8443/nifi-api"
-TEMPLATE_NAME="ingestion_and_preprocessing"
+TEMPLATE_NAME="prova"
 TEMPLATE_FILE="/opt/nifi/conf/${TEMPLATE_NAME}.xml"
 TOOLKIT_PATH="/opt/nifi/nifi-toolkit-current/bin/cli.sh"
 
@@ -24,12 +24,9 @@ KEYSTORE="/opt/nifi/nifi-current/conf/keystore.p12"
 KEYSTORE_TYPE="PKCS12"
 KEYSTORE_PASSWORD=$(grep '^nifi.security.keystorePasswd=' /opt/nifi/nifi-current/conf/nifi.properties | cut -d'=' -f2)
 
-# Credenziali NiFi
 USERNAME="admin"
 PASSWORD="adminpassword"
 
-# genera token  per l'utente
-echo "🔐 Generazione token..."
 TOKEN=$(curl -sk -X POST "$NIFI_API_URL/access/token" \
   -H 'Content-Type: application/x-www-form-urlencoded' \
   -d "username=$USERNAME&password=$PASSWORD")
@@ -39,56 +36,43 @@ if [[ -z "$TOKEN" ]]; then
   exit 1
 fi
 
-echo " Token ottenuto: ${TOKEN:0:20}..."
 
-echo "Upload nuovo template..."
-
-#  Verifica se il template è già presente in NiFi
-echo "🔍 Verifico se il template '$TEMPLATE_NAME' è già presente..."
+# Upload template se non esiste
 TEMPLATES_JSON=$(curl -sk -H "Authorization: Bearer $TOKEN" "$NIFI_API_URL/flow/templates")
 TEMPLATE_ID=$(echo "$TEMPLATES_JSON" | jq -r ".templates[] | select(.template.name == \"$TEMPLATE_NAME\") | .template.id")
 
-#  Se non esiste, lo carica via toolkit
 if [[ -z "$TEMPLATE_ID" ]]; then
-  echo "Template non trovato. Caricamento..."
-  TEMPLATE_UPLOAD_OUTPUT=$($TOOLKIT_PATH nifi upload-template \
+  echo " Template non trovato. Caricamento..."
+  $TOOLKIT_PATH nifi upload-template \
     -u "$NIFI_API_URL" \
     -btk "$TOKEN" \
-    -ts "$TRUSTSTORE" \
-    -tst "$TRUSTSTORE_TYPE" \
-    -tsp "$TRUSTSTORE_PASSWORD" \
-    -ks "$KEYSTORE" \
-    -kst "$KEYSTORE_TYPE" \
-    -ksp "$KEYSTORE_PASSWORD" \
-    -pgid root \
-    -i "$TEMPLATE_FILE" \
-    -ot json 2>&1)
+    -ts "$TRUSTSTORE" -tst "$TRUSTSTORE_TYPE" -tsp "$TRUSTSTORE_PASSWORD" \
+    -ks "$KEYSTORE" -kst "$KEYSTORE_TYPE" -ksp "$KEYSTORE_PASSWORD" \
+    -pgid root -i "$TEMPLATE_FILE" -ot json
 
-  # Dopo l'upload, lo cerca di nuovo per ottenerne l'ID
   TEMPLATES_JSON=$(curl -sk -H "Authorization: Bearer $TOKEN" "$NIFI_API_URL/flow/templates")
   TEMPLATE_ID=$(echo "$TEMPLATES_JSON" | jq -r ".templates[] | select(.template.name == \"$TEMPLATE_NAME\") | .template.id")
 fi
-# Se ancora non lo trova, esce con errore
+
 if [[ -z "$TEMPLATE_ID" ]]; then
   echo " Errore: impossibile ottenere l'ID del template."
   exit 1
 fi
 echo "Template ID: $TEMPLATE_ID"
 
-#evita istanze duplicate
-echo "🔎 Controllo se esiste già un Process Group istanziato da '$TEMPLATE_NAME'..."
+# #evita istanze duplicate
+echo " Controllo se esiste già un Process Group istanziato da '$TEMPLATE_NAME'..."
 PG_CANDIDATES=$(curl -sk -H "Authorization: Bearer $TOKEN" "$NIFI_API_URL/process-groups/root/process-groups" | jq -r '.processGroups[].component.id')
 
 for PG_ID in $PG_CANDIDATES; do
   PROC_NAMES=$(curl -sk -H "Authorization: Bearer $TOKEN" "$NIFI_API_URL/process-groups/$PG_ID/processors" | jq -r '.processors[].component.name')
   if echo "$PROC_NAMES" | grep -q "ListenHTTP"; then
-    echo "⚠️  Process Group già presente (contiene 'ListenHTTP'). Istanza saltata."
+    echo "  Process Group già presente (contiene 'ListenHTTP'). Istanza saltata."
     exit 0
   fi
 done 
 
-# Istanzia il template nel canvas alla posizione (300,100)
-echo "Istanzio template nel canvas..."
+# Istanzia template
 INSTANCE_RESPONSE=$(curl -sk -H "Authorization: Bearer $TOKEN" -X POST "$NIFI_API_URL/process-groups/root/template-instance" \
   -H "Content-Type: application/json" \
   -d "{
@@ -97,23 +81,116 @@ INSTANCE_RESPONSE=$(curl -sk -H "Authorization: Bearer $TOKEN" -X POST "$NIFI_AP
     \"originY\": 100.0
 }")
 
-
 NEW_PG_ID=$(echo "$INSTANCE_RESPONSE" | jq -r '.flow.processGroups[0].component.id')
 
-if [[ -z "$NEW_PG_ID" || "$NEW_PG_ID" == "null" ]]; then
+if [[ -z "$NEW_PG_ID\" || \"$NEW_PG_ID\" == \"null" ]]; then
   echo " Errore: Process Group non istanziato correttamente!"
-  echo "$INSTANCE_RESPONSE"
   exit 1
 fi
-echo " Process Group istanziato con ID: $NEW_PG_ID"
+
+# Recupera tutti i processori nel PG
+PROCESSORS_JSON=$(curl -sk -H "Authorization: Bearer $TOKEN" "$NIFI_API_URL/process-groups/$NEW_PG_ID/processors")
+
+# Estrai gli ID dei QueryRecord
+QUERY_RECORD_IDS=$(echo "$PROCESSORS_JSON" | jq -r '.processors[] | select(.component.type | contains("QueryRecord")) | .component.id')
+
+# Colleziona gli ID dei controller service usati da questi processori
+USED_CONTROLLERS=()
+
+for PROC_ID in $QUERY_RECORD_IDS; do
+  PROC_CONFIG=$(curl -sk -H "Authorization: Bearer $TOKEN" "$NIFI_API_URL/processors/$PROC_ID" | jq -r '.component.config.properties')
+
+  READER_ID=$(echo "$PROC_CONFIG" | jq -r '."record-reader" // empty')
+  WRITER_ID=$(echo "$PROC_CONFIG" | jq -r '."record-writer" // empty')
+
+  if [[ -n "$READER_ID" ]]; then USED_CONTROLLERS+=("$READER_ID"); fi
+  if [[ -n "$WRITER_ID" ]]; then USED_CONTROLLERS+=("$WRITER_ID"); fi
+done
+
+# Rimuovi duplicati
+UNIQUE_CONTROLLERS=($(printf "%s\n" "${USED_CONTROLLERS[@]}" | sort -u))
+
+# Abilita i controller usati
+for CONTROLLER_ID in "${UNIQUE_CONTROLLERS[@]}"; do
+  curl -sk -X PUT "$NIFI_API_URL/controller-services/$CONTROLLER_ID/run-status" \
+    -H "Authorization: Bearer $TOKEN" \
+    -H "Content-Type: application/json" \
+    -d "{
+      \"revision\": {
+        \"version\": 0
+      },
+      \"state\": \"ENABLED\"
+    }"
+done
+
+# Attendi che siano abilitati
+for CONTROLLER_ID in "${UNIQUE_CONTROLLERS[@]}"; do
+  while true; do
+    STATUS=$(curl -sk -H "Authorization: Bearer $TOKEN" "$NIFI_API_URL/controller-services/$CONTROLLER_ID" | jq -r '.component.state')
+    if [[ "$STATUS" == "ENABLED" ]]; then
+      break
+    else
+      sleep 2
+    fi
+  done
+done
+
+# === ABILITA CONTROLLER SERVICE ===
+
+CONTROLLERS_JSON=$(curl -sk -H "Authorization: Bearer $TOKEN" "$NIFI_API_URL/process-groups/$NEW_PG_ID/controller-services")
+CONTROLLER_IDS=$(echo "$CONTROLLERS_JSON" | jq -r '.controllerServices[].component.id')
+
+for CONTROLLER_ID in $CONTROLLER_IDS; do
+  curl -sk -X PUT "$NIFI_API_URL/controller-services/$CONTROLLER_ID/run-status" \
+    -H "Authorization: Bearer $TOKEN" \
+    -H "Content-Type: application/json" \
+    -d "{
+      \"revision\": {
+        \"version\": 0
+      },
+      \"state\": \"ENABLED\"
+    }"
+done
+
+# Attende che siano abilitati
+for CONTROLLER_ID in $CONTROLLER_IDS; do
+  while true; do
+    STATUS=$(curl -sk -H "Authorization: Bearer $TOKEN" "$NIFI_API_URL/controller-services/$CONTROLLER_ID" | jq -r '.component.state')
+    if [[ "$STATUS" == "ENABLED" ]]; then
+      break
+    else
+      sleep 2
+    fi
+  done
+done
 
 
-#  Recupera tutti i processori presenti nel nuovo Process Group
-echo " Recupero processori nel Process Group..."
-PROCESSORS=$(curl -sk -H "Authorization: Bearer $TOKEN" "$NIFI_API_URL/process-groups/$NEW_PG_ID/processors")
+# Recupera i processori nel PG
+PROCESSORS_JSON=$(curl -sk -H "Authorization: Bearer $TOKEN" "$NIFI_API_URL/process-groups/$NEW_PG_ID/processors")
 
-echo " Avvio singolo di ogni processore nel Process Group..."
-for PROCESSOR_ID in $(echo "$PROCESSORS" | jq -r '.processors[] | select(.component.state != "RUNNING") | .component.id'); do
+# Estrai ID dei processori che hanno nome o tipo "QueryRecord"
+QUERY_RECORD_IDS=$(echo "$PROCESSORS_JSON" | jq -r '.processors[] | select(.component.name | test("(?i)queryrecord")) | .component.id')
+
+if [[ -z "$QUERY_RECORD_IDS" ]]; then
+  echo " Nessun processore 'QueryRecord' trovato nel template."
+else
+  for PROCESSOR_ID in $QUERY_RECORD_IDS; do
+    RESPONSE=$(curl -sk -X PUT "$NIFI_API_URL/processors/$PROCESSOR_ID/run-status" \
+      -H "Authorization: Bearer $TOKEN" \
+      -H "Content-Type: application/json" \
+      -d "{
+        \"revision\": {
+          \"version\": 0
+        },
+        \"state\": \"RUNNING\"
+      }")
+
+    STATUS=$(echo "$RESPONSE" | jq -r '.component.state // .message // .error')
+  done
+fi
+
+# Avvia i QueryRecord
+for PROCESSOR_ID in $QUERY_RECORD_IDS; do
   RESPONSE=$(curl -sk -X PUT "$NIFI_API_URL/processors/$PROCESSOR_ID/run-status" \
     -H "Authorization: Bearer $TOKEN" \
     -H "Content-Type: application/json" \
@@ -123,7 +200,35 @@ for PROCESSOR_ID in $(echo "$PROCESSORS" | jq -r '.processors[] | select(.compon
       },
       \"state\": \"RUNNING\"
     }")
-  echo "Avvio processore $PROCESSOR_ID "
+
+  STATUS=$(echo "$RESPONSE" | jq -r '.component.state // .message // .error')
 done
 
-echo " Process Group avviato!"
+# Raccogli gli ID già avviati (QueryRecord)
+SKIP_IDS=($QUERY_RECORD_IDS)
+
+# Recupera di nuovo tutti i processori (per sicurezza)
+ALL_PROCESSORS_JSON=$(curl -sk -H "Authorization: Bearer $TOKEN" "$NIFI_API_URL/process-groups/$NEW_PG_ID/processors")
+
+for PROCESSOR_ID in $(echo "$ALL_PROCESSORS_JSON" | jq -r '.processors[] | select(.component.state != "RUNNING") | .component.id'); do
+  # Salta se è già stato gestito (QueryRecord)
+  if [[ " ${SKIP_IDS[@]} " =~ " ${PROCESSOR_ID} " ]]; then
+    continue
+  fi
+
+  RESPONSE=$(curl -sk -X PUT "$NIFI_API_URL/processors/$PROCESSOR_ID/run-status" \
+    -H "Authorization: Bearer $TOKEN" \
+    -H "Content-Type: application/json" \
+    -d "{
+      \"revision\": {
+        \"version\": 0
+      },
+      \"state\": \"RUNNING\"
+    }")
+
+  STATUS=$(echo "$RESPONSE" | jq -r '.component.state // .message // .error')
+done
+  echo "Caricamento template completato!"
+  echo "==============================="
+
+
