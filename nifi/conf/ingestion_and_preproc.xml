@@ -2,7 +2,7 @@
 <template encoding-version="1.3">
     <description></description>
     <groupId>c5e94b0b-0196-1000-f88e-65a028467db5</groupId>
-    <name>prova</name>
+    <name>ingestion_and_preproc</name>
     <snippet>
         <processGroups>
             <id>207fb363-1940-3eba-0000-000000000000</id>
@@ -2121,7 +2121,7 @@
             <defaultFlowFileExpiration>0 sec</defaultFlowFileExpiration>
             <flowfileConcurrency>UNBOUNDED</flowfileConcurrency>
             <flowfileOutboundPolicy>STREAM_WHEN_AVAILABLE</flowfileOutboundPolicy>
-            <name>Preprocessing_and_ingestion</name>
+            <name>Ingestion and Preprocessing</name>
             <variables/>
         </processGroups>
     </snippet>

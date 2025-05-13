@@ -1,4 +1,31 @@
 services:
+
+  # NiFi
+  nifi:
+    build:
+      context: .
+      dockerfile: nifi/Dockerfile.nifi
+    container_name: nifi
+    ports:
+      - "8443:8443" # Web UI
+      - "1406:1406" # HTTP di Listening
+    environment:
+      - NIFI_WEB_HTTPS_PORT=8443
+      - NIFI_WEB_HTTPS_HOST=0.0.0.0
+      - SINGLE_USER_CREDENTIALS_USERNAME=admin
+      - SINGLE_USER_CREDENTIALS_PASSWORD=adminpassword
+    networks:
+      sabd_network:
+        ipv4_address: 172.20.0.12
+    volumes:        
+      - ./hdfs/conf:/opt/hadoop/etc/hadoop
+      - ./nifi/conf/ingestion_and_preproc.xml:/opt/nifi/conf/ingestion_and_preproc.xml
+      - ./nifi/conf/import-template.sh:/opt/nifi/scripts/import-template.sh
+    depends_on:
+      - namenode
+
+
+  # HDFS nameNode
   namenode:
     image: apache/hadoop:3.3.5
     container_name: namenode
@@ -11,12 +38,14 @@ services:
       - ./hdfs/conf:/opt/hadoop/etc/hadoop
       - ./hdfs/start-hdfs.sh:/start-hdfs.sh
     ports:
-      - "9870:9870"  # Web UI NameNode
+      - "9870:9870"
     command: [ "/bin/bash", "/start-hdfs.sh" ]
     networks:
       sabd_network:
         ipv4_address: 172.20.0.2
 
+
+  # HDFS dataNode1
   datanode1:
     image: apache/hadoop:3.3.5
     container_name: datanode1
@@ -35,6 +64,8 @@ services:
       sabd_network:
         ipv4_address: 172.20.0.3
 
+
+  # HDFS dataNode2
   datanode2:
     image: apache/hadoop:3.3.5
     container_name: datanode2
@@ -54,6 +85,7 @@ services:
         ipv4_address: 172.20.0.4
 
 
+  # Spark master
   spark-master:
     image: apache/spark:3.5.0
     container_name: spark-master
@@ -61,11 +93,11 @@ services:
     environment:
       - SPARK_MODE=master
     ports:
-      - "7077:7077"   # Spark master port
-      - "8080:8080"   # Spark master web UI
+      - "7077:7077"   
+      - "8080:8080"   # Web UI
     volumes:
-      - ./hdfs/conf:/opt/hadoop/etc/hadoop  # Per accedere ai file core-site.xml e hdfs-site.xml
-      - ./spark/app:/app  # Per i tuoi job Spark
+      - ./hdfs/conf:/opt/hadoop/etc/hadoop  # Per accedere ai file core-site.xml e hdfs-site.xml di HDFS
+      - ./spark/app:/app                    # Per i job Spark
     command: >
       bash -c "/opt/spark/bin/spark-class org.apache.spark.deploy.master.Master --host spark-master"
     networks:
@@ -76,6 +108,8 @@ services:
       - datanode1
       - datanode2
 
+
+  # Spark worker
   spark-worker:
     image: apache/spark:3.5.0
     container_name: spark-worker
@@ -93,31 +127,7 @@ services:
       - spark-master
 
 
-
-  nifi:
-    build:
-      context: .
-      dockerfile: nifi/Dockerfile.nifi
-    container_name: nifi
-    ports:
-      - "8443:8443"
-      - "1406:1406"
-    environment:
-      - NIFI_WEB_HTTPS_PORT=8443
-      - NIFI_WEB_HTTPS_HOST=0.0.0.0
-      - SINGLE_USER_CREDENTIALS_USERNAME=admin
-      - SINGLE_USER_CREDENTIALS_PASSWORD=adminpassword
-    networks:
-      sabd_network:
-        ipv4_address: 172.20.0.12
-    volumes:        
-      - ./hdfs/conf:/opt/hadoop/etc/hadoop
-      - ./nifi/app/nifi_url_feeder.py:/app/nifi_url_feeder.py
-      - ./nifi/conf/prova.xml:/opt/nifi/conf/prova.xml
-      - ./nifi/import-template.sh:/opt/nifi/scripts/import-template.sh
-      - ./nifi/entrypoint.sh:/opt/nifi/scripts/entrypoint.sh
-    command: [ "/bin/bash", "/opt/nifi/scripts/entrypoint.sh" ]
-  
+  # Redis
   redis:
     image: redis:7
     container_name: redis
@@ -130,6 +140,7 @@ services:
       - redis_data:/data
 
 
+  # Redis Loader
   redis-loader:
     build:
       context: ./redis
@@ -142,6 +153,7 @@ services:
         ipv4_address: 172.20.0.14
 
 
+# Definizione della rete
 networks:
   sabd_network:
     ipam:
