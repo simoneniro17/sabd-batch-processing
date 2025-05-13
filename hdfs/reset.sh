@@ -17,7 +17,7 @@ change_permissions() {
 remove_content() {
   dir=$1
   echo "Rimuovendo contenuto di $dir..."
-  rm -rf $dir/*
+  sudo rm -rf $dir/*
 }
 
 # Cambia i permessi e rimuovi i contenuti delle directory
