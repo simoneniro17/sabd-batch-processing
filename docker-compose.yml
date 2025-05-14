@@ -19,7 +19,7 @@ services:
         ipv4_address: 172.20.0.12
     volumes:        
       - ./hdfs/conf:/opt/hadoop/etc/hadoop
-      - ./nifi/conf/ing_and_preproc_new.xml:/opt/nifi/conf/ing_and_preproc_new.xml
+      - ./nifi/conf/ing_and_preproc.xml:/opt/nifi/conf/ing_and_preproc.xml
       - ./nifi/conf/import-template.sh:/opt/nifi/scripts/import-template.sh
     depends_on:
       - namenode
