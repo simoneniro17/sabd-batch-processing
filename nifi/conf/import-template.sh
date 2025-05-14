@@ -11,7 +11,7 @@ echo "==============================="
 
 # === CONFIGURAZIONE ===
 NIFI_API_URL="https://localhost:8443/nifi-api"
-TEMPLATE_NAME="ingestion_and_preproc"
+TEMPLATE_NAME="ing_and_preproc_new"
 TEMPLATE_FILE="/opt/nifi/conf/${TEMPLATE_NAME}.xml"
 TOOLKIT_PATH="/opt/nifi/nifi-toolkit-current/bin/cli.sh"
 
@@ -60,7 +60,7 @@ if [[ -z "$TEMPLATE_ID" ]]; then
 fi
 echo "Template ID: $TEMPLATE_ID"
 
-# #evita istanze duplicate
+# # #evita istanze duplicate
 echo " Controllo se esiste già un Process Group istanziato da '$TEMPLATE_NAME'..."
 PG_CANDIDATES=$(curl -sk -H "Authorization: Bearer $TOKEN" "$NIFI_API_URL/process-groups/root/process-groups" | jq -r '.processGroups[].component.id')
 
@@ -92,12 +92,12 @@ fi
 PROCESSORS_JSON=$(curl -sk -H "Authorization: Bearer $TOKEN" "$NIFI_API_URL/process-groups/$NEW_PG_ID/processors")
 
 # Estrai gli ID dei QueryRecord
-QUERY_RECORD_IDS=$(echo "$PROCESSORS_JSON" | jq -r '.processors[] | select(.component.type | contains("QueryRecord")) | .component.id')
+RECORD_PROCESSOR_IDS=$(echo "$PROCESSORS_JSON" | jq -r '.processors[] | select(.component.type | test("QueryRecord|ConvertRecord")) | .component.id')
 
 # Colleziona gli ID dei controller service usati da questi processori
 USED_CONTROLLERS=()
 
-for PROC_ID in $QUERY_RECORD_IDS; do
+for PROC_ID in $RECORD_PROCESSOR_IDS; do
   PROC_CONFIG=$(curl -sk -H "Authorization: Bearer $TOKEN" "$NIFI_API_URL/processors/$PROC_ID" | jq -r '.component.config.properties')
 
   READER_ID=$(echo "$PROC_CONFIG" | jq -r '."record-reader" // empty')
@@ -169,12 +169,12 @@ done
 PROCESSORS_JSON=$(curl -sk -H "Authorization: Bearer $TOKEN" "$NIFI_API_URL/process-groups/$NEW_PG_ID/processors")
 
 # Estrai ID dei processori che hanno nome o tipo "QueryRecord"
-QUERY_RECORD_IDS=$(echo "$PROCESSORS_JSON" | jq -r '.processors[] | select(.component.name | test("(?i)queryrecord")) | .component.id')
+RECORD_PROCESSOR_IDS=$(echo "$PROCESSORS_JSON" | jq -r '.processors[] | select(.component.type | test("QueryRecord|ConvertRecord")) | .component.id')
 
-if [[ -z "$QUERY_RECORD_IDS" ]]; then
+if [[ -z "$RECORD_PROCESSOR_IDS" ]]; then
   echo " Nessun processore 'QueryRecord' trovato nel template."
 else
-  for PROCESSOR_ID in $QUERY_RECORD_IDS; do
+  for PROCESSOR_ID in $RECORD_PROCESSOR_IDS; do
     RESPONSE=$(curl -sk -X PUT "$NIFI_API_URL/processors/$PROCESSOR_ID/run-status" \
       -H "Authorization: Bearer $TOKEN" \
       -H "Content-Type: application/json" \
@@ -190,7 +190,7 @@ else
 fi
 
 # Avvia i QueryRecord
-for PROCESSOR_ID in $QUERY_RECORD_IDS; do
+for PROCESSOR_ID in $RECORD_PROCESSOR_IDS; do
   RESPONSE=$(curl -sk -X PUT "$NIFI_API_URL/processors/$PROCESSOR_ID/run-status" \
     -H "Authorization: Bearer $TOKEN" \
     -H "Content-Type: application/json" \
@@ -205,7 +205,7 @@ for PROCESSOR_ID in $QUERY_RECORD_IDS; do
 done
 
 # Raccogli gli ID già avviati (QueryRecord)
-SKIP_IDS=($QUERY_RECORD_IDS)
+SKIP_IDS=($RECORD_PROCESSOR_IDS)
 
 # Recupera di nuovo tutti i processori (per sicurezza)
 ALL_PROCESSORS_JSON=$(curl -sk -H "Authorization: Bearer $TOKEN" "$NIFI_API_URL/process-groups/$NEW_PG_ID/processors")
