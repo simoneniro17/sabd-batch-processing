@@ -6,23 +6,23 @@ import time
 import statistics
 
 def process_file(spark, path, zone_id):
-    df = spark.read.csv(path, header=True, inferSchema=True)
+    df = spark.read.parquet(path)
 
-    df = df.withColumn("Datetime (UTC)", to_timestamp(col("Datetime (UTC)"), "yyyy-MM-dd HH:mm:ss"))
+    df = df.withColumn("Datetime (UTC)", to_timestamp(col("Datetime__UTC_"), "yyyy-MM-dd HH:mm:ss"))
     df = df.withColumn("Year", year("Datetime (UTC)"))
 
     agg_df = df.groupBy("Year").agg(
-        avg(col("Carbon intensity gCO₂eq/kWh (direct)")).alias("carbon-avg"),
-        min(col("Carbon intensity gCO₂eq/kWh (direct)")).alias("carbon-min"),
-        max(col("Carbon intensity gCO₂eq/kWh (direct)")).alias("carbon-max"),
+        avg(col("Carbon_intensity_gCO_eq_kWh__direct_")).alias("carbon-avg"),
+        min(col("Carbon_intensity_gCO_eq_kWh__direct_")).alias("carbon-min"),
+        max(col("Carbon_intensity_gCO_eq_kWh__direct_")).alias("carbon-max"),
 
-        avg(col("Carbon-free energy percentage (CFE%)")).alias("cfe-avg"),
-        min(col("Carbon-free energy percentage (CFE%)")).alias("cfe-min"),
-        max(col("Carbon-free energy percentage (CFE%)")).alias("cfe-max")
+        avg(col("Carbon_free_energy_percentage__CFE__")).alias("cfe-avg"),
+        min(col("Carbon_free_energy_percentage__CFE__")).alias("cfe-min"),
+        max(col("Carbon_free_energy_percentage__CFE__")).alias("cfe-max")
     )
 
     # Aggiungi zona (IT o SE)
-    return agg_df.withColumn("Zone id", lit(zone_id))
+    return agg_df.withColumn("Zone_id", lit(zone_id))
 
 
 def main(input_paths, output_path, zone_id):
@@ -44,7 +44,7 @@ def main(input_paths, output_path, zone_id):
             combined_df = combined_df.unionByName(df)
 
         # Aggrega ancora (per sicurezza), nel caso più file dello stesso anno
-        final_df = combined_df.groupBy("Zone id", "Year").agg(
+        final_df = combined_df.groupBy("Zone_id", "Year").agg(
             avg("carbon-avg").alias("carbon-avg"),
             min("carbon-min").alias("carbon-min"),
             max("carbon-max").alias("carbon-max"),
@@ -56,8 +56,7 @@ def main(input_paths, output_path, zone_id):
 
         # final_df.show()
 
-        # Scrivi in una sola partizione per ottenere un solo file
-        final_df.coalesce(1).write.mode("overwrite").option("header", True).csv(output_path)
+        final_df.write.mode("overwrite").option("header", True).csv(output_path)
 
         end_time = time.time()
         execution_time = end_time - start_time
@@ -69,8 +68,8 @@ def main(input_paths, output_path, zone_id):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Aggrega i dati elettrici su base annua.")
-    parser.add_argument("--input", required=True, help="Percorsi CSV separati da virgola su HDFS")
+    parser = argparse.ArgumentParser(description="Query 1: Elaborazione dei dati di elettricità per zona e anno.")
+    parser.add_argument("--input", required=True, help="Percorsi Parquet separati da virgola su HDFS")
     parser.add_argument("--output", required=True, help="Cartella di output su HDFS")
     parser.add_argument("--zone", required=True, help="ID della zona (es: IT, SE)")
     parser.add_argument("--runs", type=int, default=1, help="Numero di esecuzioni per la misurazione delle prestazioni")
