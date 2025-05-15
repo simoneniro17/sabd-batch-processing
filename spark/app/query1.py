@@ -21,42 +21,38 @@ def process_file(spark, path, zone_id):
         max(col("Carbon_free_energy_percentage__CFE__")).alias("cfe-max")
     )
 
-    # Aggiungi zona (IT o SE)
     return agg_df.withColumn("Zone_id", lit(zone_id))
 
 
-def main(input_paths, output_path, zone_id):
-    spark = SparkSession.builder.appName(f"Q1-{zone_id}").getOrCreate()
-
+def main(input_it, input_se, output_path):
+    spark = SparkSession.builder.appName(f"Q1-IT-SE").getOrCreate()
     spark.sparkContext.setLogLevel("ERROR")
 
     execution_time = 0
     try:
         start_time = time.time()
         
-        # Split manuale dei percorsi
-        file_list = input_paths.split(",")
+        # Processiamo sia i file IT che quelli SE
+        it_results = process_file(spark, input_it, "IT")
+        se_results = process_file(spark, input_se, "SE")
 
-        # Processa ogni file e unisci i risultati
-        results = [process_file(spark, path.strip(), zone_id) for path in file_list]
-        combined_df = results[0]
-        for df in results[1:]:
-            combined_df = combined_df.unionByName(df)
+        # Uniamo i risultati
+        combined_df = it_results.unionByName(se_results)
 
-        # Aggrega ancora (per sicurezza), nel caso più file dello stesso anno
-        final_df = combined_df.groupBy("Zone_id", "Year").agg(
-            avg("carbon-avg").alias("carbon-avg"),
-            min("carbon-min").alias("carbon-min"),
-            max("carbon-max").alias("carbon-max"),
-
-            avg("cfe-avg").alias("cfe-avg"),
-            min("cfe-min").alias("cfe-min"),
-            max("cfe-max").alias("cfe-max")
+        final_df = combined_df.select(
+            "Year",
+            "Zone_id",
+            "carbon-avg",
+            "carbon-min",
+            "carbon-max",
+            "cfe-avg",
+            "cfe-min",
+            "cfe-max"
         )
 
-        # final_df.show()
+        final_df.show()
 
-        final_df.write.mode("overwrite").option("header", True).csv(output_path)
+        final_df.coalesce(1).write.mode("overwrite").option("header", True).csv(output_path)
 
         end_time = time.time()
         execution_time = end_time - start_time
@@ -69,9 +65,9 @@ def main(input_paths, output_path, zone_id):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Query 1: Elaborazione dei dati di elettricità per zona e anno.")
-    parser.add_argument("--input", required=True, help="Percorsi Parquet separati da virgola su HDFS")
+    parser.add_argument("--input_it", required=True, help="Percorso per file IT Parquet su HDFS")
+    parser.add_argument("--input_se", required=True, help="Percorsi per file SE Parquet su HDFS")
     parser.add_argument("--output", required=True, help="Cartella di output su HDFS")
-    parser.add_argument("--zone", required=True, help="ID della zona (es: IT, SE)")
     parser.add_argument("--runs", type=int, default=1, help="Numero di esecuzioni per la misurazione delle prestazioni")
 
     args = parser.parse_args()
@@ -81,10 +77,10 @@ if __name__ == "__main__":
         exit(1)
 
     execution_times = []
-    print(f"Avvio misurazione prestazioni per Query1 ({args.zone}) con {args.runs} esecuzioni...")
+    print(f"Avvio misurazione prestazioni per Query1 con {args.runs} esecuzioni...")
 
     for i in range(args.runs):
-        run_time = main(args.input, args.output, args.zone)
+        run_time = main(args.input_it, args.input_se, args.output)
         if run_time > 0:
             execution_times.append(run_time)
         else:
@@ -92,7 +88,7 @@ if __name__ == "__main__":
 
     if execution_times:
         mean_time = statistics.mean(execution_times)
-        print(f"\nStatistiche prestazioni per Query1 ({args.zone}) dopo {len(execution_times)} esecuzioni valide:")
+        print(f"\nStatistiche prestazioni per Query1 dopo {len(execution_times)} esecuzioni valide:")
         print(f"Tempo medio di esecuzione: {mean_time:.4f} secondi")
 
         if len(execution_times) > 1:
