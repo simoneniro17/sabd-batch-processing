@@ -145,6 +145,8 @@ services:
     build:
       context: ./redis
     container_name: redis-loader
+    volumes:
+      - ./redis/loader:/app
     depends_on:
       - redis
       - namenode

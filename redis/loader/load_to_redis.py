@@ -2,6 +2,8 @@ import time
 import redis
 from hdfs import InsecureClient
 from requests.exceptions import ConnectionError
+import os
+import sys
 
 # Attendi che il NameNode sia pronto
 namenode_url = 'http://namenode:9870'
@@ -26,25 +28,34 @@ while True:
         print("⏳ In attesa di Redis...")
         time.sleep(3)
 
-# Lettura da HDFS
-file_path = '/data/input1.txt'  # Path corretto in HDFS
-try:
-    with hdfs_client.read(file_path, encoding='utf-8') as reader:
-        content = reader.read()
-        print(f"✔️ File letto da HDFS: {file_path}")
-except Exception as e:
-    print(f"❌ Errore nella lettura del file HDFS: {e}")
-    content = None
+# Funzione ricorsiva per visitare tutte le directory
+def visit_and_store(hdfs_client, redis_client, current_path, base_path):
+    try:
+        items = hdfs_client.list(current_path, status=True)
+        for name, info in items:
+            full_path = os.path.join(current_path, name)
+            relative_path = os.path.relpath(full_path, base_path)
 
-# Scrittura su Redis
-if content:
-    r.set('hdfs_data', content)
-    print("✔️ Dati scritti su Redis.")
+            if info['type'] == 'DIRECTORY':
+                visit_and_store(hdfs_client, redis_client, full_path, base_path)
+            elif info['type'] == 'FILE':
+                try:
+                    with hdfs_client.read(full_path, encoding='utf-8') as reader:
+                        content = reader.read()
+                        redis_key = f"hdfs_data:{relative_path}"
+                        redis_client.set(redis_key, content)
+                        print(f"✔️ File letto e scritto in Redis: {redis_key}")
+                except Exception as e:
+                    print(f"❌ Errore nella lettura del file {full_path}: {e}")
+    except Exception as e:
+        print(f"❌ Errore durante l'accesso a {current_path}: {e}")
 
-    # Estrazione dei dati da Redis
-    redis_data = r.get('hdfs_data')
-    if redis_data:
-        print("✔️ Dati letti da Redis:")
-        print(redis_data.decode('utf-8'))  # Decodifica e stampa il contenuto
-    else:
-        print("❌ La chiave 'hdfs_data' non esiste su Redis.")
+# Percorso iniziale da cui partire
+if len(sys.argv) < 2:
+    print("❌ Errore: specificare il path HDFS come argomento.")
+    sys.exit(1)
+
+base_hdfs_path = sys.argv[1]
+
+# Avvia la lettura ricorsiva e copia su Redis
+visit_and_store(hdfs_client, r, base_hdfs_path, base_hdfs_path)

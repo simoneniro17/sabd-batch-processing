@@ -5,6 +5,4 @@ WORKDIR /app
 COPY loader/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY loader/load_to_redis.py .
-
 CMD ["tail", "-f", "/dev/null"]
