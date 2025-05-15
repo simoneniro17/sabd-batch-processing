@@ -78,7 +78,7 @@ INSTANCE_RESPONSE=$(curl -sk -H "Authorization: Bearer $TOKEN" -X POST "$NIFI_AP
   -d "{
     \"templateId\": \"$TEMPLATE_ID\",
     \"originX\": 300.0,
-    \"originY\": 100.0
+    \"originY\": 200.0
 }")
 
 NEW_PG_ID=$(echo "$INSTANCE_RESPONSE" | jq -r '.flow.processGroups[0].component.id')
@@ -92,7 +92,7 @@ fi
 PROCESSORS_JSON=$(curl -sk -H "Authorization: Bearer $TOKEN" "$NIFI_API_URL/process-groups/$NEW_PG_ID/processors")
 
 # Estrai gli ID dei QueryRecord
-RECORD_PROCESSOR_IDS=$(echo "$PROCESSORS_JSON" | jq -r '.processors[] | select(.component.type | test("QueryRecord|ConvertRecord")) | .component.id')
+RECORD_PROCESSOR_IDS=$(echo "$PROCESSORS_JSON" | jq -r '.processors[] | select(.component.type | test("QueryRecord|ConvertRecord|MergeRecord")) | .component.id')
 
 # Colleziona gli ID dei controller service usati da questi processori
 USED_CONTROLLERS=()
@@ -169,7 +169,7 @@ done
 PROCESSORS_JSON=$(curl -sk -H "Authorization: Bearer $TOKEN" "$NIFI_API_URL/process-groups/$NEW_PG_ID/processors")
 
 # Estrai ID dei processori che hanno nome o tipo "QueryRecord"
-RECORD_PROCESSOR_IDS=$(echo "$PROCESSORS_JSON" | jq -r '.processors[] | select(.component.type | test("QueryRecord|ConvertRecord")) | .component.id')
+RECORD_PROCESSOR_IDS=$(echo "$PROCESSORS_JSON" | jq -r '.processors[] | select(.component.type | test("QueryRecord|ConvertRecord|MergeRecord")) | .component.id')
 
 if [[ -z "$RECORD_PROCESSOR_IDS" ]]; then
   echo " Nessun processore 'QueryRecord' trovato nel template."
