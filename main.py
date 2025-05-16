@@ -8,21 +8,23 @@ import argparse
 #-------NIFI-------
 
 # # carica il tamplate e avvialo
-cmd = f"docker exec nifi ../scripts/import-template.sh"
-result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+# cmd = f"docker exec nifi ../scripts/import-template.sh"
+# result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-print("STDOUT:", result.stdout)
-# print("STDERR:", result.stderr)
-print("Return code:", result.returncode)
+# print("STDOUT:", result.stdout)#
+# # print("STDERR:", result.stderr)
+# print("Return code:", result.returncode)
 
-# # # # manda i dati da processare a nifi
-#feed_nifi_urls()
+# # manda i dati da processare a nifi
+# feed_nifi_urls()
 
 #--------SPARK-------
+runs = 1
 
 script_q1 = "/app/query1.py"
 script_q2 = "/app/query2.py"
 script_q3 = "/app/query3.py"
+script_q4 = "/app/query4.py"
 
 # TODO: OPZIONALE: per rendere meno hardcoded il tutto possiamo fare che è direttamente da spark/functions che si monta il path di hdfs://namenode:9000/ leggendolo dinamicamnte dal container
 
@@ -48,13 +50,19 @@ input_files_q3 = (
 )
 output_dir_q3 = "hdfs://namenode:9000/results/query3"
 
-execute_spark_query(script_q1, input_files_q1, output_dir_q1, "", runs = 1)
+
+input_files_q4 = "hdfs://namenode:9000/data/2024_yearly.csv"
+output_dir_q4 = "hdfs://namenode:9000/results/query4"
+
+#TODO: mi sembra che possiamo tranquillamente togliere l'identificatore di zona
+#execute_spark_query(script_q1, input_files_q1, output_dir_q1, "", runs)
 #execute_spark_query(script_q2, input_files_q2, output_dir_q2, "", runs)
 #execute_spark_query(script_q3, input_files_q3, output_dir_q3, zone_id, runs)
+execute_spark_query(script_q4, input_files_q4, output_dir_q4, "", runs)
 
 #--------REDIS-------
-hdfs_results_path = "/results/"
-load_to_redis(hdfs_results_path)
+#hdfs_results_path = "/results/"
+#load_to_redis(hdfs_results_path)
 
 # se vuoi controllare se effettivamnte i file sono stati salvati segui: 
 #docker exec -it redis redis-cli

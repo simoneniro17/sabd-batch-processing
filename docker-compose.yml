@@ -87,7 +87,9 @@ services:
 
   # Spark master
   spark-master:
-    image: apache/spark:3.5.0
+    build:
+      context: .
+      dockerfile: spark/Dockerfile.spark
     container_name: spark-master
     hostname: spark-master
     environment:
@@ -111,7 +113,9 @@ services:
 
   # Spark worker
   spark-worker:
-    image: apache/spark:3.5.0
+    build:
+      context: .
+      dockerfile: spark/Dockerfile.spark
     container_name: spark-worker
     hostname: spark-worker
     environment:
@@ -143,7 +147,8 @@ services:
   # Redis Loader
   redis-loader:
     build:
-      context: ./redis
+      context: .
+      dockerfile: redis/Dockerfile.redis
     container_name: redis-loader
     volumes:
       - ./redis/loader:/app

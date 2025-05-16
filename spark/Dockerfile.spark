@@ -1,0 +1,11 @@
+FROM apache/spark:3.5.0
+
+USER root   
+
+WORKDIR /app
+
+RUN pip install numpy
+
+USER spark
+
+CMD ["tail", "-f", "/dev/null"]
