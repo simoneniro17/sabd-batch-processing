@@ -1,7 +1,5 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import year, month, avg, col, lit
-from pyspark.sql.window import Window
-from pyspark.sql.functions import row_number
+from pyspark.sql.functions import year, month, avg, col, lit, to_timestamp
 
 import argparse
 import time
@@ -50,13 +48,14 @@ def process_file(spark, path):
     df = spark.read.parquet(path)
 
     # Colonne per anno e mese
-    df = df.withColumn("Year", year("Datetime__UTC_"))
-    df = df.withColumn("Month", month("Datetime__UTC_"))
+    df = df.withColumn("Datetime (UTC)", to_timestamp(col("Datetime__UTC_"), "yyyy-MM-dd HH:mm:ss"))
+    df = df.withColumn("Year", year("Datetime (UTC)"))
+    df = df.withColumn("Month", month("Datetime (UTC)"))
 
     # Aggregazione dati per le coppie (anno, mese)
     agg_df = df.groupBy("Year", "Month").agg(
-        avg(col("Carbon_intensity_gCO_eq_kWh__direct_")).alias("carbon-avg"),
-        avg(col("Carbon_free_energy_percentage__CFE__")).alias("cfe-avg")
+        avg(col("Carbon_intensity_gCO_eq_kWh__direct_").cast("float")).alias("carbon-avg"),
+        avg(col("Carbon_free_energy_percentage__CFE__").cast("float")).alias("cfe-avg"),
     )
 
     return agg_df
@@ -78,7 +77,7 @@ def calculate_rankings(df):
     return highest_carbon, lowest_carbon, highest_cfe, lowest_cfe
 
 
-def main(input_paths, output_path):
+def main(input_path, output_path):
     spark = SparkSession.builder.appName("Query2-IT").getOrCreate()
     spark.sparkContext.setLogLevel("ERROR")
 
@@ -86,17 +85,11 @@ def main(input_paths, output_path):
     try:
         start_time = time.time()
 
-        # Split manuale dei percorsi
-        file_list = input_paths.split(",")
-
-        # Processamento di ogni file e unione dei risultati
-        results = [process_file(spark, path.strip()) for path in file_list]
-        combined_df = results[0]
-        for df in results[1:]:
-            combined_df = combined_df.unionByName(df)
+        # Processamento del file di input
+        df = process_file(spark, input_path)
 
         # Calcolo delle classifiche
-        highest_carbon, lowest_carbon, highest_cfe, lowest_cfe = calculate_rankings(combined_df)
+        highest_carbon, lowest_carbon, highest_cfe, lowest_cfe = calculate_rankings(df)
 
         highest_carbon.show()
         lowest_carbon.show()
@@ -115,7 +108,7 @@ def main(input_paths, output_path):
         # lowest_cfe.write.mode("overwrite").option("header", True).csv(f"{output_path}/lowest_cfe")
 
         # Salvataggio del DataFrame finale
-        final_df.write.mode("overwrite").option("header", True).csv(output_path)
+        final_df.coalesce(1).write.mode("overwrite").option("header", True).csv(output_path)
 
         end_time = time.time()
         execution_time = end_time - start_time
@@ -128,7 +121,7 @@ def main(input_paths, output_path):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Query 2: Elaborazione dei dati di elettricità per anno e mese.")
-    parser.add_argument("--input", required=True, help="Percorsi Parquet separati da virgola su HDFS")
+    parser.add_argument("--input", required=True, help="Percorso del file Parquet di input su HDFS")
     parser.add_argument("--output", required=True, help="Cartella di output su HDFS")
     parser.add_argument("--runs", type=int, default=1, help="Numero di esecuzioni per la misurazione delle prestazioni")
 
