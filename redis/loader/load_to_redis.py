@@ -34,21 +34,29 @@ def visit_and_store(hdfs_client, redis_client, current_path, base_path):
         items = hdfs_client.list(current_path, status=True)
         for name, info in items:
             full_path = os.path.join(current_path, name)
-            relative_path = os.path.relpath(full_path, base_path)
 
             if info['type'] == 'DIRECTORY':
                 visit_and_store(hdfs_client, redis_client, full_path, base_path)
-            elif info['type'] == 'FILE':
+
+            elif info['type'] == 'FILE' and name.endswith('.csv'):
                 try:
                     with hdfs_client.read(full_path, encoding='utf-8') as reader:
                         content = reader.read()
-                        redis_key = f"hdfs_data:{relative_path}"
+
+                        # Ottieni il nome della directory madre
+                        parent_dir = os.path.basename(os.path.dirname(full_path))
+                        redis_key = f"hdfs_data:{parent_dir}.csv"
+
                         redis_client.set(redis_key, content)
-                        print(f"✔️ File letto e scritto in Redis: {redis_key}")
+                        print(f"✔️ File CSV salvato in Redis con chiave: {redis_key}")
+
                 except Exception as e:
                     print(f"❌ Errore nella lettura del file {full_path}: {e}")
+            else:
+                print(f"ℹ️ Ignorato file non CSV: {full_path}")
     except Exception as e:
         print(f"❌ Errore durante l'accesso a {current_path}: {e}")
+
 
 # Percorso iniziale da cui partire
 if len(sys.argv) < 2:

@@ -8,15 +8,15 @@ import argparse
 #-------NIFI-------
 
 # # carica il tamplate e avvialo
-#cmd = f"docker exec nifi ../scripts/import-template.sh"
-#result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+# cmd = f"docker exec nifi ../scripts/import-template.sh"
+# result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-#print("STDOUT:", result.stdout)
+# print("STDOUT:", result.stdout)
 # print("STDERR:", result.stderr)
-#print("Return code:", result.returncode)
+# print("Return code:", result.returncode)
 
 # # # # manda i dati da processare a nifi
-#feed_nifi_urls()
+# feed_nifi_urls()
 
 #--------SPARK-------
 
@@ -36,7 +36,7 @@ output_dir_q3 = "hdfs://namenode:9000/results/query3"
 
 #execute_spark_query(script_q1, (IT_HOURLY, SE_HOURLY), output_dir_q1, runs = 1)
 #execute_spark_query(script_q2, IT_HOURLY, output_dir_q2, runs = 1)
-execute_spark_query(script_q3, (IT_HOURLY, SE_HOURLY), output_dir_q3, runs = 1)
+#execute_spark_query(script_q3, (IT_HOURLY, SE_HOURLY), output_dir_q3, runs = 1)
 
 #--------REDIS-------
 hdfs_results_path = "/results/"
