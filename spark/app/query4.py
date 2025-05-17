@@ -4,8 +4,8 @@ from pyspark.ml.feature import VectorAssembler
 from pyspark.ml.clustering import KMeans
 import numpy as np
 import argparse
-import time
-import statistics
+
+from evaluation import Evaluation
 
 def process_data(spark, input_path):
     """Process the yearly data CSV"""
@@ -77,10 +77,7 @@ def main(input_path, output_path):
         .getOrCreate()
     spark.sparkContext.setLogLevel("ERROR")
     
-    execution_time = 0
-    try:
-        start_time = time.time()
-        
+    try:    
         # Process the yearly data
         data = process_data(spark, input_path)
         
@@ -94,15 +91,10 @@ def main(input_path, output_path):
         # Save clustering results
         results.coalesce(1).write.mode("overwrite") \
                .option("header", True).csv(output_path)
-        
-        end_time = time.time()
-        execution_time = end_time - start_time
-        
     except Exception as e:
         print(f"Error during processing: {e}")
     finally:
         spark.stop()
-    return execution_time
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Query 4: Country clustering by carbon intensity")
@@ -112,30 +104,6 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
     
-    if args.runs < 1:
-        print("Number of runs must be at least 1")
-        exit(1)
-    
-    execution_times = []
-    print(f"Starting performance measurement for Query4 with {args.runs} runs...")
-    
-    for i in range(args.runs):
-        run_time = main(args.input, args.output)
-        if run_time > 0:
-            execution_times.append(run_time)
-            print(f"Run {i+1} completed in {run_time:.4f} seconds")
-        else:
-            print(f"Run {i+1} failed")
-    
-    if execution_times:
-        mean_time = statistics.mean(execution_times)
-        print(f"\nPerformance statistics after {len(execution_times)} valid runs:")
-        print(f"Mean execution time: {mean_time:.4f} seconds")
-        
-        if len(execution_times) > 1:
-            std_dev = statistics.stdev(execution_times)
-            print(f"Standard deviation: {std_dev:.4f} seconds")
-        
-        print(f"Individual run times: {[round(t, 4) for t in execution_times]}")
-    else:
-        print("No successful runs completed")
+    evaluator = Evaluation(args.runs)
+    evaluator.run(main, args.input, args.output)
+    evaluator.evaluate()
