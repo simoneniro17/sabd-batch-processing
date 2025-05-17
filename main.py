@@ -23,6 +23,11 @@ import argparse
 script_q1 = "/app/query1.py"
 script_q2 = "/app/query2.py"
 script_q3 = "/app/query3.py"
+script_q4 = "/app/query4.py"
+
+script_q1_sql = "/app/query1_sql.py"
+script_q2_sql = "/app/query2_sql.py"
+script_q3_sql = "/app/query3_sql.py"
 
 # TODO: OPZIONALE: per rendere meno hardcoded il tutto possiamo fare che è direttamente da spark/functions che si monta il path di hdfs://namenode:9000/ leggendolo dinamicamnte dal container
 
@@ -33,10 +38,19 @@ YEARLY = "hdfs://namenode:9000/data/2024_yearly.csv"
 output_dir_q1 = "hdfs://namenode:9000/results/query1"
 output_dir_q2 = "hdfs://namenode:9000/results/query2"
 output_dir_q3 = "hdfs://namenode:9000/results/query3"
+output_dir_q4 = "hdfs://namenode:9000/results/query4"
+
+output_dir_q1_sql = "hdfs://namenode:9000/results/query1-sql"
+output_dir_q2_sql = "hdfs://namenode:9000/results/query2-sql"
+output_dir_q3_sql = "hdfs://namenode:9000/results/query3-sql"
 
 #execute_spark_query(script_q1, (IT_HOURLY, SE_HOURLY), output_dir_q1, runs = 1)
 #execute_spark_query(script_q2, IT_HOURLY, output_dir_q2, runs = 1)
-execute_spark_query(script_q3, (IT_HOURLY, SE_HOURLY), output_dir_q3, runs = 4)
+#execute_spark_query(script_q3, (IT_HOURLY, SE_HOURLY), output_dir_q3, runs = 1)
+#execute_spark_query(script_q4, YEARLY, output_dir_q4, runs = 1)
+#execute_spark_query(script_q1_sql, (IT_HOURLY, SE_HOURLY), output_dir_q1_sql, runs = 1)
+#execute_spark_query(script_q2_sql, IT_HOURLY, output_dir_q2_sql, runs = 1)
+execute_spark_query(script_q3_sql, (IT_HOURLY, SE_HOURLY), output_dir_q3_sql, runs = 1)
 
 #--------REDIS-------
 # hdfs_results_path = "/results/"
