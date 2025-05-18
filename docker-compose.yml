@@ -122,6 +122,7 @@ services:
       - SPARK_MODE=worker
     volumes:
       - ./hdfs/conf:/opt/hadoop/etc/hadoop
+      - ./spark/app:/app
     command: >
       bash -c "/opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077"
     networks:
