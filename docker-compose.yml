@@ -121,7 +121,6 @@ services:
     hostname: spark-worker
     environment:
       - SPARK_MODE=worker
-      
     volumes:
       - ./hdfs/conf:/opt/hadoop/etc/hadoop
       - ./spark/app:/app
