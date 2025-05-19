@@ -6,7 +6,7 @@ import os
 import sys
 
 # Attendi che il NameNode sia pronto
-namenode_url = 'http://namenode:9870'
+namenode_url = os.getenv('NAMENODE')
 while True:
     try:
         hdfs_client = InsecureClient(namenode_url, user='root')

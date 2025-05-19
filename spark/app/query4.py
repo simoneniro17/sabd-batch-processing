@@ -4,6 +4,7 @@ from pyspark.ml.feature import VectorAssembler
 from pyspark.ml.clustering import KMeans
 import numpy as np
 import argparse
+import os
 
 from evaluation import Evaluation
 
@@ -103,7 +104,11 @@ if __name__ == "__main__":
     parser.add_argument("--runs", type=int, default=1, help="Number of execution runs")
     
     args = parser.parse_args()
+
+    HDFS_BASE = os.getenv("HDFS_BASE")
+    input = f"{HDFS_BASE.rstrip('/')}/{args.input.lstrip('/')}"
+    output = f"{HDFS_BASE.rstrip('/')}/{args.output.lstrip('/')}"
     
     evaluator = Evaluation(args.runs)
-    evaluator.run(main, args.input, args.output)
+    evaluator.run(main, input, output)
     evaluator.evaluate()

@@ -3,6 +3,8 @@ from pyspark.sql.functions import year, avg, min, max, to_timestamp, col, lit
 
 import argparse
 from evaluation import Evaluation
+import os
+
 
 def process_file(spark, path, zone_id):
     df = spark.read.parquet(path)
@@ -64,6 +66,11 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    HDFS_BASE = os.getenv("HDFS_BASE")
+    input_it = f"{HDFS_BASE.rstrip('/')}/{args.input_it.lstrip('/')}"
+    input_se = f"{HDFS_BASE.rstrip('/')}/{args.input_se.lstrip('/')}"
+    output = f"{HDFS_BASE.rstrip('/')}/{args.output.lstrip('/')}"
+
     evaluator = Evaluation(args.runs)
-    evaluator.run(main, args.input_it, args.input_se, args.output)
+    evaluator.run(main, input_it, input_se, output)
     evaluator.evaluate()

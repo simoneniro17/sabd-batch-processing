@@ -2,6 +2,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import lit
 import argparse
 from evaluation import Evaluation 
+import os
 
 def process_file_sql(spark, path, zone_id, view_name_suffix):
     df = spark.read.parquet(path)
@@ -63,6 +64,11 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    HDFS_BASE = os.getenv("HDFS_BASE")
+    input_it = f"{HDFS_BASE.rstrip('/')}/{args.input_it.lstrip('/')}"
+    input_se = f"{HDFS_BASE.rstrip('/')}/{args.input_se.lstrip('/')}"
+    output = f"{HDFS_BASE.rstrip('/')}/{args.output.lstrip('/')}"
+
     evaluator = Evaluation(args.runs)
-    evaluator.run(main_sql_query1, args.input_it, args.input_se, args.output)
+    evaluator.run(main_sql_query1, input_it, input_se, output)
     evaluator.evaluate()

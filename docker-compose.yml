@@ -94,6 +94,7 @@ services:
     hostname: spark-master
     environment:
       - SPARK_MODE=master
+      - HDFS_BASE=hdfs://namenode:9000
     ports:
       - "7077:7077"   
       - "8080:8080"   # Web UI
@@ -120,6 +121,7 @@ services:
     hostname: spark-worker
     environment:
       - SPARK_MODE=worker
+      
     volumes:
       - ./hdfs/conf:/opt/hadoop/etc/hadoop
       - ./spark/app:/app
@@ -151,6 +153,8 @@ services:
       context: .
       dockerfile: redis/Dockerfile.redis
     container_name: redis-loader
+    environment:
+      - NAMENODE=http://namenode:9870
     volumes:
       - ./redis/loader:/app
     depends_on:

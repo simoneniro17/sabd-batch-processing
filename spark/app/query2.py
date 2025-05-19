@@ -4,6 +4,7 @@ from pyspark.sql.functions import year, month, avg, col, to_timestamp
 import argparse
 
 from evaluation import Evaluation
+import os
 
 ## Query 2 (Solo Italia)
 # *   Aggregare i dati sulla coppia (anno, mese) calcolando il valor medio dell'**intensità di carbonio** e della **percentuale di
@@ -120,6 +121,10 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    HDFS_BASE = os.getenv("HDFS_BASE")
+    input = f"{HDFS_BASE.rstrip('/')}/{args.input.lstrip('/')}"
+    output = f"{HDFS_BASE.rstrip('/')}/{args.output.lstrip('/')}"
+
     evaluator = Evaluation(args.runs)
-    evaluator.run(main, args.input, args.output)
+    evaluator.run(main, input, output)
     evaluator.evaluate()

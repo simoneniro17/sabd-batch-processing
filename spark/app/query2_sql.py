@@ -1,6 +1,6 @@
 from pyspark.sql import SparkSession
 import argparse
-
+import os
 from evaluation import Evaluation
 
 def main_sql_query2(input_path, output_path):
@@ -94,6 +94,10 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    HDFS_BASE = os.getenv("HDFS_BASE")
+    input = f"{HDFS_BASE.rstrip('/')}/{args.input.lstrip('/')}"
+    output = f"{HDFS_BASE.rstrip('/')}/{args.output.lstrip('/')}"
+
     evaluator = Evaluation(args.runs)
-    evaluator.run(main_sql_query2, args.input, args.output)
+    evaluator.run(main_sql_query2, input, output)
     evaluator.evaluate()
