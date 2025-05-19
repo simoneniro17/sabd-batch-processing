@@ -1,6 +1,6 @@
 from nifi.functions import feed_nifi_urls
 from spark.functions import execute_spark_query
-from redis.functions import load_to_redis
+from redis.functions import load_to_redis, export_from_redis
 from grafana.functions import export_hdfs_csv_to_grafana
 import subprocess
 import argparse
@@ -69,13 +69,6 @@ import argparse
 # # FLUSHDB
 
 
-import subprocess
-from nifi.functions import feed_nifi_urls
-from spark.functions import execute_spark_query
-from redis.functions import load_to_redis
-from grafana.functions import export_hdfs_csv_to_grafana
-
-
 def import_nifi_template():
     print("Importazione template NiFi...")
     cmd = f"docker exec nifi ../scripts/import-template.sh"
@@ -140,7 +133,7 @@ def run_redis_menu():
             load_to_redis("/results/")
         elif choice == "2":
             print("Download da Redis...")
-            print("TODO: implementare download da Redis")
+            export_from_redis("/app/results")
         elif choice == "3":
             break
         else:
@@ -148,7 +141,7 @@ def run_redis_menu():
 
 def main_menu():
     print("=== AVVIO PROGETTO ===")
-    start_nifi()
+    #start_nifi()
 
     while True:
         print("\nCosa vuoi fare?")
