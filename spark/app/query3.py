@@ -1,57 +1,57 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import to_timestamp, col, hour, date_format, avg, min, max, expr, lit, percentile_approx
+from pyspark.sql.functions import to_timestamp, col, date_format, avg, min, max, round, lit, percentile
 
-from pyspark.sql.window import Window
 import argparse
 from evaluation import Evaluation
 import os
 
-# ## Query 3 (Italia e Svezia)
-# *   Aggregare i dati di ciascun paese su un **periodo di 24 ore**.
-# *   Calcolare il valore medio (average) dell'**intensità di carbonio** e della **percentuale di energia a zero emissioni (CFE%)** 
-#       per ogni periodo di 24 ore.
-# *   Per questi valori medi calcolati sulle 24 ore, computare il minimo (minimum), il 25° percentile, il 50° percentile (mediana),
-#       il 75° percentile e il massimo (maximum) per ciascuna delle due metriche (intensità di carbonio e CFE%).
-# *   Considerando sempre il valor medio delle due metriche aggregati sulle 24 fasce orarie giornaliere, generare **due grafici** per
-#       confrontare visivamente l'andamento (trend).
-# ### Esempio di output
-# ```
-# # county, data, min, 25-perc, 50-perc, 75-perc, max
-# IT, carbon-intensity, 219.029329, 241.060318, 279.202916, 285.008504, 296.746208
-# IT, cfe, 42.203176, 45.728436, 47.600110, 53.149180, 57.423648
-# SE, carbon-intensity, 3.150062, 3.765761, 4.293638, 4.876138, 5.947180
-# SE, cfe, 99.213936, 99.338007, 99.411328, 99.472495, 99.540979
-# ```
 
 def process_file(spark, path, zone_id):
+    # Carichiamo i dati da file Parquet
     df = spark.read.parquet(path)
+
+    # Prima di procedere, verifichiamo che le colonne richieste siano presenti
+    required_cols = ["Datetime__UTC_", "Carbon_intensity_gCO_eq_kWh__direct_", "Carbon_free_energy_percentage__CFE__"]
+    missing = [col for col in required_cols if col not in df.columns]
+    if missing:
+        raise ValueError(f"Colonne mancanti nel dataset: {missing}")
     
+    # Parsing del timestamp e estrazione di data per il raggruppamento temporale di 24 ore
     df = df.withColumn("Datetime (UTC)", to_timestamp(col("Datetime__UTC_"), "yyyy-MM-dd HH:mm:ss"))
-    df = df.withColumn("Date", date_format("Datetime (UTC)", "yyyy-MM-dd"))     # Data senza ora per raggruppare in base a 24 ore
+    df = df.withColumn("date", date_format("Datetime (UTC)", "yyyy-MM-dd"))     # Data senza ora per raggruppare in base a 24 ore
     
-    daily_avg = df.groupBy("Date").agg(
-        avg(col("Carbon_intensity_gCO_eq_kWh__direct_").cast("float")).alias("carbon_intensity"),
-        avg(col("Carbon_free_energy_percentage__CFE__").cast("float")).alias("cfe_percentage")
+    # Calcoliamo le aggregazioni per ciascun giorno per le due metriche e i valori richiesti
+    # Castiamo le colonne numeriche per evitare errori di tipo (magari causati dalla conversione in Parquet durante il preprocessing)
+    daily_avg = df.groupBy("date").agg(
+        round(avg(col("Carbon_intensity_gCO_eq_kWh__direct_").cast("double")), 6).alias("carbon_intensity"),
+        round(avg(col("Carbon_free_energy_percentage__CFE__").cast("double")), 6).alias("cfe_percentage")
     )
     
-    # Calcolo di min, percentili e max
+    max_carbon_day = daily_avg.orderBy(col("carbon_intensity").desc()).first()
+    print(f"Il giorno con il valore più alto di carbon intensity in {zone_id} è {max_carbon_day['date']} con un valore di {max_carbon_day['carbon_intensity']} gCO2eq/kWh.")
+    min_carbon_day = daily_avg.orderBy(col("carbon_intensity").asc()).first()
+    print(f"Il giorno con il valore più basso di carbon intensity in {zone_id} è {min_carbon_day['date']} con un valore di {min_carbon_day['carbon_intensity']} gCO2eq/kWh.")
+    max_cfe_day = daily_avg.orderBy(col("cfe_percentage").desc()).first()
+    print(f"Il giorno con il valore più alto di CFE in {zone_id} è {max_cfe_day['date']} con un valore di {max_cfe_day['cfe_percentage']}%.")
+    min_cfe_day = daily_avg.orderBy(col("cfe_percentage").asc()).first()
+    print(f"Il giorno con il valore più basso di CFE in {zone_id} è {min_cfe_day['date']} con un valore di {min_cfe_day['cfe_percentage']}%.")
+
+    # Calcolo delle statistiche min, max, e percentili per le due metriche
     stats = daily_avg.agg(
-        # Carbon intensity
         min("carbon_intensity").alias("carbon_min"),
-        expr("percentile_approx(carbon_intensity, array(0.25))")[0].alias("carbon_25p"),
-        expr("percentile_approx(carbon_intensity, array(0.5))")[0].alias("carbon_50p"),
-        expr("percentile_approx(carbon_intensity, array(0.75))")[0].alias("carbon_75p"),
+        percentile("carbon_intensity", 0.25).alias("carbon_25p"),
+        percentile("carbon_intensity", 0.5).alias("carbon_50p"),
+        percentile("carbon_intensity", 0.75).alias("carbon_75p"),
         max("carbon_intensity").alias("carbon_max"),
         
-        # CFE percentage stats
         min("cfe_percentage").alias("cfe_min"),
-        expr("percentile_approx(cfe_percentage, array(0.25))")[0].alias("cfe_25p"),
-        expr("percentile_approx(cfe_percentage, array(0.5))")[0].alias("cfe_50p"),
-        expr("percentile_approx(cfe_percentage, array(0.75))")[0].alias("cfe_75p"),
+        percentile("cfe_percentage", 0.25).alias("cfe_25p"),
+        percentile("cfe_percentage", 0.5).alias("cfe_50p"),
+        percentile("cfe_percentage", 0.75).alias("cfe_75p"),
         max("cfe_percentage").alias("cfe_max")
     )
-    
-    # Aggiungi l'identificatore della zona e crea il formato di output desiderato
+
+    # Aggiunta dell'identificatore della zona e separazione delle statistiche per le due metriche
     carbon_stats = stats.select(
         lit(zone_id).alias("country"),
         lit("carbon_intensity").alias("metric"),
@@ -72,38 +72,49 @@ def process_file(spark, path, zone_id):
         col("cfe_max").alias("max")
     )
 
+    # Uniamo le statistiche per le due metriche del singolo paese in un unico DataFrame
     return carbon_stats.union(cfe_stats)
 
+
 def main(input_it, input_se, output_path):
+    # Inizializziamo la sessione Spark
     spark = SparkSession.builder.appName(f"Q3-IT-SE").getOrCreate()
     spark.sparkContext.setLogLevel("ERROR")
 
     try:
+        # Processiamo i file per l'Italia e la Svezia
         it_results = process_file(spark, input_it, "IT")
         se_results = process_file(spark, input_se, "SE")
 
+        # Uniamo i risultati dei due paesi in un unico DataFrame
         combined_df = it_results.unionByName(se_results)
+
+        combined_df.show(truncate=False)
+
+        # Salvataggio del DataFrame finale
         combined_df.coalesce(1).write.mode("overwrite").option("header", True).csv(output_path)
     except Exception as e:
-        print(f"Errore durante l'elaborazione: {e}")
+        print(f"Errore durante l'elaborazione di Query 3: {e}")
     finally:
         spark.stop()
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Query 3: elaborazione dati per IT e SE.")
-    parser.add_argument("--input_it", required=True)
-    parser.add_argument("--input_se", required=True)
-    parser.add_argument("--output", required=True)
-    parser.add_argument("--runs", type=int, default=1)
+    parser = argparse.ArgumentParser(description="Query 3: statistiche su medie giornaliere per Italia e Svezia.")
+    parser.add_argument("--input_it", required=True, help="Percorso per file IT Parquet su HDFS")
+    parser.add_argument("--input_se", required=True, help="Percorsi per file SE Parquet su HDFS")
+    parser.add_argument("--output", required=True, help="Cartella di output su HDFS")
+    parser.add_argument("--runs", type=int, default=1, help="Numero di esecuzioni per la misurazione delle prestazioni")
 
     args = parser.parse_args()
 
+    # Costruzione dei percorsi HDFS
     HDFS_BASE = os.getenv("HDFS_BASE")
     input_it = f"{HDFS_BASE.rstrip('/')}/{args.input_it.lstrip('/')}"
     input_se = f"{HDFS_BASE.rstrip('/')}/{args.input_se.lstrip('/')}"
     output = f"{HDFS_BASE.rstrip('/')}/{args.output.lstrip('/')}"
 
+    # Avvio della misurazione e della valutazione delle performance
     evaluator = Evaluation(args.runs)
     evaluator.run(main, input_it, input_se, output)
     evaluator.evaluate()
