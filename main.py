@@ -124,6 +124,7 @@ def run_spark_menu():
         print(f"Eseguo Query {query} in modalità {mode}...")
         execute_spark_query(script, input_data, output_dir, runs=1)
         print("Query completata.\n")
+        export_hdfs_csv_to_grafana(script, output_dir)      
 
 def run_redis_menu():
     while True:
@@ -141,7 +142,7 @@ def run_redis_menu():
 
 def main_menu():
     print("=== AVVIO PROGETTO ===")
-    start_nifi()
+    #start_nifi()
 
     while True:
         print("\nCosa vuoi fare?")
