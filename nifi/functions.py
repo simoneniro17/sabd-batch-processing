@@ -1,4 +1,24 @@
 import requests
+import time
+
+def is_namenode_ready(namenode_host = "localhost", port = 9870):
+    url = f"http://{namenode_host}:{port}/jmx?qry=Hadoop:service=NameNode,name=NameNodeInfo"
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            data = response.json()
+            beans = data.get("beans", [])
+            if beans:
+                safemode = beans[0].get("Safemode", "UNKNOWN")
+                return safemode.strip() == ""
+            else:
+                return False
+        else:
+            print(f"Errore nella richiesta al Namenode: {response.status_code}")
+            return False
+    except Exception as e:
+        print(f"Eccezione durante la richiesta al Namenode: {e}")
+        return False
 
 # Funzione per inviare URL a NiFi
 def send_url_to_nifi(url, endpoint):
@@ -21,6 +41,11 @@ def feed_nifi_urls(granularity="hourly", nifi_endpoint="http://localhost:1406/co
         granularity (str): Livello di granularità del dataset ['hourly', 'daily', 'monthly', 'yearly']. Default è "hourly".
         nifi_endpoint (str): Endpoint HTTP di NiFi a cui inviare gli URL. Default è "http://localhost:1406/contentListener".
     """
+
+    while not is_namenode_ready():
+        print("Namenode non pronto, attendo...")
+        time.sleep(5)
+    print("Namenode pronto a ricevere i file, invio degli URL a NiFi.")
 
     short_countries = ["IT", "SE"]
     short_years = ["2021", "2022", "2023", "2024"]
