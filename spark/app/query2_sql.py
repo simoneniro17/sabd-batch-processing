@@ -1,80 +1,78 @@
 from pyspark.sql import SparkSession
+
 import argparse
-import os
 from evaluation import Evaluation
+import os
+
 
 def main_sql_query2(input_path, output_path):
+    # Inizializziamo la sessione Spark
     spark = SparkSession.builder.appName("SQL-Query2-IT").getOrCreate()
     spark.sparkContext.setLogLevel("ERROR")
 
     try:
+        # Carichiamo i dati da file Parquet
         df = spark.read.parquet(input_path)
+
+        # Prima di procedere, verifichiamo che le colonne richieste siano presenti
+        required_cols = ["Datetime__UTC_", "Carbon_intensity_gCO_eq_kWh__direct_", "Carbon_free_energy_percentage__CFE__"]
+        missing = [col for col in required_cols if col not in df.columns]
+        if missing:
+            raise ValueError(f"Colonne mancanti nel dataset: {missing}")
+    
+        # Creiamo una vista temporanea per eseguire query SQL
         df.createOrReplaceTempView("electricity_data_it")
 
-        # Query SQL per aggregare i dati per anno e mese
-        # Calcola la media dell'intensità di carbonio e della CFE%
+        # Query SQL per aggregare i dati per coppie (anno, mese) e calcolare la media dell'intensità di carbonio e della CFE%
         aggregated_query = """
             SELECT
-                YEAR(TO_TIMESTAMP(`Datetime__UTC_`, 'yyyy-MM-dd HH:mm:ss')) AS Year,
-                MONTH(TO_TIMESTAMP(`Datetime__UTC_`, 'yyyy-MM-dd HH:mm:ss')) AS Month,
-                AVG(CAST(`Carbon_intensity_gCO_eq_kWh__direct_` AS FLOAT)) AS `carbon-avg`,
-                AVG(CAST(`Carbon_free_energy_percentage__CFE__` AS FLOAT)) AS `cfe-avg`
+                YEAR(TO_TIMESTAMP(`Datetime__UTC_`, 'yyyy-MM-dd HH:mm:ss')) AS year,
+                MONTH(TO_TIMESTAMP(`Datetime__UTC_`, 'yyyy-MM-dd HH:mm:ss')) AS month,
+                ROUND(AVG(CAST(`Carbon_intensity_gCO_eq_kWh__direct_` AS DOUBLE)), 6) AS `carbon-avg`,
+                ROUND(AVG(CAST(`Carbon_free_energy_percentage__CFE__` AS DOUBLE)), 6) AS `cfe-avg`
             FROM
                 electricity_data_it
             GROUP BY
-                Year, Month
+                year, month
         """
         agg_df = spark.sql(aggregated_query)
         
         # Vista temporanea dai dati aggregati per facilitare le query di ranking
         agg_df.createOrReplaceTempView("monthly_averages_it")
 
-        # Query per le prime 5 coppie (anno, mese) con intensità di carbonio più alta
         highest_carbon_query = """
-            SELECT Year, Month, `carbon-avg`, `cfe-avg`
+            SELECT year, month, `carbon-avg`, `cfe-avg`, 'highest_carbon' AS label
             FROM monthly_averages_it
             ORDER BY `carbon-avg` DESC
             LIMIT 5
         """
         highest_carbon_df = spark.sql(highest_carbon_query)
 
-        # Query per le prime 5 coppie (anno, mese) con intensità di carbonio più bassa
         lowest_carbon_query = """
-            SELECT Year, Month, `carbon-avg`, `cfe-avg`
+            SELECT year, month, `carbon-avg`, `cfe-avg`, 'lowest_carbon' AS label
             FROM monthly_averages_it
             ORDER BY `carbon-avg` ASC
             LIMIT 5
         """
         lowest_carbon_df = spark.sql(lowest_carbon_query)
 
-        # Query per le prime 5 coppie (anno, mese) con CFE% più alta
         highest_cfe_query = """
-            SELECT Year, Month, `carbon-avg`, `cfe-avg`
+            SELECT year, month, `carbon-avg`, `cfe-avg`, 'highest_cfe' AS label
             FROM monthly_averages_it
             ORDER BY `cfe-avg` DESC
             LIMIT 5
         """
         highest_cfe_df = spark.sql(highest_cfe_query)
 
-        # Query per le prime 5 coppie (anno, mese) con CFE% più bassa
         lowest_cfe_query = """
-            SELECT Year, Month, `carbon-avg`, `cfe-avg`
+            SELECT year, month, `carbon-avg`, `cfe-avg`, 'lowest_cfe' AS label
             FROM monthly_averages_it
             ORDER BY `cfe-avg` ASC
             LIMIT 5
         """
         lowest_cfe_df = spark.sql(lowest_cfe_query)
 
-        print("Top 5 Highest Carbon Intensity:")
-        highest_carbon_df.show()
-        print("Top 5 Lowest Carbon Intensity:")
-        lowest_carbon_df.show()
-        print("Top 5 Highest CFE%:")
-        highest_cfe_df.show()
-        print("Top 5 Lowest CFE%:")
-        lowest_cfe_df.show()
-
-        # Unisce tutti i risultati per l'output finale (unionByName assicura che le colonne siano unite correttamente per nome)
+        # Uniamo i risultati delle quattro classifiche in un unico DataFrame
         final_df = highest_carbon_df \
             .unionByName(lowest_carbon_df) \
             .unionByName(highest_cfe_df) \
@@ -94,10 +92,12 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    # Costruzione dei percorsi HDFS
     HDFS_BASE = os.getenv("HDFS_BASE")
     input = f"{HDFS_BASE.rstrip('/')}/{args.input.lstrip('/')}"
     output = f"{HDFS_BASE.rstrip('/')}/{args.output.lstrip('/')}"
 
+    # Avvio della misurazione e della valutazione delle performance
     evaluator = Evaluation(args.runs)
     evaluator.run(main_sql_query2, input, output)
     evaluator.evaluate()

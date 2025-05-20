@@ -1,104 +1,66 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import year, month, avg, col, to_timestamp
+from pyspark.sql.functions import year, month, avg, col, to_timestamp, round, lit
 
 import argparse
-
 from evaluation import Evaluation
 import os
 
-## Query 2 (Solo Italia)
-# *   Aggregare i dati sulla coppia (anno, mese) calcolando il valor medio dell'**intensità di carbonio** e della **percentuale di
-#       energia a zero emissioni (CFE%)**.
-# *   Calcolare la classifica (sempre usando Spark, no sorting manuale) delle **prime 5 coppie (anno, mese)** con:
-#     *   Intensità di carbonio più alta (highest).
-#     *   Intensità di carbonio più bassa (lowest).
-#     *   Quota di energia a zero emissioni (CFE) più bassa (lowest).
-#     *   Quota di energia a zero emissioni (CFE) più alta (highest).
-#     In totale sono attesi 20 valori.
-# *   Considerando il valor medio delle due metriche aggregati sulla coppia (anno, mese), generare **due grafici** per valutare
-#       visivamente  l'andamento (trend) delle due metriche.
-# ### Esempio di output
-# ```
-# # date, carbon-intensity, cfe
-# 2022 12, 360.520000, 35.838320
-# 2022 3, 347.359073, 35.822218
-# 2021 11, 346.728514, 33.076681
-# 2022 10, 335.784745, 39.167164
-# 2022 2, 330.489896, 38.980595
-
-# 2024 5, 158.240887, 68.989731
-# 2024 4, 170.670889, 66.253958
-# 2024 6, 171.978792, 65.487792
-# 2024 3, 192.853871, 60.919556
-# 2024 7, 200.595995, 57.939099
-
-# 2024 5, 158.240887, 68.989731 
-# 2024 4, 170.670889, 66.253958 
-# 2024 6, 171.978792, 65.487792
-# 2024 3, 192.853871, 60.919556
-# 2023 5, 203.494489, 59.877003
-
-# 2021 11, 346.728514, 33.076681
-# 2022 3, 347.359073, 35.822218
-# 2022 12, 360.520000, 35.838320
-# 2022 1, 326.947876, 36.603683
-# 2021 12, 329.303508, 37.868817
-# ```
 
 def process_file(spark, path):
+    # Carichiamo i dati da file Parquet
     df = spark.read.parquet(path)
 
-    # Colonne per anno e mese
-    df = df.withColumn("Datetime (UTC)", to_timestamp(col("Datetime__UTC_"), "yyyy-MM-dd HH:mm:ss"))
-    df = df.withColumn("Year", year("Datetime (UTC)"))
-    df = df.withColumn("Month", month("Datetime (UTC)"))
+    # Prima di procedere, verifichiamo che le colonne richieste siano presenti
+    required_cols = ["Datetime__UTC_", "Carbon_intensity_gCO_eq_kWh__direct_", "Carbon_free_energy_percentage__CFE__"]
+    missing = [col for col in required_cols if col not in df.columns]
+    if missing:
+        raise ValueError(f"Colonne mancanti nel dataset: {missing}")
 
-    # Aggregazione dati per le coppie (anno, mese)
-    agg_df = df.groupBy("Year", "Month").agg(
-        avg(col("Carbon_intensity_gCO_eq_kWh__direct_").cast("float")).alias("carbon-avg"),
-        avg(col("Carbon_free_energy_percentage__CFE__").cast("float")).alias("cfe-avg"),
+    # Parsing del timestamp e estrazione di anno e mese per il raggruppamento temporale
+    df = df.withColumn("Datetime (UTC)", to_timestamp(col("Datetime__UTC_"), "yyyy-MM-dd HH:mm:ss"))
+    df = df.withColumn("year", year("Datetime (UTC)"))
+    df = df.withColumn("month", month("Datetime (UTC)"))
+
+    # Calcoliamo le aggregazioni per le coppie (anno, mese) per le due metriche e i valori richiesti
+    # Castiamo le colonne numeriche per evitare errori di tipo (magari causati dalla conversione in Parquet durante il preprocessing)
+    agg_df = df.groupBy("year", "month").agg(
+        round(avg(col("Carbon_intensity_gCO_eq_kWh__direct_").cast("double")), 6).alias("carbon-avg"),
+        round(avg(col("Carbon_free_energy_percentage__CFE__").cast("double")), 6).alias("cfe-avg"),
     )
 
     return agg_df
 
 
 def calculate_rankings(df):
-    # Prime 5 coppie con intensità di carbonio più alta
-    highest_carbon = df.orderBy(col("carbon-avg").desc()).limit(5)
-
-    # Prime 5 coppie con intensità di carbonio più bassa
-    lowest_carbon = df.orderBy(col("carbon-avg").asc()).limit(5)
-
-    # Prime 5 coppie con CFE% più alta
-    highest_cfe = df.orderBy(col("cfe-avg").desc()).limit(5)
-
-    # Prime 5 coppie con CFE% più bassa
-    lowest_cfe = df.orderBy(col("cfe-avg").asc()).limit(5)
+    # Ordiniamo il DataFrame per ciascuna metrica e direzione (asc/desc) per ottenere le prime 5 coppie
+    highest_carbon = df.orderBy(col("carbon-avg").desc()).limit(5).withColumn("label", lit("highest_carbon"))
+    lowest_carbon = df.orderBy(col("carbon-avg").asc()).limit(5).withColumn("label", lit("lowest_carbon"))
+    highest_cfe = df.orderBy(col("cfe-avg").desc()).limit(5).withColumn("label", lit("highest_cfe"))
+    lowest_cfe = df.orderBy(col("cfe-avg").asc()).limit(5).withColumn("label", lit("lowest_cfe"))
 
     return highest_carbon, lowest_carbon, highest_cfe, lowest_cfe
 
 
 def main(input_path, output_path):
+    # Inizializziamo la sessione Spark
     spark = SparkSession.builder.appName("Query2-IT").getOrCreate()
     spark.sparkContext.setLogLevel("ERROR")
 
     try:
-        # Processamento del file di input
+        # Processiamo il file per l'Italia
         df = process_file(spark, input_path)
 
-        # Calcolo delle classifiche
+        # Calcoliamo le classifiche richieste
         highest_carbon, lowest_carbon, highest_cfe, lowest_cfe = calculate_rankings(df)
 
-        highest_carbon.show()
-        lowest_carbon.show()
-        highest_cfe.show()
-        lowest_cfe.show()
-
+        # Uniamo i risultati delle quattro classifiche in un unico DataFrame
         final_df = highest_carbon \
             .unionByName(lowest_carbon) \
             .unionByName(highest_cfe) \
             .unionByName(lowest_cfe)
         
+        final_df.show(truncate=False)
+
         # Se vogliamo salvare i risultati delle classifiche in file separati
         # highest_carbon.write.mode("overwrite").option("header", True).csv(f"{output_path}/highest_carbon")
         # lowest_carbon.write.mode("overwrite").option("header", True).csv(f"{output_path}/lowest_carbon")
@@ -108,23 +70,25 @@ def main(input_path, output_path):
         # Salvataggio del DataFrame finale
         final_df.coalesce(1).write.mode("overwrite").option("header", True).csv(output_path)
     except Exception as e:
-        print(f"Errore durante l'elaborazione: {e}")
+        print(f"Errore durante l'elaborazione di Query2: {e}")
     finally:
         spark.stop()
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Query 2: Elaborazione dei dati di elettricità per anno e mese.")
-    parser.add_argument("--input", required=True, help="Percorso del file Parquet di input su HDFS")
+    parser = argparse.ArgumentParser(description="Query 2: Elaborazione dei dati di elettricità per anno e mese per l'Italia.")
+    parser.add_argument("--input", required=True, help="Percorso per file IT Parquet su HDFS")
     parser.add_argument("--output", required=True, help="Cartella di output su HDFS")
     parser.add_argument("--runs", type=int, default=1, help="Numero di esecuzioni per la misurazione delle prestazioni")
 
     args = parser.parse_args()
 
+    # Costruzione dei percorsi HDFS
     HDFS_BASE = os.getenv("HDFS_BASE")
     input = f"{HDFS_BASE.rstrip('/')}/{args.input.lstrip('/')}"
     output = f"{HDFS_BASE.rstrip('/')}/{args.output.lstrip('/')}"
 
+    # Avvio della misurazione e della valutazione delle performance
     evaluator = Evaluation(args.runs)
     evaluator.run(main, input, output)
     evaluator.evaluate()
