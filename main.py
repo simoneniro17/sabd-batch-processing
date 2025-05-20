@@ -141,7 +141,7 @@ def run_redis_menu():
 
 def main_menu():
     print("=== AVVIO PROGETTO ===")
-    #start_nifi()
+    start_nifi()
 
     while True:
         print("\nCosa vuoi fare?")

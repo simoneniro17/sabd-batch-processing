@@ -1,6 +1,6 @@
 import requests
 
-# Funzione per inviare URL a NiFi (in ascolto su localhost:1406)
+# Funzione per inviare URL a NiFi
 def send_url_to_nifi(url, endpoint):
     print(f"Invio URL: {url}")
     response = requests.post(endpoint, data=url)
@@ -12,7 +12,7 @@ def send_url_to_nifi(url, endpoint):
         if hasattr(response, 'text'):
             print(f"Risposta errore: {response.text[:100]}")
 
-# 
+
 def feed_nifi_urls(granularity="hourly", nifi_endpoint="http://localhost:1406/contentListener"):
     """
     Genera gli URL dei dataset di Electricity Maps da inviare a NiFi. Li invia chiamando la funzione `send_url_to_nifi`.

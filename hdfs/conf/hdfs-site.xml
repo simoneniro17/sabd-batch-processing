@@ -2,7 +2,7 @@
 <configuration>
   <property>
     <name>dfs.replication</name>
-    <value>2</value> <!-- o 1 se hai solo 1 DataNode -->
+    <value>2</value>
   </property>
 
   <property>

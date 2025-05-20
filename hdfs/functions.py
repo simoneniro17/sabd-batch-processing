@@ -1,3 +1,6 @@
+#TODO: Quesdto file non serve più, teniamolo non si sa mai torna utile ma poi si può cancellare 
+
+
 import subprocess
 
 HDFS_HOST = "namenode"

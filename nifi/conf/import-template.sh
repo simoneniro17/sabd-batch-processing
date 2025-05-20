@@ -60,7 +60,7 @@ if [[ -z "$TEMPLATE_ID" ]]; then
 fi
 echo "Template ID: $TEMPLATE_ID"
 
-# # #evita istanze duplicate
+# Evita istanze duplicate
 echo " Controllo se esiste già un Process Group istanziato da '$TEMPLATE_NAME'..."
 PG_CANDIDATES=$(curl -sk -H "Authorization: Bearer $TOKEN" "$NIFI_API_URL/process-groups/root/process-groups" | jq -r '.processGroups[].component.id')
 

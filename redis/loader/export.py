@@ -1,10 +1,10 @@
 import os
 import redis
-import csv
-import sys
-import traceback
+import argparse
 
-def export_from_redis(output_dir="/app/results"):
+# TODO: rimuovi i debug
+
+def export_from_redis(output_dir):
     r = redis.Redis(host="redis", port=6379, decode_responses=True)
     keys = r.keys("hdfs_data:*")
     print(f"[DEBUG] Trovate {len(keys)} chiavi")
@@ -23,6 +23,10 @@ def export_from_redis(output_dir="/app/results"):
         print(f"[DEBUG] Salvato: {filename}")
 
 if __name__ == "__main__":
-    output_path = sys.argv[1] if len(sys.argv) > 1 else "/app/results"
-    print(f"[DEBUG] Avvio script con output_path = {output_path}")
-    export_from_redis(output_path)
+    parser = argparse.ArgumentParser(description="Esporta e salva i dati da Redis.")
+    parser.add_argument("--directory", required=True, help="Percorso della cartella di esportare (es. /app/results)")
+
+    args = parser.parse_args()
+
+    print(f"[DEBUG] Avvio script con output_path = {args.directory}")
+    export_from_redis(args.directory)

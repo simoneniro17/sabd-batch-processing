@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Directory che vogliamo resettare
+# Directory da resettare
 datanode_dir1="./datanode1"
 datanode_dir2="./datanode2"
 namenode_dir="./namenode"
 
-# Funzione per cambiare i permessi
+
 change_permissions() {
   dir=$1
   echo "Modificando permessi per $dir..."
@@ -13,14 +13,14 @@ change_permissions() {
   sudo chown -R $USER:$USER $dir
 }
 
-# Funzione per rimuovere il contenuto di una directory
+
 remove_content() {
   dir=$1
   echo "Rimuovendo contenuto di $dir..."
   sudo rm -rf $dir/*
 }
 
-# Cambia i permessi e rimuovi i contenuti delle directory
+
 change_permissions $datanode_dir1
 change_permissions $datanode_dir2
 change_permissions $namenode_dir
