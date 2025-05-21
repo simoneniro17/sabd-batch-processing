@@ -81,6 +81,7 @@ def main_sql_query2(input_path, output_path):
         final_df.coalesce(1).write.mode("overwrite").option("header", True).csv(output_path)
     except Exception as e:
         print(f"Errore durante l'elaborazione di Query2 SQL: {e}")
+        raise # Rilanciamo l'eccezione affinché le statistiche vengano calcolate solo se la query ha successo
     finally:
         spark.stop()
 
@@ -97,7 +98,9 @@ if __name__ == "__main__":
     input = f"{HDFS_BASE.rstrip('/')}/{args.input.lstrip('/')}"
     output = f"{HDFS_BASE.rstrip('/')}/{args.output.lstrip('/')}"
 
-    # Avvio della misurazione e della valutazione delle performance
-    evaluator = Evaluation(args.runs)
+    # Istanziazione classe per la valutazione delle prestazioni
+    evaluator = Evaluation(args.runs, query_type="SQL")
+
+    # Esecuzione e valutazione
     evaluator.run(main_sql_query2, input, output)
     evaluator.evaluate()
