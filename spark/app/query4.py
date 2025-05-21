@@ -2,12 +2,14 @@ from pyspark.sql import SparkSession
 from pyspark.ml.clustering import KMeans
 from pyspark.ml.evaluation import ClusteringEvaluator
 from pyspark.ml.feature import VectorAssembler, StandardScaler
-from pyspark.sql.functions import col
+from pyspark.sql.functions import col, udf, abs, round
+from pyspark.sql.types import DoubleType
 import argparse
 import os
 import numpy as np
 
 from evaluation import Evaluation
+
 
 def find_optimal_k_silhouette(df, features_col, min_k=2, max_k=10):
     evaluator = ClusteringEvaluator(featuresCol=features_col, predictionCol='prediction', metricName='silhouette', distanceMeasure='squaredEuclidean')
@@ -97,15 +99,35 @@ def process_clustering(spark, input_path):
     print("\nCentri dei cluster (valori NON scalati):") 
     centers_scaled = model.clusterCenters()
     std_values = scaler_model.std       
+
+    # Dizionario per memorizzare i centri dei cluster
+    cluster_centers = {}
     for i, center in enumerate(centers_scaled):
-        original_center = center * std_values
-        print(f"  Cluster {i}: {original_center}")
+        original_center_value = float(center[0] * std_values[0])  # Solo una feature, quindi solo il primo elemento
+        cluster_centers[i] = original_center_value
+        print(f"  Cluster {i}: [{original_center_value}]")
+
+    def get_cluster_center(cluster_id):
+        return cluster_centers.get(cluster_id, 0.0)
+    
+    cluster_center_udf = udf(get_cluster_center, DoubleType())
 
     output_df = predictions.select(
         col("country"),
         col("carbon-intensity"),
         col("prediction").alias("cluster_id")
-    ).orderBy("cluster_id", "country")
+    )
+
+    # Aggiungiamo il centro del cluster e la distanza dal centro
+    output_df = output_df.withColumn("cluster_center",
+                                     round(cluster_center_udf(col("cluster_id")), 2))
+    
+    # Calcoliamo la distanza dal centro del cluster
+    output_df = output_df.withColumn("distance_from_center",
+                                     round(abs(col("carbon-intensity") - col("cluster_center")), 2))
+    
+    # Ordiniamo per ID del cluster e poi per paese
+    output_df = output_df.orderBy("cluster_id", "country")
     
     return output_df
 
