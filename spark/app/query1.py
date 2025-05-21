@@ -67,6 +67,7 @@ def main(input_it, input_se, output_path):
         final_df.write.mode("overwrite").option("header", True).csv(output_path)
     except Exception as e:
         print(f"Errore durante l'elaborazione di Query1: {e}")
+        raise # Rilanciamo l'eccezione affinché le statistiche vengano calcolate solo se la query ha successo
     finally:
         spark.stop()
 

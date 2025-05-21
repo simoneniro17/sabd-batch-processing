@@ -7,7 +7,7 @@ import csv
 
 class Evaluation:
     def __init__(self, runs, query_type="DataFrame"):
-        self.execution_time = []
+        self.execution_time = []    # Contiamo solo i tempi delle run che hanno avuto successo
         self.runs = runs
         self.query_type = query_type
     
@@ -19,12 +19,13 @@ class Evaluation:
         for i in range(self.runs):
             try:
                 start = time.time()
-                result = func(*args, **kwargs)
+                func(*args, **kwargs)
                 elapsed = time.time() - start
+
+                # Aggiungiamo il tempo solo se l'esecuzione è andata a buon fine
                 self.execution_time.append(elapsed)
             except Exception as e:
                 print(f"Errore durante l'esecuzione {i + 1}: {e}")
-        return result
 
 
     def calculate_statistics(self):

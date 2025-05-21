@@ -123,7 +123,7 @@ def run_spark_menu():
         script, input_data, output_dir = script_info
         print(f"Eseguo Query {query} in modalità {mode}...")
         execute_spark_query(script, input_data, output_dir, runs=1)
-        print("Query completata.\n")
+        print("Query completata.\n")        # TODO: forse dobbiamo gestire il caso in cui non ci siano risultati come un'eccezione
         export_hdfs_csv_to_grafana(script, output_dir)      
 
 def run_redis_menu():
