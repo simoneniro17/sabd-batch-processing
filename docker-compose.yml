@@ -27,7 +27,7 @@ services:
 
   # HDFS nameNode
   namenode:
-    image: apache/hadoop:3.3.5
+    image: apache/hadoop:3.4.1
     container_name: namenode
     hostname: namenode
     user: root
@@ -47,7 +47,7 @@ services:
 
   # HDFS dataNode1
   datanode1:
-    image: apache/hadoop:3.3.5
+    image: apache/hadoop:3.4.1
     container_name: datanode1
     hostname: datanode1
     user: root
@@ -67,7 +67,7 @@ services:
 
   # HDFS dataNode2
   datanode2:
-    image: apache/hadoop:3.3.5
+    image: apache/hadoop:3.4.1
     container_name: datanode2
     hostname: datanode2
     user: root
