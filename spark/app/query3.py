@@ -27,14 +27,14 @@ def process_file(spark, path, zone_id):
         round(avg(col("Carbon_free_energy_percentage__CFE__").cast("double")), 6).alias("cfe_percentage")
     )
     
-    max_carbon_day = daily_avg.orderBy(col("carbon_intensity").desc()).first()
-    print(f"Il giorno con il valore più alto di carbon intensity in {zone_id} è {max_carbon_day['date']} con un valore di {max_carbon_day['carbon_intensity']} gCO2eq/kWh.")
-    min_carbon_day = daily_avg.orderBy(col("carbon_intensity").asc()).first()
-    print(f"Il giorno con il valore più basso di carbon intensity in {zone_id} è {min_carbon_day['date']} con un valore di {min_carbon_day['carbon_intensity']} gCO2eq/kWh.")
-    max_cfe_day = daily_avg.orderBy(col("cfe_percentage").desc()).first()
-    print(f"Il giorno con il valore più alto di CFE in {zone_id} è {max_cfe_day['date']} con un valore di {max_cfe_day['cfe_percentage']}%.")
-    min_cfe_day = daily_avg.orderBy(col("cfe_percentage").asc()).first()
-    print(f"Il giorno con il valore più basso di CFE in {zone_id} è {min_cfe_day['date']} con un valore di {min_cfe_day['cfe_percentage']}%.")
+    # max_carbon_day = daily_avg.orderBy(col("carbon_intensity").desc()).first()
+    # print(f"Il giorno con il valore più alto di carbon intensity in {zone_id} è {max_carbon_day['date']} con un valore di {max_carbon_day['carbon_intensity']} gCO2eq/kWh.")
+    # min_carbon_day = daily_avg.orderBy(col("carbon_intensity").asc()).first()
+    # print(f"Il giorno con il valore più basso di carbon intensity in {zone_id} è {min_carbon_day['date']} con un valore di {min_carbon_day['carbon_intensity']} gCO2eq/kWh.")
+    # max_cfe_day = daily_avg.orderBy(col("cfe_percentage").desc()).first()
+    # print(f"Il giorno con il valore più alto di CFE in {zone_id} è {max_cfe_day['date']} con un valore di {max_cfe_day['cfe_percentage']}%.")
+    # min_cfe_day = daily_avg.orderBy(col("cfe_percentage").asc()).first()
+    # print(f"Il giorno con il valore più basso di CFE in {zone_id} è {min_cfe_day['date']} con un valore di {min_cfe_day['cfe_percentage']}%.")
 
     # Calcolo delle statistiche min, max, e percentili per le due metriche
     stats = daily_avg.agg(
@@ -95,6 +95,7 @@ def main(input_it, input_se, output_path):
         combined_df.coalesce(1).write.mode("overwrite").option("header", True).csv(output_path)
     except Exception as e:
         print(f"Errore durante l'elaborazione di Query 3: {e}")
+        raise # Rilanciamo l'eccezione affinché le statistiche vengano calcolate solo se la query ha successo
     finally:
         spark.stop()
 
@@ -114,7 +115,9 @@ if __name__ == "__main__":
     input_se = f"{HDFS_BASE.rstrip('/')}/{args.input_se.lstrip('/')}"
     output = f"{HDFS_BASE.rstrip('/')}/{args.output.lstrip('/')}"
 
-    # Avvio della misurazione e della valutazione delle performance
-    evaluator = Evaluation(args.runs)
+    # Istanziazione classe per la valutazione delle prestazioni
+    evaluator = Evaluation(args.runs, query_type="DF")
+
+    # Esecuzione e valutazione
     evaluator.run(main, input_it, input_se, output)
     evaluator.evaluate()

@@ -126,6 +126,7 @@ def main_query4(input_file, output_path):
         result_df.coalesce(1).write.mode("overwrite").option("header", "true").csv(output_path)
     except Exception as e:
         print(f"Errore durante l'elaborazione di Query 4: {e}")
+        raise # Rilanciamo l'eccezione affinché le statistiche vengano calcolate solo se la query ha successo
     finally:
         spark.stop()
 
@@ -143,7 +144,9 @@ if __name__ == "__main__":
     input = f"{HDFS_BASE.rstrip('/')}/{args.input.lstrip('/')}"
     output = f"{HDFS_BASE.rstrip('/')}/{args.output.lstrip('/')}"
     
-    # Avvio della misurazione e della valutazione delle performance
-    evaluator = Evaluation(args.runs)
+    # Istanziazione classe per la valutazione delle prestazioni
+    evaluator = Evaluation(args.runs, query_type="DF")
+
+    # Esecuzione e valutazione
     evaluator.run(main_query4, input, output) 
     evaluator.evaluate()
