@@ -80,7 +80,14 @@ class Evaluation:
         
         # Nome della query dallo script chiamante
         calling_file = inspect.getfile(inspect.stack()[2][0])
-        query_id = os.path.splitext(os.path.basename(calling_file))[0]
+        filename = os.path.splitext(os.path.basename(calling_file))[0]
+
+        # Estrai il nome base della query rimuovendo suffissi come "_sql"
+        if "_" in filename:
+            base_name, _ = filename.split("_", 1)  # Divide alla prima occorrenza di "_"
+            query_id = base_name
+        else:
+            query_id = filename
         
         # File per le statistiche aggregate
         aggregate_file = os.path.join(output_dir, "performance.csv")
