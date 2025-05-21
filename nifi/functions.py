@@ -1,23 +1,27 @@
 import requests
 import time
 
+
 def is_namenode_ready(namenode_host = "localhost", port = 9870):
-    url = f"http://{namenode_host}:{port}/jmx?qry=Hadoop:service=NameNode,name=NameNodeInfo"
+    """
+    Verifica se la cartella "/data" esiste in HDFS.
+    Questa verifica implica anche che il NameNode è fuori dalla Safemode. 
+    """
+
+    url = f"http://{namenode_host}:{port}/webhdfs/v1/data?op=GETFILESTATUS"
     try:
         response = requests.get(url)
         if response.status_code == 200:
-            data = response.json()
-            beans = data.get("beans", [])
-            if beans:
-                safemode = beans[0].get("Safemode", "UNKNOWN")
-                return safemode.strip() == ""
-            else:
-                return False
+            print("Cartella /data trovata in HDFS")
+            return True
+        elif response.status_code == 404:
+            print("Cartella /data NON trovata in HDFS")
+            return False
         else:
-            print(f"Errore nella richiesta al Namenode: {response.status_code}")
+            print(f"Errore durante la verifica della cartella /data: {response.status_code}")
             return False
     except Exception as e:
-        print(f"Eccezione durante la richiesta al Namenode: {e}")
+        print(f"Eccezione durante la verifica della cartella /data: {e}")
         return False
 
 # Funzione per inviare URL a NiFi
@@ -43,9 +47,9 @@ def feed_nifi_urls(granularity="hourly", nifi_endpoint="http://localhost:1406/co
     """
 
     while not is_namenode_ready():
-        print("Namenode non pronto, attendo...")
+        print("Cartella /data non disponibile in HDFS, attendo...")
         time.sleep(5)
-    print("Namenode pronto a ricevere i file, invio degli URL a NiFi.")
+    print("HDFS pronto con cartella /data disponibile, invio degli URL a NiFi...")
 
     short_countries = ["IT", "SE"]
     short_years = ["2021", "2022", "2023", "2024"]

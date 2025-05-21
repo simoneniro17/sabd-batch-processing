@@ -15,11 +15,16 @@ NAMENODE_PID=$!
 
 # Controllare se HDFS è pronto
 until hdfs dfs -ls / &> /dev/null; do
-    echo "Waiting for HDFS to be ready..."
+    echo "Aspettando che HDFS sia pronto..."
     sleep 2
 done
 
-sleep 60
+# Wait for NameNode to exit safe mode
+until hdfs dfsadmin -safemode get | grep -q "Safe mode is OFF"; do
+    echo "NameNode è ancora in modalità sicura..."
+    sleep 5
+done
+echo "NameNode è uscito dalla modalità sicura!"
 
 # Crea la directory data e imposta i permessi
 echo "Creazione directory /data in HDFS..."
