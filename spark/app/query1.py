@@ -87,6 +87,8 @@ if __name__ == "__main__":
     output = f"{HDFS_BASE.rstrip('/')}/{args.output.lstrip('/')}"
 
     # Avvio della misurazione e della valutazione delle performance
-    evaluator = Evaluation(args.runs)
+    evaluator = Evaluation(args.runs, query_type="DataFrame")
+
+    # Esecuzione e valutazione
     evaluator.run(main, input_it, input_se, output)
     evaluator.evaluate()
