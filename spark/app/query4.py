@@ -132,12 +132,8 @@ def process_clustering(spark, input_path):
     return output_df
 
 
-def main_query4(input_file, output_path):
-    # Inizializziamo la sessione Spark
-    spark = SparkSession.builder.appName("Query4-Clustering-KMeans").getOrCreate()
-    spark.sparkContext.setLogLevel("ERROR") 
+def main_query4(spark, input_file, output_path):
 
-    try:
         # Processiamo i dati e applichiamo il clustering
         result_df = process_clustering(spark, input_file)
 
@@ -146,11 +142,7 @@ def main_query4(input_file, output_path):
 
         # Salviamo i risultati in formato CSV su HDFS
         result_df.coalesce(1).write.mode("overwrite").option("header", "true").csv(output_path)
-    except Exception as e:
-        print(f"Errore durante l'elaborazione di Query 4: {e}")
-        raise # Rilanciamo l'eccezione affinché le statistiche vengano calcolate solo se la query ha successo
-    finally:
-        spark.stop()
+
 
 
 if __name__ == "__main__":
@@ -165,10 +157,20 @@ if __name__ == "__main__":
     HDFS_BASE = os.getenv("HDFS_BASE")
     input = f"{HDFS_BASE.rstrip('/')}/{args.input.lstrip('/')}"
     output = f"{HDFS_BASE.rstrip('/')}/{args.output.lstrip('/')}"
-    
-    # Istanziazione classe per la valutazione delle prestazioni
-    evaluator = Evaluation(args.runs, query_type="DF")
 
-    # Esecuzione e valutazione
-    evaluator.run(main_query4, input, output) 
-    evaluator.evaluate()
+    # Inizializziamo la sessione Spark
+    spark = SparkSession.builder.appName("Query4-Clustering-KMeans").getOrCreate()
+    spark.sparkContext.setLogLevel("ERROR") 
+
+    try:
+        # Istanziazione classe per la valutazione delle prestazioni
+        evaluator = Evaluation(spark, args.runs, output, "query4", "DF")
+
+        # Esecuzione e valutazione
+        evaluator.run(main_query4,spark, input, output) 
+        evaluator.evaluate()
+    except Exception as e:
+        print(f"Errore durante l'elaborazione di Query 4: {e}")
+        raise # Rilanciamo l'eccezione affinché le statistiche vengano calcolate solo se la query ha successo
+    finally:
+        spark.stop()

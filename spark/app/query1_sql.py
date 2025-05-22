@@ -40,12 +40,7 @@ def process_file_sql(spark, path, zone_id, view_name_suffix):
     # Aggiungiamo la colonna per il paese
     return aggregated_df.withColumn("country", lit(zone_id))
 
-def main_sql_query1(input_it, input_se, output_path):
-    # Inizializziamo la sessione Spark
-    spark = SparkSession.builder.appName("SQL-Query1-IT-SE").getOrCreate()
-    spark.sparkContext.setLogLevel("ERROR")
-
-    try:
+def main_sql_query1(spark, input_it, input_se, output_path):
         # Processiamo separatamente i file per Italia e Svezia
         it_results_df = process_file_sql(spark, input_it, "IT", "it_sql_q1")
         se_results_df = process_file_sql(spark, input_se, "SE", "se_sql_q1")
@@ -69,11 +64,7 @@ def main_sql_query1(input_it, input_se, output_path):
 
         # Scriviamo il risultato finale in formato CSV su HDFS, sovrascrivendo eventuali file esistenti
         final_df.write.mode("overwrite").option("header", True).csv(output_path)
-    except Exception as e:
-        print(f"Errore durante l'elaborazione di Query1 SQL: {e}")
-        raise # Rilanciamo l'eccezione affinché le statistiche vengano calcolate solo se la query ha successo
-    finally:
-        spark.stop()
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Query 1 (SparkSQL): Elaborazione dei dati di elettricità per zona e anno.")
@@ -90,9 +81,19 @@ if __name__ == "__main__":
     input_se = f"{HDFS_BASE.rstrip('/')}/{args.input_se.lstrip('/')}"
     output = f"{HDFS_BASE.rstrip('/')}/{args.output.lstrip('/')}"
 
-    # Istanziazione classe per la valutazione delle prestazioni
-    evaluator = Evaluation(args.runs, query_type="SQL")
+    # Inizializziamo la sessione Spark
+    spark = SparkSession.builder.appName("SQL-Query1-IT-SE").getOrCreate()
+    spark.sparkContext.setLogLevel("ERROR")
 
-    # Esecuzione e valutazione
-    evaluator.run(main_sql_query1, input_it, input_se, output)
-    evaluator.evaluate()
+    try: 
+        # Istanziazione classe per la valutazione delle prestazioni
+        evaluator = Evaluation(spark, args.runs, output, "query1-sql", "SQL")
+
+        # Esecuzione e valutazione
+        evaluator.run(main_sql_query1, spark, input_it, input_se, output)
+        evaluator.evaluate()
+    except Exception as e:
+        print(f"Errore durante l'elaborazione di Query1 SQL: {e}")
+        raise # Rilanciamo l'eccezione affinché le statistiche vengano calcolate solo se la query ha successo
+    finally:
+        spark.stop()

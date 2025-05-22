@@ -3,14 +3,21 @@ import statistics
 import time
 import inspect
 import csv
+from pyspark.sql import SparkSession
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType, FloatType
 
+
+#TODO: sistemare stampe e commenti
 
 class Evaluation:
-    def __init__(self, runs, query_type="DataFrame"):
+    def __init__(self, spark, runs, output, query_id, query_type):
         self.execution_time = []    # Contiamo solo i tempi delle run che hanno avuto successo
         self.runs = runs
         self.query_type = query_type
-    
+        self.spark_session = spark
+        self.output_path = output
+        self.query_id = query_id
+
         print(f"Avvio misurazione prestazioni con {self.runs} esecuzioni...")
 
 
@@ -71,34 +78,30 @@ class Evaluation:
                 
         print(f"{'='*60}")
         
-        self.export_stats_to_csv()
+        self.export_stats_to_hdfs()
 
 
-    def export_stats_to_csv(self, output_dir = "./eval_results"):
-        """Esporta le statistiche aggregate in un unico file CSV."""
-        os.makedirs(output_dir, exist_ok=True)
+    def export_stats_to_hdfs(self):
+        """Esporta le statistiche aggregate in HDFS come file CSV tramite Spark."""
         
-        # Nome della query dallo script chiamante
+        # Estrai il nome dello script chiamante
         calling_file = inspect.getfile(inspect.stack()[2][0])
         filename = os.path.splitext(os.path.basename(calling_file))[0]
 
         # Estrai il nome base della query rimuovendo suffissi come "_sql"
         if "_" in filename:
-            base_name, _ = filename.split("_", 1)  # Divide alla prima occorrenza di "_"
+            base_name, _ = filename.split("_", 1)
             query_id = base_name
         else:
             query_id = filename
-        
-        # File per le statistiche aggregate
-        aggregate_file = os.path.join(output_dir, "performance.csv")
-        
+
         # Calcola le statistiche
         stats = self.calculate_statistics()
         if not stats:
             print("Nessuna statistica da esportare.")
             return
-            
-        # Prepara la riga per il file aggregato
+
+        # Prepara i dati in forma di lista di dizionari (compatibile con Spark)
         row = {
             "query-id": query_id,
             "query-type": self.query_type,
@@ -106,27 +109,29 @@ class Evaluation:
             "time-avg (s)": round(stats["time_avg"], 4),
             "time-min (s)": round(stats["time_min"], 4),
             "time-max (s)": round(stats["time_max"], 4),
+            "std-dev (s)": round(stats["std_dev"], 4) if "std_dev" in stats else None
         }
 
-        if "std_dev" in stats:
-            row["std-dev (s)"] = round(stats["std_dev"], 4)
-        else:
-            row["std-dev (s)"] = "N/A"
+        data = [row]
 
-        # Verifica se il file aggregato esiste già
-        file_exists = os.path.isfile(aggregate_file)
-        
-        # Scrive nel file aggregato
+        # Definisce lo schema del DataFrame
+        schema = StructType([
+            StructField("query-id", StringType(), True),
+            StructField("query-type", StringType(), True),
+            StructField("num-runs", IntegerType(), True),
+            StructField("time-avg (s)", FloatType(), True),
+            StructField("time-min (s)", FloatType(), True),
+            StructField("time-max (s)", FloatType(), True),
+            StructField("std-dev (s)", FloatType(), True),
+        ])
+
+        # Crea un DataFrame Spark
+        df = self.spark_session.createDataFrame(data, schema)
+
+        # Scrive su HDFS (append se possibile, altrimenti sovrascrivi come fallback)
         try:
-            with open(aggregate_file, mode="a", newline="") as csvfile:
-                fieldnames = ["query-id", "query-type", "num-runs", "time-avg (s)", 
-                             "time-min (s)", "time-max (s)", "std-dev (s)"]
-                
-                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-                if not file_exists:
-                    writer.writeheader()
-                writer.writerow(row)
-                
-            print(f"Statistiche aggregate salvate in {aggregate_file}")
+            self.output_path = self.output_path.rstrip("/") + "/evaluation_" + self.query_id
+            df.coalesce(1).write.mode("append").option("header", True).csv(self.output_path)
+            print(f"Statistiche aggregate salvate su HDFS in {self.output_path}")
         except Exception as e:
-            print(f"Errore durante il salvataggio delle statistiche aggregate: {e}")
+            print(f"Errore durante il salvataggio delle statistiche su HDFS: {e}")

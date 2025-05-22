@@ -41,39 +41,31 @@ def calculate_rankings(df):
     return highest_carbon, lowest_carbon, highest_cfe, lowest_cfe
 
 
-def main(input_path, output_path):
-    # Inizializziamo la sessione Spark
-    spark = SparkSession.builder.appName("Query2-IT").getOrCreate()
-    spark.sparkContext.setLogLevel("ERROR")
+def main_query2(spark, input_path, output_path):
 
-    try:
-        # Processiamo il file per l'Italia
-        df = process_file(spark, input_path)
+    # Processiamo il file per l'Italia
+    df = process_file(spark, input_path)
 
-        # Calcoliamo le classifiche richieste
-        highest_carbon, lowest_carbon, highest_cfe, lowest_cfe = calculate_rankings(df)
+    # Calcoliamo le classifiche richieste
+    highest_carbon, lowest_carbon, highest_cfe, lowest_cfe = calculate_rankings(df)
 
-        # Uniamo i risultati delle quattro classifiche in un unico DataFrame
-        final_df = highest_carbon \
-            .unionByName(lowest_carbon) \
-            .unionByName(highest_cfe) \
-            .unionByName(lowest_cfe)
-        
-        final_df.show(truncate=False)
+    # Uniamo i risultati delle quattro classifiche in un unico DataFrame
+    final_df = highest_carbon \
+        .unionByName(lowest_carbon) \
+        .unionByName(highest_cfe) \
+        .unionByName(lowest_cfe)
+    
+    final_df.show(truncate=False)
 
-        # Se vogliamo salvare i risultati delle classifiche in file separati
-        # highest_carbon.write.mode("overwrite").option("header", True).csv(f"{output_path}/highest_carbon")
-        # lowest_carbon.write.mode("overwrite").option("header", True).csv(f"{output_path}/lowest_carbon")
-        # highest_cfe.write.mode("overwrite").option("header", True).csv(f"{output_path}/highest_cfe")
-        # lowest_cfe.write.mode("overwrite").option("header", True).csv(f"{output_path}/lowest_cfe")
+    # Se vogliamo salvare i risultati delle classifiche in file separati
+    # highest_carbon.write.mode("overwrite").option("header", True).csv(f"{output_path}/highest_carbon")
+    # lowest_carbon.write.mode("overwrite").option("header", True).csv(f"{output_path}/lowest_carbon")
+    # highest_cfe.write.mode("overwrite").option("header", True).csv(f"{output_path}/highest_cfe")
+    # lowest_cfe.write.mode("overwrite").option("header", True).csv(f"{output_path}/lowest_cfe")
 
-        # Salvataggio del DataFrame finale
-        final_df.coalesce(1).write.mode("overwrite").option("header", True).csv(output_path)
-    except Exception as e:
-        print(f"Errore durante l'elaborazione di Query2: {e}")
-        raise # Rilanciamo l'eccezione affinché le statistiche vengano calcolate solo se la query ha successo
-    finally:
-        spark.stop()
+    # Salvataggio del DataFrame finale
+    final_df.coalesce(1).write.mode("overwrite").option("header", True).csv(output_path)
+
 
 
 if __name__ == "__main__":
@@ -89,9 +81,19 @@ if __name__ == "__main__":
     input = f"{HDFS_BASE.rstrip('/')}/{args.input.lstrip('/')}"
     output = f"{HDFS_BASE.rstrip('/')}/{args.output.lstrip('/')}"
 
-    # Istanziazione classe per la valutazione delle prestazioni
-    evaluator = Evaluation(args.runs, query_type="DF")
+    # Inizializziamo la sessione Spark
+    spark = SparkSession.builder.appName("Query2-IT").getOrCreate()
+    spark.sparkContext.setLogLevel("ERROR")
 
-    # Esecuzione e valutazione
-    evaluator.run(main, input, output)
-    evaluator.evaluate()
+    try:
+        # Istanziazione classe per la valutazione delle prestazioni
+        evaluator = Evaluation(spark, args.runs, output, "query2", "DF")
+
+        # Esecuzione e valutazione
+        evaluator.run(main_query2, spark, input, output)
+        evaluator.evaluate()
+    except Exception as e:
+        print(f"Errore durante l'elaborazione di Query2: {e}")
+        raise # Rilanciamo l'eccezione affinché le statistiche vengano calcolate solo se la query ha successo
+    finally:
+        spark.stop()

@@ -76,28 +76,19 @@ def process_file(spark, path, zone_id):
     return carbon_stats.union(cfe_stats)
 
 
-def main(input_it, input_se, output_path):
-    # Inizializziamo la sessione Spark
-    spark = SparkSession.builder.appName(f"Q3-IT-SE").getOrCreate()
-    spark.sparkContext.setLogLevel("ERROR")
+def main_query3(spark, input_it, input_se, output_path):
 
-    try:
-        # Processiamo i file per l'Italia e la Svezia
-        it_results = process_file(spark, input_it, "IT")
-        se_results = process_file(spark, input_se, "SE")
+    # Processiamo i file per l'Italia e la Svezia
+    it_results = process_file(spark, input_it, "IT")
+    se_results = process_file(spark, input_se, "SE")
 
-        # Uniamo i risultati dei due paesi in un unico DataFrame
-        combined_df = it_results.unionByName(se_results)
+    # Uniamo i risultati dei due paesi in un unico DataFrame
+    combined_df = it_results.unionByName(se_results)
 
-        combined_df.show(truncate=False)
+    combined_df.show(truncate=False)
 
-        # Salvataggio del DataFrame finale
-        combined_df.coalesce(1).write.mode("overwrite").option("header", True).csv(output_path)
-    except Exception as e:
-        print(f"Errore durante l'elaborazione di Query 3: {e}")
-        raise # Rilanciamo l'eccezione affinché le statistiche vengano calcolate solo se la query ha successo
-    finally:
-        spark.stop()
+    # Salvataggio del DataFrame finale
+    combined_df.coalesce(1).write.mode("overwrite").option("header", True).csv(output_path)
 
 
 if __name__ == "__main__":
@@ -115,9 +106,19 @@ if __name__ == "__main__":
     input_se = f"{HDFS_BASE.rstrip('/')}/{args.input_se.lstrip('/')}"
     output = f"{HDFS_BASE.rstrip('/')}/{args.output.lstrip('/')}"
 
-    # Istanziazione classe per la valutazione delle prestazioni
-    evaluator = Evaluation(args.runs, query_type="DF")
+    # Inizializziamo la sessione Spark
+    spark = SparkSession.builder.appName(f"Q3-IT-SE").getOrCreate()
+    spark.sparkContext.setLogLevel("ERROR")
 
-    # Esecuzione e valutazione
-    evaluator.run(main, input_it, input_se, output)
-    evaluator.evaluate()
+    try:
+        # Istanziazione classe per la valutazione delle prestazioni
+        evaluator = Evaluation(spark, args.runs, output, "query3", "DF")
+
+        # Esecuzione e valutazione
+        evaluator.run(main_query3, spark, input_it, input_se, output)
+        evaluator.evaluate()
+    except Exception as e:
+        print(f"Errore durante l'elaborazione di Query 3: {e}")
+        raise # Rilanciamo l'eccezione affinché le statistiche vengano calcolate solo se la query ha successo
+    finally:
+        spark.stop()
