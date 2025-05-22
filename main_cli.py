@@ -10,7 +10,7 @@ from cli.redis_cli import *
 from cli.docker_utils import *
 
 
-def main_menu(nifi_configured: bool = False) -> None:
+def main_menu() -> None:
     """Menu principale dell'applicazione."""    
     while True:
         print_header("MENU PRINCIPALE")
@@ -21,9 +21,6 @@ def main_menu(nifi_configured: bool = False) -> None:
         print("5. Help / Informazioni")
         print("0. Esci")
         
-        if not nifi_configured:
-            print_warning("Il template di NiFi potrebbe non essere stato istanziato. Assicurarsi di farlo prima della data ingestion.")
-        
         choice = input(f"\n{Colors.BOLD}Scelta [0-5]: {Colors.ENDC}").strip()
         
         if choice == "1":
@@ -31,7 +28,7 @@ def main_menu(nifi_configured: bool = False) -> None:
         elif choice == "2":
             redis_menu()
         elif choice == "3":
-            nifi_configured = nifi_menu()
+            nifi_menu()
         elif choice == "4":
             docker_menu()
         elif choice == "5":
@@ -93,7 +90,7 @@ if __name__ == "__main__":
         else:
             # Modalità interattiva
             print_header("SABD BATCH PROCESSING")
-            main_menu(nifi_configured=nifi_configured or args.skip_nifi)
+            main_menu()
     except KeyboardInterrupt:
         print("\n")
         print_info("Applicazione interrotta dall'utente.")
