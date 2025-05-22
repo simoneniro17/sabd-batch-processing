@@ -29,20 +29,42 @@ def feed_nifi_data() -> bool:
     print_info("Invio dati a NiFi in corso...")
     try:
         feed_nifi_urls()
-        print_success("Dati inviati a NiFi con successo.")
         return True
     except Exception as e:
         print_error(f"Errore durante l'invio dati a NiFi: {str(e)}")
         return False
+    
 
-def setup_nifi() -> bool:
-    """Imposta NiFi importando il template e inviando dati."""
-    print_header("CONFIGURAZIONE NIFI")
+def nifi_menu() -> bool:
+    """Menu per le operazioni di NiFi. Restituisce True se il template è stato importato."""
+    template_imported = False
     
-    if not import_nifi_template():
-        return False
+    while True:
+        print_header("CONFIGURAZIONE NIFI")
+        print("1. Importa template NiFi")
+        print("2. Invia dati a NiFi")
+        print("3. Setup completo (importa template e invia dati)")
+        print("0. Torna al menu principale")
+        
+        choice = input(f"\n{Colors.BOLD}Scelta [0-3]: {Colors.ENDC}").strip()
+        
+        if choice == "1":
+            template_imported = import_nifi_template()
+        elif choice == "2":
+            if feed_nifi_data():
+                print_success("Dati inviati correttamente a NiFi.")
+            else:
+                print_warning("Assicurati che il template NiFi sia stato importato prima di inviare i dati.")
+        elif choice == "3":
+            template_imported = import_nifi_template()
+            if template_imported:
+                feed_nifi_data()
+        elif choice == "0":
+            break
+        else:
+            print_warning("Scelta non valida. Inserisci un numero da 0 a 3.")
+            continue
+        
+        input(f"\n{Colors.BOLD}Premi Invio per continuare...{Colors.ENDC}")
     
-    if not feed_nifi_data():
-        return False
-    
-    return True
+    return template_imported
