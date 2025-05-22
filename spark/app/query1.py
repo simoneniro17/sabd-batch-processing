@@ -56,8 +56,6 @@ def main_query1(spark, input_it, input_se, output_path):
         "cfe-max"
     ).orderBy("country", "year")
 
-    final_df.show()
-
     # Salviamo il risultato finale in formato CSV su HDFS, sovrascrivendo eventuali file esistenti
     final_df.write.mode("overwrite").option("header", True).csv(output_path)
 

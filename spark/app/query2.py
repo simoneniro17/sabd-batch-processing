@@ -54,8 +54,6 @@ def main_query2(spark, input_path, output_path):
         .unionByName(lowest_carbon) \
         .unionByName(highest_cfe) \
         .unionByName(lowest_cfe)
-    
-    final_df.show(truncate=False)
 
     # Se vogliamo salvare i risultati delle classifiche in file separati
     # highest_carbon.write.mode("overwrite").option("header", True).csv(f"{output_path}/highest_carbon")

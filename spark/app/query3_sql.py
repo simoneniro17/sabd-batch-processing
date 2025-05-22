@@ -70,8 +70,6 @@ def main_sql_query3(spark,input_it, input_se, output_path):
     # Uniamo i risultati per le due zone in un unico DataFrame
     combined_df = it_results_df.unionByName(se_results_df)
 
-    combined_df.show(truncate=False)
-
     # Scriviamo il risultato finale in un file CSV su HDFS
     combined_df.coalesce(1).write.mode("overwrite").option("header", True).csv(output_path)
 

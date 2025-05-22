@@ -6,23 +6,20 @@ import csv
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, FloatType
 
-
-#TODO: sistemare stampe e commenti
-
 class Evaluation:
     def __init__(self, spark, runs, output, query_id, query_type):
         self.execution_time = []    # Contiamo solo i tempi delle run che hanno avuto successo
-        self.runs = runs
+        self.runs = runs+1
         self.query_type = query_type
         self.spark_session = spark
         self.output_path = output
         self.query_id = query_id
 
-        print(f"Avvio misurazione prestazioni con {self.runs} esecuzioni...")
+        print(f"Avvio misurazione prestazioni con {self.runs - 1} esecuzioni...")
 
 
     def run(self, func, *args, **kwargs):
-        """Esegue la funzione `func` e salva il tempo di esecuzione."""
+
         for i in range(self.runs):
             try:
                 start = time.time()
@@ -36,9 +33,11 @@ class Evaluation:
 
 
     def calculate_statistics(self):
-        """Calcola le statistiche sui tempi di esecuzione."""
         if not self.execution_time:
             return {}
+
+        if len(self.execution_time) > 1:
+            self.execution_time = self.execution_time[1:]  # Ignora il primo tempo se ci sono più esecuzioni
             
         stats = {
             "num_runs": len(self.execution_time),
@@ -56,7 +55,6 @@ class Evaluation:
 
 
     def evaluate(self):
-        """Valuta e stampa le statistiche delle prestazioni."""
         if not self.execution_time:
             print("Nessuna esecuzione completata con successo, statistiche non disponibili.")
             return
@@ -82,8 +80,6 @@ class Evaluation:
 
 
     def export_stats_to_hdfs(self):
-        """Esporta le statistiche aggregate in HDFS come file CSV tramite Spark."""
-        
         # Estrai il nome dello script chiamante
         calling_file = inspect.getfile(inspect.stack()[2][0])
         filename = os.path.splitext(os.path.basename(calling_file))[0]
@@ -101,7 +97,7 @@ class Evaluation:
             print("Nessuna statistica da esportare.")
             return
 
-        # Prepara i dati in forma di lista di dizionari (compatibile con Spark)
+        # Prepara i dati in forma di lista di dizionari
         row = {
             "query-id": query_id,
             "query-type": self.query_type,
@@ -128,7 +124,7 @@ class Evaluation:
         # Crea un DataFrame Spark
         df = self.spark_session.createDataFrame(data, schema)
 
-        # Scrive su HDFS (append se possibile, altrimenti sovrascrivi come fallback)
+        # Scrive su HDFS
         try:
             self.output_path = self.output_path.rstrip("/") + "/evaluation_" + self.query_id
             df.coalesce(1).write.mode("append").option("header", True).csv(self.output_path)

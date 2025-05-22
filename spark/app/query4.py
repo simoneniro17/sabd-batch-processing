@@ -137,9 +137,6 @@ def main_query4(spark, input_file, output_path):
         # Processiamo i dati e applichiamo il clustering
         result_df = process_clustering(spark, input_file)
 
-        print("\nRisultati del Clustering:")
-        result_df.show(30, truncate=False)
-
         # Salviamo i risultati in formato CSV su HDFS
         result_df.coalesce(1).write.mode("overwrite").option("header", "true").csv(output_path)
 

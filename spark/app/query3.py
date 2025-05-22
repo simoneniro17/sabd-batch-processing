@@ -85,8 +85,6 @@ def main_query3(spark, input_it, input_se, output_path):
     # Uniamo i risultati dei due paesi in un unico DataFrame
     combined_df = it_results.unionByName(se_results)
 
-    combined_df.show(truncate=False)
-
     # Salvataggio del DataFrame finale
     combined_df.coalesce(1).write.mode("overwrite").option("header", True).csv(output_path)
 
