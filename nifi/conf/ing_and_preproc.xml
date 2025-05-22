@@ -2142,7 +2142,7 @@ Infine, il risultato viene salvato su HDFS.</description>
                             </entry>
                             <entry>
 <key>min-records</key>
-<value>1</value>
+<value>4</value>
                             </entry>
                             <entry>
 <key>max-records</key>
@@ -2157,6 +2157,7 @@ Infine, il risultato viene salvato su HDFS.</description>
                             </entry>
                             <entry>
 <key>max-bin-age</key>
+<value>1 min</value>
                             </entry>
                             <entry>
 <key>max.bin.count</key>
@@ -2319,6 +2320,7 @@ Infine, il risultato viene salvato su HDFS.</description>
                             </entry>
                             <entry>
 <key>max-bin-age</key>
+<value>1 min</value>
                             </entry>
                             <entry>
 <key>max.bin.count</key>
