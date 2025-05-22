@@ -1,45 +1,38 @@
 import requests
 import time
 
-
+# Verifica se la cartella "/data" esiste in HDFS (e quindi anche se il NameNode è fuori dalla Safemode) 
 def is_namenode_ready(namenode_host = "localhost", port = 9870):
-    """
-    Verifica se la cartella "/data" esiste in HDFS.
-    Questa verifica implica anche che il NameNode è fuori dalla Safemode. 
-    """
-
     url = f"http://{namenode_host}:{port}/webhdfs/v1/data?op=GETFILESTATUS"
     try:
         response = requests.get(url)
         if response.status_code == 200:
-            print("Cartella /data trovata in HDFS")
             return True
         elif response.status_code == 404:
-            print("Cartella /data NON trovata in HDFS")
             return False
         else:
-            print(f"Errore durante la verifica della cartella /data: {response.status_code}")
+            print(f"Errore durante la verifica della cartella /data in HDFS: {response.status_code}")
             return False
     except Exception as e:
-        print(f"Eccezione durante la verifica della cartella /data: {e}")
+        print(f"Eccezione durante la verifica della cartella /data in HDFS: {e}")
         return False
+
 
 # Funzione per inviare URL a NiFi
 def send_url_to_nifi(url, endpoint):
-    print(f"Invio URL: {url}")
     response = requests.post(endpoint, data=url)
     
     if response.status_code == 200:
-        print(f"Inviato con successo")
+        print(f"Inviato con successo URL: {url}")
     else:
-        print(f"Errore nell'invio. - Status: {response.status_code}")
+        print(f"Errore nell'invio di {url}\nStatus: {response.status_code}")
         if hasattr(response, 'text'):
             print(f"Risposta errore: {response.text[:100]}")
 
 
 def feed_nifi_urls(granularity="hourly", nifi_endpoint="http://localhost:1406/contentListener"):
     """
-    Genera gli URL dei dataset di Electricity Maps da inviare a NiFi. Li invia chiamando la funzione `send_url_to_nifi`.
+    Genera gli URL dei dataset di Electricity Maps da inviare a NiFi e li invia tramite `send_url_to_nifi`.
 
     Args:
         granularity (str): Livello di granularità del dataset ['hourly', 'daily', 'monthly', 'yearly']. Default è "hourly".
@@ -49,7 +42,6 @@ def feed_nifi_urls(granularity="hourly", nifi_endpoint="http://localhost:1406/co
     while not is_namenode_ready():
         print("Cartella /data non disponibile in HDFS, attendo...")
         time.sleep(5)
-    print("HDFS pronto con cartella /data disponibile, invio degli URL a NiFi...")
 
     short_countries = ["IT", "SE"]
     short_years = ["2021", "2022", "2023", "2024"]

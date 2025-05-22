@@ -1,7 +1,7 @@
 from nifi.functions import feed_nifi_urls
 from spark.functions import execute_spark_query
 from redis.functions import load_to_redis, export_from_redis
-from grafana.functions import export_hdfs_csv_to_grafana
+from grafana.functions import export_query_result_to_grafana
 import subprocess
 import argparse
 import os
@@ -125,7 +125,7 @@ def run_spark_menu():
         print(f"Eseguo Query {query} in modalità {mode}...")
         execute_spark_query(script, input_data, output_dir, runs=1)
         print("Query completata.\n")        # TODO: forse dobbiamo gestire il caso in cui non ci siano risultati come un'eccezione
-        export_hdfs_csv_to_grafana(script, output_dir)      
+        export_query_result_to_grafana(script, output_dir)      
 
 def run_redis_menu():
     while True:
