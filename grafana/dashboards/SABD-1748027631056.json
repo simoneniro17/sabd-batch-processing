@@ -18,13 +18,13 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 5,
+  "id": 2,
   "links": [],
   "panels": [
     {
       "datasource": {
         "type": "marcusolsson-csv-datasource",
-        "uid": "belw15iho7klcb"
+        "uid": "fems3khuqrzswf"
       },
       "fieldConfig": {
         "defaults": {
@@ -128,7 +128,7 @@
           "skipRows": 0
         }
       ],
-      "title": "query1------------",
+      "title": "query1 (prova)",
       "transformations": [
         {
           "id": "filterFieldsByName",
@@ -175,7 +175,7 @@
     {
       "datasource": {
         "type": "marcusolsson-csv-datasource",
-        "uid": "belw15iho7klcb"
+        "uid": "fems3khuqrzswf"
       },
       "fieldConfig": {
         "defaults": {
@@ -334,7 +334,7 @@
     {
       "datasource": {
         "type": "marcusolsson-csv-datasource",
-        "uid": "belw15iho7klcb"
+        "uid": "fems3khuqrzswf"
       },
       "fieldConfig": {
         "defaults": {
@@ -493,7 +493,7 @@
     {
       "datasource": {
         "type": "marcusolsson-csv-datasource",
-        "uid": "belw15iho7klcb"
+        "uid": "fems3khuqrzswf"
       },
       "fieldConfig": {
         "defaults": {
@@ -632,7 +632,7 @@
     {
       "datasource": {
         "type": "marcusolsson-csv-datasource",
-        "uid": "belw15iho7klcb"
+        "uid": "fems3khuqrzswf"
       },
       "fieldConfig": {
         "defaults": {
@@ -771,7 +771,7 @@
     {
       "datasource": {
         "type": "marcusolsson-csv-datasource",
-        "uid": "belw15iho7klcb"
+        "uid": "fems3khuqrzswf"
       },
       "fieldConfig": {
         "defaults": {
@@ -929,7 +929,7 @@
     {
       "datasource": {
         "type": "marcusolsson-csv-datasource",
-        "uid": "belw15iho7klcb"
+        "uid": "fems3khuqrzswf"
       },
       "fieldConfig": {
         "defaults": {
@@ -1131,5 +1131,5 @@
   "timezone": "browser",
   "title": "SABD",
   "uid": "47faafb2-254b-45b1-a17a-132a43c7a921",
-  "version": 2
+  "version": 1
 }

@@ -1,6 +1,5 @@
 from cli.printer import *
 from spark.functions import execute_spark_query
-from grafana.functions import export_query_result_to_grafana
 
 
 def execute_query(query_num: str, mode: str, runs: int = CONFIG["default_runs"]) -> bool:
@@ -37,11 +36,6 @@ def execute_query(query_num: str, mode: str, runs: int = CONFIG["default_runs"])
     try:
         execute_spark_query(script_path, input_data, output_path, runs=runs)
         print_success(f"Query {query_num} completata con successo.")
-        
-        print_info("Esportazione risultati a Grafana in corso...")
-        export_query_result_to_grafana(script_path, output_path)
-        print_success("Dati esportati a Grafana.")
-        
         return True
     except Exception as e:
         print_error(f"Errore durante l'esecuzione della query: {str(e)}")
