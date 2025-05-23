@@ -7,3 +7,11 @@ providers:
     updateIntervalSeconds: 10
     options:
       path: /etc/grafana/dashboards
+datasources:
+  - name: Infinity CSV
+    type: yesoreyeram-infinity-datasource
+    access: proxy
+    isDefault: false
+    editable: true
+    jsonData:
+      source: local
