@@ -22,13 +22,15 @@ def redis_download() -> bool:
     print_header("DOWNLOAD DATI DA REDIS")
     
     try:
-        os.makedirs("./results", exist_ok=True)
+        host_results_dir = CONFIG["host_results_dir"]
+        os.makedirs(host_results_dir, exist_ok=True)
+
         local_path = CONFIG["redis"]["local_path"]
-    
-        print_info(f"Download dati da Redis a {local_path}...")
+        print_info(f"Download dati da Redis in locale...")
         export_from_redis(local_path)
+        
         print_success("Dati scaricati da Redis con successo.")
-        print_info(f"I file sono stati salvati in: {local_path}")
+        print_info(f"I file sono stati salvati in {host_results_dir} in locale.")
         return True
     except Exception as e:
         print_error(f"Errore durante il download da Redis: {str(e)}")

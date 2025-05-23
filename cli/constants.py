@@ -38,7 +38,8 @@ CONFIG = {
     "mode_labels": {
         "no_sql": "DataFrame",
         "sql": "SQL"
-    }
+    },
+    "host_results_dir": "./results"
 }
 
 
