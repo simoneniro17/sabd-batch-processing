@@ -14,7 +14,7 @@ from evaluation import Evaluation
 def find_optimal_k_silhouette(df, features_col, min_k=2, max_k=10):
     evaluator = ClusteringEvaluator(featuresCol=features_col, predictionCol='prediction', metricName='silhouette', distanceMeasure='squaredEuclidean')
     silhouette_scores = {}
-    print(f"\n--- Metodo Indice di Silhouette ---")
+    #print(f"\n--- Metodo Indice di Silhouette ---")
     print(f"Determinazione del k ottimale (Silhouette) tra {min_k} e {max_k}...")
 
     for k_val in range(min_k, max_k + 1):
@@ -23,7 +23,7 @@ def find_optimal_k_silhouette(df, features_col, min_k=2, max_k=10):
         predictions = model.transform(df)
         score = evaluator.evaluate(predictions)
         silhouette_scores[k_val] = score
-        print(f"  Punteggio Silhouette per k={k_val}: {score:.4f}")
+        #print(f"  Punteggio Silhouette per k={k_val}: {score:.4f}")
 
     if not silhouette_scores:
         print("Nessun punteggio Silhouette calcolato.")
@@ -74,9 +74,6 @@ def process_clustering(spark, input_path):
     max_k_limit = min(30, num_distinct_points)
     k_silhouette = find_optimal_k_silhouette(df_scaled, features_col="features", min_k=2, max_k=max_k_limit)
 
-    print(f"\n--- Riepilogo ---")
-    print(f"K ottimale Indice di Silhouette: {k_silhouette}")
-
     # Impostiamo il k finale per il clustering
     final_k = None
     if k_silhouette is not None:
@@ -95,8 +92,7 @@ def process_clustering(spark, input_path):
     predictions = model.transform(df_scaled)
     
     # Per ottenere i centri nelle coordinate originali, non scalate, invertiamo la trasformazione dello scaler
-    # Dato che abbiamo scalato solo con std (withMean=False), possiamo "invertire" moltiplicando per lo std
-    print("\nCentri dei cluster (valori NON scalati):") 
+    # Dato che abbiamo scalato solo con std (withMean=False), possiamo "invertire" moltiplicando per lo std 
     centers_scaled = model.clusterCenters()
     std_values = scaler_model.std       
 
@@ -105,7 +101,7 @@ def process_clustering(spark, input_path):
     for i, center in enumerate(centers_scaled):
         original_center_value = float(center[0] * std_values[0])  # Solo una feature, quindi solo il primo elemento
         cluster_centers[i] = original_center_value
-        print(f"  Cluster {i}: [{original_center_value}]")
+        #print(f"  Cluster {i}: [{original_center_value}]")
 
     def get_cluster_center(cluster_id):
         return cluster_centers.get(cluster_id, 0.0)
