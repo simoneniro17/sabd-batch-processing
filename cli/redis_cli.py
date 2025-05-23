@@ -22,10 +22,9 @@ def redis_download() -> bool:
     print_header("DOWNLOAD DATI DA REDIS")
     
     try:
+        os.makedirs("./results", exist_ok=True)
         local_path = CONFIG["redis"]["local_path"]
-        if not os.path.exists(local_path):
-            os.makedirs(local_path)
-            print_info(f"Cartella '{local_path}' creata.")
+    
         print_info(f"Download dati da Redis a {local_path}...")
         export_from_redis(local_path)
         print_success("Dati scaricati da Redis con successo.")
