@@ -101,6 +101,18 @@ python main_cli.py --help
 └── Data Visualization (Grafana)
 ```
 
+### Ambiente di Deployment
+
+L'infrastruttura è stata orchestrata tramite Docker Compose e include:
+
+- **HDFS Cluster**: 1 NameNode + 2 DataNode
+- **Spark Cluster**: 1 Master + 1 Worker
+- **Apache NiFi**: Singola istanza per data ingestion
+- **Redis**: Server singolo per caching e storage risultati
+- **Grafana**: Dashboard per visualizzazione con plugin CSV
+
+L'intera configurazione utilizza una rete Docker dedicata (`172.20.0.0/16`) per la comunicazione tra i componenti.
+
 
 ## Data Pipeline
 
