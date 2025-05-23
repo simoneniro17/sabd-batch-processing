@@ -128,6 +128,5 @@ class Evaluation:
         try:
             self.output_path = self.output_path.rstrip("/") + "/evaluation_" + self.query_id
             df.coalesce(1).write.mode("append").option("header", True).csv(self.output_path)
-            print(f"Statistiche aggregate salvate su HDFS in {self.output_path}")
         except Exception as e:
             print(f"Errore durante il salvataggio delle statistiche su HDFS: {e}")
