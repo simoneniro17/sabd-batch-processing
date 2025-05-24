@@ -7,6 +7,7 @@ from cli.helper import *
 from cli.nifi_cli import *
 from cli.spark_cli import *
 from cli.redis_cli import *
+from cli.hdfs_cli import *
 from cli.docker_utils import *
 
 
@@ -17,11 +18,12 @@ def main_menu() -> None:
         print("1. Esegui Query Spark")
         print("2. Gestisci Redis")
         print("3. Configura NiFi")
-        print("4. Gestisci Container Docker")
-        print("5. Help / Informazioni")
+        print("4. Gestisci HDFS")
+        print("5. Gestisci Container Docker")
+        print("6. Help / Informazioni")
         print("0. Esci")
         
-        choice = input(f"\n{Colors.BOLD}Scelta [0-5]: {Colors.ENDC}").strip()
+        choice = input(f"\n{Colors.BOLD}Scelta [0-6]: {Colors.ENDC}").strip()
         
         if choice == "1":
             spark_menu()
@@ -30,8 +32,10 @@ def main_menu() -> None:
         elif choice == "3":
             nifi_menu()
         elif choice == "4":
-            docker_menu()
+            hdfs_menu()
         elif choice == "5":
+            docker_menu()
+        elif choice == "6":
             show_help()
             input(f"\n{Colors.BOLD}Premi Invio per continuare...{Colors.ENDC}")
         elif choice == "0":
@@ -45,7 +49,7 @@ def main_menu() -> None:
             print_info("Esco dal programma...")
             break
         else:
-            print_warning("Scelta non valida. Inserisci un numero da 0 a 5.")
+            print_warning("Scelta non valida. Inserisci un numero da 0 a 6.")
 
 
 def parse_args():
@@ -57,7 +61,8 @@ def parse_args():
                       help="Modalità di esecuzione (default: dataframe)")
     parser.add_argument("--runs", type=int, default=1, help="Numero di esecuzioni (default: 1)")
     parser.add_argument("--start-docker", action="store_true", help="Avvia i container Docker all'inizio")
-    
+    parser.add_argument("--reset-hdfs", action="store_true", help="Resetta il contenuto di HDFS")
+
     return parser.parse_args()
 
 if __name__ == "__main__":
@@ -71,6 +76,12 @@ if __name__ == "__main__":
                 print_warning("I container Docker non sono stati avviati correttamente.")
                 if not ask_continue():
                     sys.exit(1)
+
+        # Reset HDFS se richiesto
+        if args.reset_hdfs:
+            hdfs_reset()
+            if not args.query:  # Se non ci sono altre operazioni, esci
+                sys.exit(0)    
         
         # Converte 'dataframe' a 'no_sql' per compatibilità interna
         mode = "no_sql" if args.mode == "dataframe" else args.mode

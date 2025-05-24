@@ -6,14 +6,6 @@ def show_help() -> None:
     print_header("INFORMAZIONI SUL PROGETTO")
     print("""
 Questo strumento consente di eseguire l'intero workflow del progetto SABD:
-
-1. Acquisizione e ingestione dati con NiFi
-2. Elaborazione dati con Spark (Query 1-4)
-3. Caricamento/scaricamento dati con Redis
-4. Gestione container Docker
-
-Puoi eseguire le query in modalità DataFrame o SQL
-e visualizzare i risultati su Grafana.
     """)
     
     print_header("COMANDI DISPONIBILI")
@@ -22,8 +14,9 @@ e visualizzare i risultati su Grafana.
         ("1", "Esegui Query Spark", "Esegue una delle query implementate (1-4)"),
         ("2", "Gestisci Redis", "Carica o scarica dati da Redis"),
         ("3", "Configura NiFi", "Importa template e invia dati a NiFi"),
-        ("4", "Gestisci Docker", "Avvia o arresta i container Docker"),
-        ("5", "Help", "Mostra questa guida"),
+        ("4", "Gestisci HDFS", "Mostra lo stato e il contenuto di HDFS"),
+        ("5", "Gestisci Docker", "Avvia o arresta i container Docker"),
+        ("6", "Help", "Mostra questa guida"),
         ("0", "Esci", "Termina l'applicazione")
     ]
     
@@ -43,7 +36,8 @@ Opzioni:
   --setup-nifi       Configura NiFi importando template e inviando dati
   --skip-nifi        Salta l'inizializzazione di NiFi
   --start-docker     Avvia i container Docker all'inizio
-    """)
+  --reset-hdfs       Resetta il contenuto di HDFS
+""")
 
 def ask_continue() -> bool:
     """Chiede all'utente se vuole continuare nonostante gli errori."""
