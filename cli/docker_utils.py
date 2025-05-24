@@ -123,7 +123,7 @@ def ask_docker_shutdown() -> bool:
     """Chiede all'utente se vuole fermare i container Docker prima di uscire."""
     print_header("GESTIONE CONTAINER DOCKER ALL'USCITA")
     print("Prima di uscire, come vuoi gestire i container Docker?")
-    print("1. Mantieni i container in esecuzione")
+    print("1. Non fare nulla")
     print("2. Arresta i container (docker-compose stop)")
     print("3. Rimuovi i container (docker-compose down)")
     print("4. Rimuovi i container e i volumi (docker-compose down -v)")
