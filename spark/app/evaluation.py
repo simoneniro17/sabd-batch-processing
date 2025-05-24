@@ -76,10 +76,10 @@ class Evaluation:
                 
         print(f"{'='*60}")
         
-        self.export_stats_to_hdfs()
+        self.export_stats_to_hdfs(stats)
 
 
-    def export_stats_to_hdfs(self):
+    def export_stats_to_hdfs(self,stats):
         # Estrai il nome dello script chiamante
         calling_file = inspect.getfile(inspect.stack()[2][0])
         filename = os.path.splitext(os.path.basename(calling_file))[0]
@@ -92,7 +92,6 @@ class Evaluation:
             query_id = filename
 
         # Calcola le statistiche
-        stats = self.calculate_statistics()
         if not stats:
             print("Nessuna statistica da esportare.")
             return
