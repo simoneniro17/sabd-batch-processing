@@ -54,14 +54,14 @@ def main_menu() -> None:
 
 def parse_args():
     parser = argparse.ArgumentParser(description="SABD Batch Processing CLI")
-    parser.add_argument("--skip-nifi", action="store_true", help="Salta l'inizializzazione di NiFi")
+    parser.add_argument("--start-docker", action="store_true", help="Avvia i container Docker all'inizio")
+    parser.add_argument("--reset-hdfs", action="store_true", help="Resetta il contenuto di HDFS")
     parser.add_argument("--setup-nifi", action="store_true", help="Configura NiFi importando template e inviando dati")
+    parser.add_argument("--skip-nifi", action="store_true", help="Salta l'inizializzazione di NiFi")
     parser.add_argument("--query", type=str, choices=["1", "2", "3", "4"], help="Esegue direttamente una query")
     parser.add_argument("--mode", type=str, choices=["dataframe", "sql"], default="dataframe", 
                       help="Modalità di esecuzione (default: dataframe)")
     parser.add_argument("--runs", type=int, default=1, help="Numero di esecuzioni (default: 1)")
-    parser.add_argument("--start-docker", action="store_true", help="Avvia i container Docker all'inizio")
-    parser.add_argument("--reset-hdfs", action="store_true", help="Resetta il contenuto di HDFS")
 
     return parser.parse_args()
 

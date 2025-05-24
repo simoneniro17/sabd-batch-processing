@@ -41,6 +41,35 @@ def execute_query(query_num: str, mode: str, runs: int = CONFIG["default_runs"])
         print_error(f"Errore durante l'esecuzione della query: {str(e)}")
         return False
     
+def execute_all_queries() -> None:
+    """Esegue tutte le query in sequenza."""
+    runs = input(f"\n{Colors.BOLD}Numero di esecuzioni (per tutte le query) [1]: {Colors.ENDC}").strip()
+    runs = int(runs) if runs.isdigit() and int(runs) > 0 else 1
+
+    queries = ["1", "2", "3", "4"]
+    modes = [("no_sql", "DataFrame"), ("sql", "SQL")]
+
+    for mode_key, mode_label in modes:
+        print_header(f"MODALITÀ {mode_label.upper()}")
+
+        for query_num in queries:
+            # Salta la modalità SQL per Query 4
+            if query_num == "4" and mode_key == "sql":
+                continue
+
+            print_info(f"Esecuzione Query {query_num} - {mode_label}...")
+            try:
+                success = execute_query(query_num, mode_key, runs)
+                if success:
+                    print_success(f"Query {query_num} eseguita con successo in modalità {mode_label}.")
+                else:
+                    print_error(f"Errore nell'esecuzione della Query {query_num} in modalità {mode_label}.")
+            except Exception as e:
+                print_error(f"Errore durante l'esecuzione della Query {query_num} in modalità {mode_label}: {str(e)}")
+            print("-" * 30)
+
+    print_success(f"Esecuzione completata per tutte le query in entrambe le modalità (dove applicabile).")
+
     
 def spark_menu() -> None:
     """Menu per l'esecuzione delle query Spark."""
@@ -50,15 +79,21 @@ def spark_menu() -> None:
         # Mostra le query disponibili
         for q_num, desc in CONFIG["query_descriptions"].items():
             print(f"{q_num}. Query {q_num} - {desc}")
+        print("5. Esegui tutte le query sequenzialmente")
         print("0. Torna al menu principale")
         
-        choice = input(f"\n{Colors.BOLD}Scelta [0-4]: {Colors.ENDC}").strip()
+        choice = input(f"\n{Colors.BOLD}Scelta [0-5]: {Colors.ENDC}").strip()
         
         if choice == "0":
             break
+
+        if choice == "5":
+            execute_all_queries()
+            input(f"\n{Colors.BOLD}Tutte le query eseguite. Premi Invio per continuare...{Colors.ENDC}")
+            continue
         
-        if choice not in ["1", "2", "3", "4"]:
-            print_warning("Scelta non valida. Inserisci un numero da 0 a 4.")
+        if choice not in ["1", "2", "3", "4", "5"]:
+            print_warning("Scelta non valida. Inserisci un numero da 0 a 5.")
             continue
         
         # Per Query 4 non c'è SQL
