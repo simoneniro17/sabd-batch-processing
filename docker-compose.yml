@@ -101,6 +101,7 @@ services:
     volumes:
       - ./hdfs/conf:/opt/hadoop/etc/hadoop  # Per accedere ai file core-site.xml e hdfs-site.xml di HDFS
       - ./spark/app:/app                    # Per i job Spark
+      - ./spark/conf/spark-defaults.conf:/opt/spark/conf/spark-defaults.conf
     command: >
       bash -c "/opt/spark/bin/spark-class org.apache.spark.deploy.master.Master --host spark-master"
     networks:

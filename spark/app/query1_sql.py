@@ -80,8 +80,15 @@ if __name__ == "__main__":
     output = f"{HDFS_BASE.rstrip('/')}/{args.output.lstrip('/')}"
 
     # Inizializziamo la sessione Spark
-    spark = SparkSession.builder.appName("SQL-Query1-IT-SE").getOrCreate()
+    spark = SparkSession.builder.appName(f"Q1-IT-SE").getOrCreate()
     spark.sparkContext.setLogLevel("ERROR")
+
+    conf = spark.sparkContext.getConf()
+    print("---------DEBUGGING---------")
+    print(conf.get("spark.executor.instances"))
+    print(conf.get("spark.executor.cores"))
+    print(conf.get("spark.executor.memory"))
+    print(conf.get("spark.driver.memory"))
 
     try: 
         # Istanziazione classe per la valutazione delle prestazioni
