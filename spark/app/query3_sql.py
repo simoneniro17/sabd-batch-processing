@@ -15,37 +15,37 @@ def process_country_sql(spark, input_path, zone_id, view_name_suffix):
     if missing:
         raise ValueError(f"Colonne mancanti nel dataset: {missing}")
     
-    # Registriamo una prima vista temporanea che verrà interrogata da SparkSQL per aggregare i dati giornalmente
+    # Registriamo una prima vista temporanea che verrà interrogata da SparkSQL per aggregare i dati
     raw_view_name = f"raw_data_{view_name_suffix}"  # Il suffisso nel nome dovrebbe garantire l'assenza di conflitti in eventuali esecuzioni parallele
     raw_df.createOrReplaceTempView(raw_view_name)
 
-    # Query SQL per registrare un'ulteriore vista temporanea con le medie giornaliere
-    daily_avg_view_name = f"daily_averages_{view_name_suffix}"
-    daily_avg_query = f"""
-        CREATE OR REPLACE TEMP VIEW {daily_avg_view_name} AS
+    # Query SQL per registrare un'ulteriore vista temporanea con le medie per le 24 fasce orarie
+    hourly_avg_view_name = f"hourly_averages_{view_name_suffix}"
+    hourly_avg_query = f"""
+        CREATE OR REPLACE TEMP VIEW {hourly_avg_view_name} AS
         SELECT
-            DATE(TO_TIMESTAMP(`Datetime__UTC_`, 'yyyy-MM-dd HH:mm:ss')) AS AggDate,
+            HOUR(TO_TIMESTAMP(`Datetime__UTC_`, 'yyyy-MM-dd HH:mm:ss')) AS hour_of_day,
             ROUND(AVG(CAST(`Carbon_intensity_gCO_eq_kWh__direct_` AS DOUBLE)), 6) AS avg_carbon_intensity,
             ROUND(AVG(CAST(`Carbon_free_energy_percentage__CFE__` AS DOUBLE)), 6) AS avg_cfe_percentage
         FROM
             {raw_view_name}
         GROUP BY
-            AggDate
+            hour_of_day
     """
-    spark.sql(daily_avg_query)
+    spark.sql(hourly_avg_query)
 
-    # Query per calcolare min, percentili (25, 50, 75) e max sulle medie giornaliere
+    # Query per calcolare min, percentili (25, 50, 75) e max sulle medie delle 24 fasce orarie
     # L'output è formattato con una riga per metrica (carbon_intensity, cfe_percentage)
     stats_query = f"""
         SELECT
             '{zone_id}' AS country,
             'carbon_intensity' AS metric,
             MIN(avg_carbon_intensity) AS `min`,
-            percentile_approx(avg_carbon_intensity, 0.25) AS `25-perc`,
-            percentile_approx(avg_carbon_intensity, 0.50) AS `50-perc`,
-            percentile_approx(avg_carbon_intensity, 0.75) AS `75-perc`,
+            ROUND(percentile(avg_carbon_intensity, 0.25), 6) AS `25-perc`,
+            ROUND(percentile(avg_carbon_intensity, 0.50), 6) AS `50-perc`,
+            ROUND(percentile(avg_carbon_intensity, 0.75), 6) AS `75-perc`,
             MAX(avg_carbon_intensity) AS `max`
-        FROM {daily_avg_view_name}
+        FROM {hourly_avg_view_name}
 
         UNION ALL
 
@@ -53,13 +53,14 @@ def process_country_sql(spark, input_path, zone_id, view_name_suffix):
             '{zone_id}' AS country,
             'cfe_percentage' AS metric,
             MIN(avg_cfe_percentage) AS `min`,
-            percentile_approx(avg_cfe_percentage, 0.25) AS `25-perc`,
-            percentile_approx(avg_cfe_percentage, 0.50) AS `50-perc`,
-            percentile_approx(avg_cfe_percentage, 0.75) AS `75-perc`,
+            ROUND(percentile(avg_cfe_percentage, 0.25), 6) AS `25-perc`,
+            ROUND(percentile(avg_cfe_percentage, 0.50), 6) AS `50-perc`,
+            ROUND(percentile(avg_cfe_percentage, 0.75), 6) AS `75-perc`,
             MAX(avg_cfe_percentage) AS `max`
-        FROM {daily_avg_view_name}
+        FROM {hourly_avg_view_name}
     """
     return spark.sql(stats_query)
+
 
 def main_sql_query3(spark,input_it, input_se, output_path):
 
@@ -74,9 +75,8 @@ def main_sql_query3(spark,input_it, input_se, output_path):
     combined_df.coalesce(1).write.mode("overwrite").option("header", True).csv(output_path)
 
 
-
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Query 3 (Spark SQL): Statistiche su medie giornaliere per IT e SE.")
+    parser = argparse.ArgumentParser(description="Query 3 (Spark SQL): statistiche sulle medie dei dati aggregati sulle 24h della giornata per Italia e Svezia.")
     parser.add_argument("--input_it", required=True, help="Percorso per file IT Parquet su HDFS")
     parser.add_argument("--input_se", required=True, help="Percorsi per file SE Parquet su HDFS")
     parser.add_argument("--output", required=True, help="Cartella di output su HDFS")

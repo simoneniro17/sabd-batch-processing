@@ -1,5 +1,5 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import to_timestamp, col, date_format, avg, min, max, round, lit, percentile
+from pyspark.sql.functions import to_timestamp, col, hour, avg, min, max, round, lit, percentile
 
 import argparse
 from evaluation import Evaluation
@@ -18,36 +18,27 @@ def process_file(spark, path, zone_id):
     
     # Parsing del timestamp e estrazione di data per il raggruppamento temporale di 24 ore
     df = df.withColumn("Datetime (UTC)", to_timestamp(col("Datetime__UTC_"), "yyyy-MM-dd HH:mm:ss"))
-    df = df.withColumn("date", date_format("Datetime (UTC)", "yyyy-MM-dd"))     # Data senza ora per raggruppare in base a 24 ore
+    df = df.withColumn("hour", hour(col("Datetime (UTC)")))     #  Raggruppiamo per ora
     
-    # Calcoliamo le aggregazioni per ciascun giorno per le due metriche e i valori richiesti
+    # Calcoliamo le aggregazioni per ciascuna fascia oraria per le due metriche e i valori richiesti
     # Castiamo le colonne numeriche per evitare errori di tipo (magari causati dalla conversione in Parquet durante il preprocessing)
-    daily_avg = df.groupBy("date").agg(
+    hourly_avg = df.groupBy("hour").agg(
         round(avg(col("Carbon_intensity_gCO_eq_kWh__direct_").cast("double")), 6).alias("carbon_intensity"),
         round(avg(col("Carbon_free_energy_percentage__CFE__").cast("double")), 6).alias("cfe_percentage")
     )
     
-    # max_carbon_day = daily_avg.orderBy(col("carbon_intensity").desc()).first()
-    # print(f"Il giorno con il valore più alto di carbon intensity in {zone_id} è {max_carbon_day['date']} con un valore di {max_carbon_day['carbon_intensity']} gCO2eq/kWh.")
-    # min_carbon_day = daily_avg.orderBy(col("carbon_intensity").asc()).first()
-    # print(f"Il giorno con il valore più basso di carbon intensity in {zone_id} è {min_carbon_day['date']} con un valore di {min_carbon_day['carbon_intensity']} gCO2eq/kWh.")
-    # max_cfe_day = daily_avg.orderBy(col("cfe_percentage").desc()).first()
-    # print(f"Il giorno con il valore più alto di CFE in {zone_id} è {max_cfe_day['date']} con un valore di {max_cfe_day['cfe_percentage']}%.")
-    # min_cfe_day = daily_avg.orderBy(col("cfe_percentage").asc()).first()
-    # print(f"Il giorno con il valore più basso di CFE in {zone_id} è {min_cfe_day['date']} con un valore di {min_cfe_day['cfe_percentage']}%.")
-
     # Calcolo delle statistiche min, max, e percentili per le due metriche
-    stats = daily_avg.agg(
+    stats = hourly_avg.agg(
         min("carbon_intensity").alias("carbon_min"),
-        percentile("carbon_intensity", 0.25).alias("carbon_25p"),
-        percentile("carbon_intensity", 0.5).alias("carbon_50p"),
-        percentile("carbon_intensity", 0.75).alias("carbon_75p"),
+        round(percentile("carbon_intensity", 0.25), 6).alias("carbon_25p"),
+        round(percentile("carbon_intensity", 0.5), 6).alias("carbon_50p"),
+        round(percentile("carbon_intensity", 0.75), 6).alias("carbon_75p"),
         max("carbon_intensity").alias("carbon_max"),
         
         min("cfe_percentage").alias("cfe_min"),
-        percentile("cfe_percentage", 0.25).alias("cfe_25p"),
-        percentile("cfe_percentage", 0.5).alias("cfe_50p"),
-        percentile("cfe_percentage", 0.75).alias("cfe_75p"),
+        round(percentile("cfe_percentage", 0.25), 6).alias("cfe_25p"),
+        round(percentile("cfe_percentage", 0.5), 6).alias("cfe_50p"),
+        round(percentile("cfe_percentage", 0.75), 6).alias("cfe_75p"),
         max("cfe_percentage").alias("cfe_max")
     )
 
@@ -90,7 +81,7 @@ def main_query3(spark, input_it, input_se, output_path):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Query 3: statistiche su medie giornaliere per Italia e Svezia.")
+    parser = argparse.ArgumentParser(description="Query 3: statistiche sulle medie dei dati aggregati sulle 24h della giornata per Italia e Svezia.")
     parser.add_argument("--input_it", required=True, help="Percorso per file IT Parquet su HDFS")
     parser.add_argument("--input_se", required=True, help="Percorsi per file SE Parquet su HDFS")
     parser.add_argument("--output", required=True, help="Cartella di output su HDFS")

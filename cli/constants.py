@@ -30,9 +30,9 @@ CONFIG = {
     },
     "default_runs": 1,
     "query_descriptions": {
-        "1": "Media, massimo e minimo per IT e SE per ciascun anno dal 2021 al 2024 con dati aggregati su base annua",
-        "2": "Statistiche sulla coppia (anno, mese) e classifiche delle prime 5 coppie per IT",
-        "3": "Statistiche con dati aggregati su un periodo di 24 ore per IT e SE",
+        "1": "Media, massimo e minimo di dati aggregati su base annua, per ciascun anno dal 2021 al 2024 [per Italia e Svezia]",
+        "2": "Statistiche sulla coppia (anno, mese) e classifiche delle prime 5 coppie in ordine ascendente e decrescente [per Italia]",
+        "3": "Statistiche sulle medie dei dati aggregati sulle 24h della giornata [per Italia e Svezia]",
         "4": "Clustering di paesi con dati su base annua e per l'anno 2024 (solo DataFrame)"
     },
     "mode_labels": {
