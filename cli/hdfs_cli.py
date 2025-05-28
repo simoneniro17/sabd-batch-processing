@@ -1,6 +1,4 @@
 import subprocess
-import os
-import time
 from cli.printer import *
 
 

@@ -1,7 +1,7 @@
 import sys
 import argparse
 
-from cli.constants import CONFIG, Colors
+from cli.constants import Colors
 from cli.printer import *
 from cli.helper import *
 from cli.nifi_cli import *

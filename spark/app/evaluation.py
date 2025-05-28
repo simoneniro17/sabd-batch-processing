@@ -2,8 +2,7 @@ import os
 import statistics
 import time
 import inspect
-import csv
-from pyspark.sql import SparkSession
+
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, FloatType
 
 class Evaluation:

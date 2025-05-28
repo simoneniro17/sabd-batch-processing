@@ -4,4 +4,3 @@ hdfs/namenode
 hdfs/datanode1
 hdfs/datanode2
 spark/app/__pycache__
-spark/app/eval_results

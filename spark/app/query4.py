@@ -6,7 +6,6 @@ from pyspark.sql.functions import col, udf, abs, round
 from pyspark.sql.types import DoubleType
 import argparse
 import os
-import numpy as np
 
 from evaluation import Evaluation
 
