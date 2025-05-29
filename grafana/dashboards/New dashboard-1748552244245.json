@@ -1,0 +1,1366 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_YESOREYERAM-INFINITY-DATASOURCE",
+      "label": "yesoreyeram-infinity-datasource",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "yesoreyeram-infinity-datasource",
+      "pluginName": "Infinity"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "barchart",
+      "name": "Bar chart",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "bargauge",
+      "name": "Bar gauge",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "geomap",
+      "name": "Geomap",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "12.0.0+security-01"
+    },
+    {
+      "type": "datasource",
+      "id": "yesoreyeram-infinity-datasource",
+      "name": "Infinity",
+      "version": "3.2.2"
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "red",
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Carbon Intensity (gCO2eq/kWh)",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "text": {
+          "valueSize": 15
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xField": "year",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "12.0.0+security-01",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "country",
+              "text": "country",
+              "type": "string"
+            },
+            {
+              "selector": "year",
+              "text": "year",
+              "timestampFormat": "",
+              "type": "timestamp"
+            },
+            {
+              "selector": "carbon-avg",
+              "text": "carbon-avg",
+              "type": "number"
+            }
+          ],
+          "data": "year,country,carbon-avg,carbon-min,carbon-max,cfe-avg,cfe-min,cfe-max\r\n2021,IT,280.084245,121.24,439.06,46.305932,15.41,77.02\r\n2022,IT,321.617976,121.38,447.33,41.244127,13.93,77.44\r\n2023,IT,251.819465,74.44,429.93,51.596057,20.39,85.02\r\n2024,IT,207.299189,50.18,345.65,57.431828,20.9,90.26\r\n2021,SE,5.946325,1.5,55.07,98.962411,92.8,99.65\r\n2022,SE,3.875823,0.54,50.58,99.551723,94.16,99.97\r\n2023,SE,3.903308,0.31,51.57,99.525599,94.12,99.98\r\n2024,SE,3.726149,0.25,45.61,99.557928,94.27,99.98\r\n",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+          },
+          "filterExpression": "country==\"IT\"",
+          "filters": [],
+          "format": "dataframe",
+          "global_query_id": "",
+          "parser": "backend",
+          "refId": "IT",
+          "root_selector": "",
+          "source": "inline",
+          "type": "csv",
+          "url": "",
+          "url_options": {
+            "data": "",
+            "method": "GET"
+          }
+        },
+        {
+          "columns": [
+            {
+              "selector": "country",
+              "text": "country",
+              "type": "string"
+            },
+            {
+              "selector": "year",
+              "text": "year",
+              "timestampFormat": "",
+              "type": "timestamp"
+            },
+            {
+              "selector": "carbon-avg",
+              "text": "carbon-avg",
+              "type": "number"
+            }
+          ],
+          "data": "year,country,carbon-avg,carbon-min,carbon-max,cfe-avg,cfe-min,cfe-max\r\n2021,IT,280.084245,121.24,439.06,46.305932,15.41,77.02\r\n2022,IT,321.617976,121.38,447.33,41.244127,13.93,77.44\r\n2023,IT,251.819465,74.44,429.93,51.596057,20.39,85.02\r\n2024,IT,207.299189,50.18,345.65,57.431828,20.9,90.26\r\n2021,SE,5.946325,1.5,55.07,98.962411,92.8,99.65\r\n2022,SE,3.875823,0.54,50.58,99.551723,94.16,99.97\r\n2023,SE,3.903308,0.31,51.57,99.525599,94.12,99.98\r\n2024,SE,3.726149,0.25,45.61,99.557928,94.27,99.98\r\n",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+          },
+          "filterExpression": "country==\"SE\"",
+          "filters": [],
+          "format": "dataframe",
+          "global_query_id": "",
+          "hide": false,
+          "parser": "backend",
+          "refId": "SE",
+          "root_selector": "",
+          "source": "inline",
+          "type": "csv",
+          "url": "",
+          "url_options": {
+            "data": "",
+            "method": "GET"
+          }
+        }
+      ],
+      "title": "Q1 - IT vs SE - Intensità di Carbonio Media  (dati aggregati su base annua)",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "red",
+            "mode": "continuous-RdYlGr"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "CFE (%)",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "text": {
+          "valueSize": 15
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xField": "year",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "12.0.0+security-01",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "country",
+              "text": "country",
+              "type": "string"
+            },
+            {
+              "selector": "year",
+              "text": "year",
+              "timestampFormat": "",
+              "type": "timestamp"
+            },
+            {
+              "selector": "cfe-avg",
+              "text": "cfe-avg",
+              "type": "number"
+            }
+          ],
+          "data": "year,country,carbon-avg,carbon-min,carbon-max,cfe-avg,cfe-min,cfe-max\r\n2021,IT,280.084245,121.24,439.06,46.305932,15.41,77.02\r\n2022,IT,321.617976,121.38,447.33,41.244127,13.93,77.44\r\n2023,IT,251.819465,74.44,429.93,51.596057,20.39,85.02\r\n2024,IT,207.299189,50.18,345.65,57.431828,20.9,90.26\r\n2021,SE,5.946325,1.5,55.07,98.962411,92.8,99.65\r\n2022,SE,3.875823,0.54,50.58,99.551723,94.16,99.97\r\n2023,SE,3.903308,0.31,51.57,99.525599,94.12,99.98\r\n2024,SE,3.726149,0.25,45.61,99.557928,94.27,99.98\r\n",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+          },
+          "filterExpression": "country==\"IT\"",
+          "filters": [],
+          "format": "dataframe",
+          "global_query_id": "",
+          "parser": "backend",
+          "refId": "IT",
+          "root_selector": "",
+          "source": "inline",
+          "type": "csv",
+          "url": "",
+          "url_options": {
+            "data": "",
+            "method": "GET"
+          }
+        },
+        {
+          "columns": [
+            {
+              "selector": "country",
+              "text": "country",
+              "type": "string"
+            },
+            {
+              "selector": "year",
+              "text": "year",
+              "timestampFormat": "",
+              "type": "timestamp"
+            },
+            {
+              "selector": "cfe-avg",
+              "text": "cfe-avg",
+              "type": "number"
+            }
+          ],
+          "data": "year,country,carbon-avg,carbon-min,carbon-max,cfe-avg,cfe-min,cfe-max\r\n2021,IT,280.084245,121.24,439.06,46.305932,15.41,77.02\r\n2022,IT,321.617976,121.38,447.33,41.244127,13.93,77.44\r\n2023,IT,251.819465,74.44,429.93,51.596057,20.39,85.02\r\n2024,IT,207.299189,50.18,345.65,57.431828,20.9,90.26\r\n2021,SE,5.946325,1.5,55.07,98.962411,92.8,99.65\r\n2022,SE,3.875823,0.54,50.58,99.551723,94.16,99.97\r\n2023,SE,3.903308,0.31,51.57,99.525599,94.12,99.98\r\n2024,SE,3.726149,0.25,45.61,99.557928,94.27,99.98\r\n",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+          },
+          "filterExpression": "country==\"SE\"",
+          "filters": [],
+          "format": "dataframe",
+          "global_query_id": "",
+          "hide": false,
+          "parser": "backend",
+          "refId": "SE",
+          "root_selector": "",
+          "source": "inline",
+          "type": "csv",
+          "url": "",
+          "url_options": {
+            "data": "",
+            "method": "GET"
+          }
+        }
+      ],
+      "title": "Q1 - IT vs SE - CFE Media (dati aggregati su base annua)",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#808080",
+            "mode": "fixed"
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Lowest-Carbon carbon-avg"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Highest-Carbon carbon-avg"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "Lowest-Carbon carbon-avg"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 6,
+      "options": {
+        "displayMode": "gradient",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "values": true
+        },
+        "showUnfilled": false,
+        "sizing": "auto",
+        "text": {
+          "titleSize": 15
+        },
+        "valueMode": "text"
+      },
+      "pluginVersion": "12.0.0+security-01",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "year",
+              "text": "year",
+              "timestampFormat": "2006",
+              "type": "string"
+            },
+            {
+              "selector": "month",
+              "text": "month",
+              "type": "string"
+            },
+            {
+              "selector": "carbon-avg",
+              "text": "carbon-avg",
+              "type": "number"
+            },
+            {
+              "selector": "cfe-avg",
+              "text": "cfe-avg",
+              "type": "number"
+            },
+            {
+              "selector": "label",
+              "text": "label",
+              "type": "string"
+            }
+          ],
+          "computed_columns": [
+            {
+              "selector": "year+\"-\"+month",
+              "text": "date",
+              "type": "string"
+            }
+          ],
+          "data": "year,month,carbon-avg,cfe-avg,label\r\n2022,12,360.52,35.83832,highest_carbon\r\n2022,3,347.359073,35.822218,highest_carbon\r\n2021,11,346.728514,33.076681,highest_carbon\r\n2022,10,335.784745,39.167164,highest_carbon\r\n2022,2,330.489896,38.980595,highest_carbon\r\n2024,5,158.240887,68.989731,lowest_carbon\r\n2024,4,170.670889,66.253958,lowest_carbon\r\n2024,6,171.978792,65.487792,lowest_carbon\r\n2024,3,192.853871,60.919556,lowest_carbon\r\n2024,7,200.595995,57.939099,lowest_carbon\r\n2024,5,158.240887,68.989731,highest_cfe\r\n2024,4,170.670889,66.253958,highest_cfe\r\n2024,6,171.978792,65.487792,highest_cfe\r\n2024,3,192.853871,60.919556,highest_cfe\r\n2023,5,203.494489,59.877003,highest_cfe\r\n2021,11,346.728514,33.076681,lowest_cfe\r\n2022,3,347.359073,35.822218,lowest_cfe\r\n2022,12,360.52,35.83832,lowest_cfe\r\n2022,1,326.947876,36.603683,lowest_cfe\r\n2021,12,329.303508,37.868817,lowest_cfe\r\n",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+          },
+          "filterExpression": "label==\"highest_carbon\"",
+          "filters": [],
+          "format": "table",
+          "global_query_id": "",
+          "hide": false,
+          "parser": "backend",
+          "refId": "Highest-Carbon",
+          "root_selector": "",
+          "source": "inline",
+          "summarizeBy": "",
+          "type": "csv",
+          "url": "",
+          "url_options": {
+            "data": "",
+            "method": "GET"
+          }
+        },
+        {
+          "columns": [
+            {
+              "selector": "year",
+              "text": "year",
+              "timestampFormat": "2006",
+              "type": "string"
+            },
+            {
+              "selector": "month",
+              "text": "month",
+              "type": "string"
+            },
+            {
+              "selector": "carbon-avg",
+              "text": "carbon-avg",
+              "type": "number"
+            },
+            {
+              "selector": "cfe-avg",
+              "text": "cfe-avg",
+              "type": "number"
+            },
+            {
+              "selector": "label",
+              "text": "label",
+              "type": "string"
+            }
+          ],
+          "computed_columns": [
+            {
+              "selector": "year+\"-\"+month",
+              "text": "date",
+              "type": "string"
+            }
+          ],
+          "data": "year,month,carbon-avg,cfe-avg,label\r\n2022,12,360.52,35.83832,highest_carbon\r\n2022,3,347.359073,35.822218,highest_carbon\r\n2021,11,346.728514,33.076681,highest_carbon\r\n2022,10,335.784745,39.167164,highest_carbon\r\n2022,2,330.489896,38.980595,highest_carbon\r\n2024,5,158.240887,68.989731,lowest_carbon\r\n2024,4,170.670889,66.253958,lowest_carbon\r\n2024,6,171.978792,65.487792,lowest_carbon\r\n2024,3,192.853871,60.919556,lowest_carbon\r\n2024,7,200.595995,57.939099,lowest_carbon\r\n2024,5,158.240887,68.989731,highest_cfe\r\n2024,4,170.670889,66.253958,highest_cfe\r\n2024,6,171.978792,65.487792,highest_cfe\r\n2024,3,192.853871,60.919556,highest_cfe\r\n2023,5,203.494489,59.877003,highest_cfe\r\n2021,11,346.728514,33.076681,lowest_cfe\r\n2022,3,347.359073,35.822218,lowest_cfe\r\n2022,12,360.52,35.83832,lowest_cfe\r\n2022,1,326.947876,36.603683,lowest_cfe\r\n2021,12,329.303508,37.868817,lowest_cfe\r\n",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+          },
+          "filterExpression": "label==\"lowest_carbon\"",
+          "filters": [],
+          "format": "table",
+          "global_query_id": "",
+          "hide": false,
+          "parser": "backend",
+          "refId": "Lowest-Carbon",
+          "root_selector": "",
+          "source": "inline",
+          "summarizeBy": "",
+          "type": "csv",
+          "url": "",
+          "url_options": {
+            "data": "",
+            "method": "GET"
+          }
+        }
+      ],
+      "title": "Q2 - IT - Intensità di Carbonio Media (dati aggregati sulle coppie anno-mese; prime e ultime 5 coppie) [gCO2eq/kWh]",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Highest-Carbon date",
+                "Lowest-Carbon date",
+                "Highest-Carbon carbon-avg",
+                "Lowest-Carbon carbon-avg"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#808080",
+            "mode": "fixed"
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Highest-Cfe cfe-avg"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Lowest-Cfe cfe-avg"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "Lowest-Carbon carbon-avg"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 7,
+      "options": {
+        "displayMode": "gradient",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "values": true
+        },
+        "showUnfilled": false,
+        "sizing": "auto",
+        "text": {
+          "titleSize": 15
+        },
+        "valueMode": "text"
+      },
+      "pluginVersion": "12.0.0+security-01",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "year",
+              "text": "year",
+              "timestampFormat": "2006",
+              "type": "string"
+            },
+            {
+              "selector": "month",
+              "text": "month",
+              "type": "string"
+            },
+            {
+              "selector": "carbon-avg",
+              "text": "carbon-avg",
+              "type": "number"
+            },
+            {
+              "selector": "cfe-avg",
+              "text": "cfe-avg",
+              "type": "number"
+            },
+            {
+              "selector": "label",
+              "text": "label",
+              "type": "string"
+            }
+          ],
+          "computed_columns": [
+            {
+              "selector": "year+\"-\"+month",
+              "text": "date",
+              "type": "string"
+            }
+          ],
+          "data": "year,month,carbon-avg,cfe-avg,label\r\n2022,12,360.52,35.83832,highest_carbon\r\n2022,3,347.359073,35.822218,highest_carbon\r\n2021,11,346.728514,33.076681,highest_carbon\r\n2022,10,335.784745,39.167164,highest_carbon\r\n2022,2,330.489896,38.980595,highest_carbon\r\n2024,5,158.240887,68.989731,lowest_carbon\r\n2024,4,170.670889,66.253958,lowest_carbon\r\n2024,6,171.978792,65.487792,lowest_carbon\r\n2024,3,192.853871,60.919556,lowest_carbon\r\n2024,7,200.595995,57.939099,lowest_carbon\r\n2024,5,158.240887,68.989731,highest_cfe\r\n2024,4,170.670889,66.253958,highest_cfe\r\n2024,6,171.978792,65.487792,highest_cfe\r\n2024,3,192.853871,60.919556,highest_cfe\r\n2023,5,203.494489,59.877003,highest_cfe\r\n2021,11,346.728514,33.076681,lowest_cfe\r\n2022,3,347.359073,35.822218,lowest_cfe\r\n2022,12,360.52,35.83832,lowest_cfe\r\n2022,1,326.947876,36.603683,lowest_cfe\r\n2021,12,329.303508,37.868817,lowest_cfe\r\n",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+          },
+          "filterExpression": "label==\"highest_cfe\"",
+          "filters": [],
+          "format": "table",
+          "global_query_id": "",
+          "hide": false,
+          "parser": "backend",
+          "refId": "Highest-Cfe",
+          "root_selector": "",
+          "source": "inline",
+          "summarizeBy": "",
+          "type": "csv",
+          "url": "",
+          "url_options": {
+            "data": "",
+            "method": "GET"
+          }
+        },
+        {
+          "columns": [
+            {
+              "selector": "year",
+              "text": "year",
+              "timestampFormat": "2006",
+              "type": "string"
+            },
+            {
+              "selector": "month",
+              "text": "month",
+              "type": "string"
+            },
+            {
+              "selector": "carbon-avg",
+              "text": "carbon-avg",
+              "type": "number"
+            },
+            {
+              "selector": "cfe-avg",
+              "text": "cfe-avg",
+              "type": "number"
+            },
+            {
+              "selector": "label",
+              "text": "label",
+              "type": "string"
+            }
+          ],
+          "computed_columns": [
+            {
+              "selector": "year+\"-\"+month",
+              "text": "date",
+              "type": "string"
+            }
+          ],
+          "data": "year,month,carbon-avg,cfe-avg,label\r\n2022,12,360.52,35.83832,highest_carbon\r\n2022,3,347.359073,35.822218,highest_carbon\r\n2021,11,346.728514,33.076681,highest_carbon\r\n2022,10,335.784745,39.167164,highest_carbon\r\n2022,2,330.489896,38.980595,highest_carbon\r\n2024,5,158.240887,68.989731,lowest_carbon\r\n2024,4,170.670889,66.253958,lowest_carbon\r\n2024,6,171.978792,65.487792,lowest_carbon\r\n2024,3,192.853871,60.919556,lowest_carbon\r\n2024,7,200.595995,57.939099,lowest_carbon\r\n2024,5,158.240887,68.989731,highest_cfe\r\n2024,4,170.670889,66.253958,highest_cfe\r\n2024,6,171.978792,65.487792,highest_cfe\r\n2024,3,192.853871,60.919556,highest_cfe\r\n2023,5,203.494489,59.877003,highest_cfe\r\n2021,11,346.728514,33.076681,lowest_cfe\r\n2022,3,347.359073,35.822218,lowest_cfe\r\n2022,12,360.52,35.83832,lowest_cfe\r\n2022,1,326.947876,36.603683,lowest_cfe\r\n2021,12,329.303508,37.868817,lowest_cfe\r\n",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+          },
+          "filterExpression": "label==\"lowest_cfe\"",
+          "filters": [],
+          "format": "table",
+          "global_query_id": "",
+          "hide": false,
+          "parser": "backend",
+          "refId": "Lowest-Cfe",
+          "root_selector": "",
+          "source": "inline",
+          "summarizeBy": "",
+          "type": "csv",
+          "url": "",
+          "url_options": {
+            "data": "",
+            "method": "GET"
+          }
+        }
+      ],
+      "title": "Q2 - IT - CFE Media (dati aggregati sulle coppie anno-mese; prime e ultime 5 coppie) [%]",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Lowest-Cfe cfe-avg",
+                "Highest-Cfe date",
+                "Lowest-Cfe date",
+                "Highest-Cfe cfe-avg"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Carbon Intensity (gCO2eq/kWh)",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 16
+      },
+      "id": 3,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xField": "country",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "12.0.0+security-01",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "country",
+              "text": "country",
+              "type": "string"
+            },
+            {
+              "selector": "metric",
+              "text": "metric",
+              "timestampFormat": "",
+              "type": "string"
+            },
+            {
+              "selector": "min",
+              "text": "min",
+              "type": "number"
+            },
+            {
+              "selector": "25-perc",
+              "text": "25-perc",
+              "type": "number"
+            },
+            {
+              "selector": "50-perc",
+              "text": "50-perc",
+              "type": "number"
+            },
+            {
+              "selector": "75-perc",
+              "text": "75-perc",
+              "type": "number"
+            },
+            {
+              "selector": "max",
+              "text": "max",
+              "type": "number"
+            }
+          ],
+          "computed_columns": [],
+          "data": "country,metric,min,25-perc,50-perc,75-perc,max\r\nIT,carbon_intensity,219.029329,241.060318,279.202916,285.008504,296.746208\r\nIT,cfe_percentage,42.203176,45.728436,47.60011,53.149181,57.423648\r\nSE,carbon_intensity,3.150062,3.765761,4.293638,4.876138,5.94718\r\nSE,cfe_percentage,99.213936,99.338007,99.411328,99.472495,99.540979\r\n",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+          },
+          "filterExpression": "metric==\"carbon_intensity\"",
+          "filters": [],
+          "format": "dataframe",
+          "global_query_id": "",
+          "parser": "backend",
+          "refId": "CI",
+          "root_selector": "",
+          "source": "inline",
+          "summarizeBy": "",
+          "type": "csv",
+          "url": "",
+          "url_options": {
+            "data": "",
+            "method": "GET"
+          }
+        }
+      ],
+      "title": "Q3 - IT vs SE - Intensità di Carbonio Media (dati aggregati sulle 24 fasce giornaliere)",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "CFE (%)",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
+      "id": 4,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "always",
+        "stacking": "none",
+        "text": {
+          "valueSize": 15
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xField": "country",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "12.0.0+security-01",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "country",
+              "text": "country",
+              "type": "string"
+            },
+            {
+              "selector": "metric",
+              "text": "metric",
+              "timestampFormat": "",
+              "type": "string"
+            },
+            {
+              "selector": "min",
+              "text": "min",
+              "type": "number"
+            },
+            {
+              "selector": "25-perc",
+              "text": "25-perc",
+              "type": "number"
+            },
+            {
+              "selector": "50-perc",
+              "text": "50-perc",
+              "type": "number"
+            },
+            {
+              "selector": "75-perc",
+              "text": "75-perc",
+              "type": "number"
+            },
+            {
+              "selector": "max",
+              "text": "max",
+              "type": "number"
+            }
+          ],
+          "computed_columns": [],
+          "data": "country,metric,min,25-perc,50-perc,75-perc,max\r\nIT,carbon_intensity,219.029329,241.060318,279.202916,285.008504,296.746208\r\nIT,cfe_percentage,42.203176,45.728436,47.60011,53.149181,57.423648\r\nSE,carbon_intensity,3.150062,3.765761,4.293638,4.876138,5.94718\r\nSE,cfe_percentage,99.213936,99.338007,99.411328,99.472495,99.540979\r\n",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+          },
+          "filterExpression": "metric==\"cfe_percentage\"",
+          "filters": [],
+          "format": "dataframe",
+          "global_query_id": "",
+          "parser": "backend",
+          "refId": "CI",
+          "root_selector": "",
+          "source": "inline",
+          "summarizeBy": "",
+          "type": "csv",
+          "url": "",
+          "url_options": {
+            "data": "",
+            "method": "GET"
+          }
+        }
+      ],
+      "title": "Q3 - IT vs SE - CFE Media (dati aggregati sulle 24 fasce giornaliere)",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 24
+      },
+      "id": 5,
+      "options": {
+        "basemap": {
+          "config": {},
+          "name": "Layer 0",
+          "type": "default"
+        },
+        "controls": {
+          "mouseWheelZoom": true,
+          "showAttribution": true,
+          "showDebug": false,
+          "showMeasure": false,
+          "showScale": false,
+          "showZoom": true
+        },
+        "layers": [
+          {
+            "config": {
+              "showLegend": false,
+              "style": {
+                "color": {
+                  "field": "carbon-intensity",
+                  "fixed": "dark-green"
+                },
+                "opacity": 0.5,
+                "rotation": {
+                  "fixed": 0,
+                  "max": 360,
+                  "min": -360,
+                  "mode": "mod"
+                },
+                "size": {
+                  "field": "carbon-intensity",
+                  "fixed": 50,
+                  "max": 100,
+                  "min": 20
+                },
+                "symbol": {
+                  "fixed": "img/icons/marker/circle.svg",
+                  "mode": "fixed"
+                },
+                "symbolAlign": {
+                  "horizontal": "center",
+                  "vertical": "center"
+                },
+                "text": {
+                  "field": "country",
+                  "fixed": "",
+                  "mode": "field"
+                },
+                "textConfig": {
+                  "fontSize": 20,
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "textAlign": "center",
+                  "textBaseline": "middle"
+                }
+              }
+            },
+            "filterData": {
+              "id": "byRefId",
+              "options": "Clustering"
+            },
+            "location": {
+              "lookup": "country",
+              "mode": "lookup"
+            },
+            "name": "Layer 1",
+            "tooltip": true,
+            "type": "markers"
+          }
+        ],
+        "tooltip": {
+          "mode": "details"
+        },
+        "view": {
+          "allLayers": true,
+          "id": "fit",
+          "lastOnly": false,
+          "lat": 0,
+          "layer": "Layer 1",
+          "lon": 0,
+          "zoom": 15
+        }
+      },
+      "pluginVersion": "12.0.0+security-01",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "country",
+              "text": "country",
+              "type": "string"
+            },
+            {
+              "selector": "carbon-intensity",
+              "text": "carbon-intensity",
+              "timestampFormat": "",
+              "type": "number"
+            },
+            {
+              "selector": "cluster_id",
+              "text": "cluster_id",
+              "type": "number"
+            },
+            {
+              "selector": "cluster_center",
+              "text": "cluster_center",
+              "type": "number"
+            },
+            {
+              "selector": "distance_from_center",
+              "text": "distance_from_center",
+              "type": "number"
+            }
+          ],
+          "computed_columns": [],
+          "data": "country,carbon-intensity,cluster_id,cluster_center,distance_from_center\r\nIndonesia,567.04,0,617.91,50.87\r\nMainland India,605.69,0,617.91,12.22\r\nPoland,643.02,0,617.91,25.11\r\nSouth Africa,655.89,0,617.91,37.98\r\nBrazil,57.45,1,25.12,32.33\r\nFinland,43.35,1,25.12,18.23\r\nFrance,18.4,1,25.12,6.72\r\nNorway,8.78,1,25.12,16.34\r\nSweden,4.09,1,25.12,21.03\r\nSwitzerland,18.63,1,25.12,6.49\r\nJapan,382.18,2,369.84,12.34\r\nSingapore,366.37,2,369.84,3.47\r\nSouth Korea,360.97,2,369.84,8.87\r\nArgentina,302.79,3,290.29,12.5\r\nGermany,276.61,3,290.29,13.68\r\nMexico,296.31,3,290.29,6.02\r\nUnited Arab Emirates,285.44,3,290.29,4.85\r\nAustralia,435.48,4,451.78,16.3\r\nChina,480.48,4,451.78,28.7\r\nCzechia,439.39,4,451.78,12.39\r\nAustria,100.1,5,98.7,1.4\r\nBelgium,109.93,5,98.7,11.23\r\nCanada,87.85,5,98.7,10.85\r\nGreat Britain,106.68,5,98.7,7.98\r\nSpain,88.95,5,98.7,9.75\r\nItaly,210.41,6,209.07,1.34\r\nSlovenia,207.72,6,209.07,1.35\r\nEgypt,342.83,7,332.72,10.11\r\nIreland,322.48,7,332.72,10.24\r\nUSA,332.84,7,332.72,0.12\r\n",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+          },
+          "filterExpression": "",
+          "filters": [],
+          "format": "dataframe",
+          "global_query_id": "",
+          "parser": "backend",
+          "refId": "Clustering",
+          "root_selector": "",
+          "source": "inline",
+          "summarizeBy": "",
+          "type": "csv",
+          "url": "",
+          "url_options": {
+            "data": "",
+            "method": "GET"
+          }
+        }
+      ],
+      "title": "Q4 - Analisi Clustering K-Means (Intensità di Carbonio, dati su base annua, 2024)",
+      "type": "geomap"
+    }
+  ],
+  "schemaVersion": 41,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-5m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "New dashboard",
+  "uid": "5892f45a-545c-4e1f-9716-54b234dd9e82",
+  "version": 14,
+  "weekStart": ""
+}
