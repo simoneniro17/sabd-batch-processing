@@ -1158,6 +1158,7 @@
             },
             "show": "points"
           },
+          "fieldMinMax": false,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -1204,19 +1205,19 @@
             "size": {
               "matcher": {
                 "id": "byName",
-                "options": "cluster_center"
+                "options": "A cluster_center"
               }
             },
             "x": {
               "matcher": {
                 "id": "byName",
-                "options": "carbon-intensity"
+                "options": "carbon_intensity(gCO2eq/kWh)"
               }
             },
             "y": {
               "matcher": {
                 "id": "byName",
-                "options": "distance_from_center"
+                "options": "distance_from_center(gCO2eq/kWh)"
               }
             }
           },
@@ -1233,19 +1234,19 @@
             "size": {
               "matcher": {
                 "id": "byName",
-                "options": "Cluster 1 cluster_center"
+                "options": "B cluster_center"
               }
             },
             "x": {
               "matcher": {
                 "id": "byName",
-                "options": "Cluster 1 carbon-intensity"
+                "options": "carbon_intensity(gCO2eq/kWh)"
               }
             },
             "y": {
               "matcher": {
                 "id": "byName",
-                "options": "Cluster 1 distance_from_center"
+                "options": "distance_from_center(gCO2eq/kWh)"
               }
             }
           },
@@ -1262,19 +1263,19 @@
             "size": {
               "matcher": {
                 "id": "byName",
-                "options": "Cluster 2 cluster_center"
+                "options": "C cluster_center"
               }
             },
             "x": {
               "matcher": {
                 "id": "byName",
-                "options": "Cluster 2 carbon-intensity"
+                "options": "carbon_intensity(gCO2eq/kWh)"
               }
             },
             "y": {
               "matcher": {
                 "id": "byName",
-                "options": "Cluster 2 distance_from_center"
+                "options": "distance_from_center(gCO2eq/kWh)"
               }
             }
           },
@@ -1291,19 +1292,19 @@
             "size": {
               "matcher": {
                 "id": "byName",
-                "options": "Cluster 3 cluster_center"
+                "options": "D cluster_center"
               }
             },
             "x": {
               "matcher": {
                 "id": "byName",
-                "options": "Cluster 3 carbon-intensity"
+                "options": "carbon_intensity(gCO2eq/kWh)"
               }
             },
             "y": {
               "matcher": {
                 "id": "byName",
-                "options": "Cluster 3 distance_from_center"
+                "options": "distance_from_center(gCO2eq/kWh)"
               }
             }
           },
@@ -1320,19 +1321,19 @@
             "size": {
               "matcher": {
                 "id": "byName",
-                "options": "Cluster 4 cluster_center"
+                "options": "E cluster_center"
               }
             },
             "x": {
               "matcher": {
                 "id": "byName",
-                "options": "Cluster 4 carbon-intensity"
+                "options": "carbon_intensity(gCO2eq/kWh)"
               }
             },
             "y": {
               "matcher": {
                 "id": "byName",
-                "options": "Cluster 4 distance_from_center"
+                "options": "distance_from_center(gCO2eq/kWh)"
               }
             }
           },
@@ -1349,19 +1350,19 @@
             "size": {
               "matcher": {
                 "id": "byName",
-                "options": "Cluster 5 cluster_center"
+                "options": "F cluster_center"
               }
             },
             "x": {
               "matcher": {
                 "id": "byName",
-                "options": "Cluster 5 carbon-intensity"
+                "options": "carbon_intensity(gCO2eq/kWh)"
               }
             },
             "y": {
               "matcher": {
                 "id": "byName",
-                "options": "Cluster 5 distance_from_center"
+                "options": "distance_from_center(gCO2eq/kWh)"
               }
             }
           },
@@ -1378,19 +1379,19 @@
             "size": {
               "matcher": {
                 "id": "byName",
-                "options": "Cluster 6 cluster_center"
+                "options": "G cluster_center"
               }
             },
             "x": {
               "matcher": {
                 "id": "byName",
-                "options": "Cluster 6 carbon-intensity"
+                "options": "carbon_intensity(gCO2eq/kWh)"
               }
             },
             "y": {
               "matcher": {
                 "id": "byName",
-                "options": "Cluster 6 distance_from_center"
+                "options": "distance_from_center(gCO2eq/kWh)"
               }
             }
           },
@@ -1407,19 +1408,19 @@
             "size": {
               "matcher": {
                 "id": "byName",
-                "options": "Cluster 7 cluster_center"
+                "options": "H cluster_center"
               }
             },
             "x": {
               "matcher": {
                 "id": "byName",
-                "options": "Cluster 7 carbon-intensity"
+                "options": "carbon_intensity(gCO2eq/kWh)"
               }
             },
             "y": {
               "matcher": {
                 "id": "byName",
-                "options": "Cluster 7 distance_from_center"
+                "options": "distance_from_center(gCO2eq/kWh)"
               }
             }
           }
@@ -1465,13 +1466,13 @@
             "type": "yesoreyeram-infinity-datasource",
             "uid": "P93246661838A09EA"
           },
-          "filterExpression": "cluster_id==0",
+          "filterExpression": "",
           "filters": [],
           "format": "dataframe",
           "global_query_id": "",
           "hide": false,
           "parser": "backend",
-          "refId": "Cluster 0",
+          "refId": "A",
           "root_selector": "",
           "source": "inline",
           "type": "csv",
@@ -1521,7 +1522,7 @@
           "global_query_id": "",
           "hide": false,
           "parser": "backend",
-          "refId": "Cluster 1",
+          "refId": "B",
           "root_selector": "",
           "source": "inline",
           "type": "csv",
@@ -1571,7 +1572,7 @@
           "global_query_id": "",
           "hide": false,
           "parser": "backend",
-          "refId": "Cluster 2",
+          "refId": "C",
           "root_selector": "",
           "source": "inline",
           "type": "csv",
@@ -1621,7 +1622,7 @@
           "global_query_id": "",
           "hide": false,
           "parser": "backend",
-          "refId": "Cluster 3",
+          "refId": "D",
           "root_selector": "",
           "source": "inline",
           "type": "csv",
@@ -1671,7 +1672,7 @@
           "global_query_id": "",
           "hide": false,
           "parser": "backend",
-          "refId": "Cluster 4",
+          "refId": "E",
           "root_selector": "",
           "source": "inline",
           "type": "csv",
@@ -1721,7 +1722,7 @@
           "global_query_id": "",
           "hide": false,
           "parser": "backend",
-          "refId": "Cluster 5",
+          "refId": "F",
           "root_selector": "",
           "source": "inline",
           "type": "csv",
@@ -1771,7 +1772,7 @@
           "global_query_id": "",
           "hide": false,
           "parser": "backend",
-          "refId": "Cluster 6",
+          "refId": "G",
           "root_selector": "",
           "source": "inline",
           "type": "csv",
@@ -1821,7 +1822,7 @@
           "global_query_id": "",
           "hide": false,
           "parser": "backend",
-          "refId": "Cluster 7",
+          "refId": "H",
           "root_selector": "",
           "source": "inline",
           "type": "csv",
@@ -1834,6 +1835,22 @@
         }
       ],
       "title": "Q4 - Analisi Clustering K-Means (Intensità di Carbonio, dati su base annua, 2024)",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "carbon-intensity",
+            "renamePattern": "carbon_intensity(gCO2eq/kWh)"
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "distance_from_center",
+            "renamePattern": "distance_from_center(gCO2eq/kWh)"
+          }
+        }
+      ],
       "type": "xychart"
     },
     {
