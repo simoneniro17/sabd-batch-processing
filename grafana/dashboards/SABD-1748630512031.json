@@ -30,172 +30,6 @@
         "defaults": {
           "color": {
             "fixedColor": "red",
-            "mode": "continuous-RdYlGr"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "CFE (%)",
-            "axisPlacement": "auto",
-            "fillOpacity": 80,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineWidth": 1,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 0
-      },
-      "id": 1,
-      "options": {
-        "barRadius": 0,
-        "barWidth": 0.97,
-        "fullHighlight": false,
-        "groupWidth": 0.7,
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "orientation": "auto",
-        "showValue": "auto",
-        "stacking": "none",
-        "text": {
-          "valueSize": 15
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        },
-        "xField": "year",
-        "xTickLabelRotation": 0,
-        "xTickLabelSpacing": 0
-      },
-      "pluginVersion": "12.0.0",
-      "targets": [
-        {
-          "columns": [
-            {
-              "selector": "country",
-              "text": "country",
-              "type": "string"
-            },
-            {
-              "selector": "year",
-              "text": "year",
-              "timestampFormat": "",
-              "type": "timestamp"
-            },
-            {
-              "selector": "cfe-avg",
-              "text": "cfe-avg",
-              "type": "number"
-            }
-          ],
-          "data": "year,country,carbon-avg,carbon-min,carbon-max,cfe-avg,cfe-min,cfe-max\r\n2021,IT,280.084245,121.24,439.06,46.305932,15.41,77.02\r\n2022,IT,321.617976,121.38,447.33,41.244127,13.93,77.44\r\n2023,IT,251.819465,74.44,429.93,51.596057,20.39,85.02\r\n2024,IT,207.299189,50.18,345.65,57.431828,20.9,90.26\r\n2021,SE,5.946325,1.5,55.07,98.962411,92.8,99.65\r\n2022,SE,3.875823,0.54,50.58,99.551723,94.16,99.97\r\n2023,SE,3.903308,0.31,51.57,99.525599,94.12,99.98\r\n2024,SE,3.726149,0.25,45.61,99.557928,94.27,99.98\r\n",
-          "datasource": {
-            "type": "yesoreyeram-infinity-datasource",
-            "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
-          },
-          "filterExpression": "country==\"IT\"",
-          "filters": [],
-          "format": "dataframe",
-          "global_query_id": "",
-          "parser": "backend",
-          "refId": "IT",
-          "root_selector": "",
-          "source": "inline",
-          "type": "csv",
-          "url": "",
-          "url_options": {
-            "data": "",
-            "method": "GET"
-          }
-        },
-        {
-          "columns": [
-            {
-              "selector": "country",
-              "text": "country",
-              "type": "string"
-            },
-            {
-              "selector": "year",
-              "text": "year",
-              "timestampFormat": "",
-              "type": "timestamp"
-            },
-            {
-              "selector": "cfe-avg",
-              "text": "cfe-avg",
-              "type": "number"
-            }
-          ],
-          "data": "year,country,carbon-avg,carbon-min,carbon-max,cfe-avg,cfe-min,cfe-max\r\n2021,IT,280.084245,121.24,439.06,46.305932,15.41,77.02\r\n2022,IT,321.617976,121.38,447.33,41.244127,13.93,77.44\r\n2023,IT,251.819465,74.44,429.93,51.596057,20.39,85.02\r\n2024,IT,207.299189,50.18,345.65,57.431828,20.9,90.26\r\n2021,SE,5.946325,1.5,55.07,98.962411,92.8,99.65\r\n2022,SE,3.875823,0.54,50.58,99.551723,94.16,99.97\r\n2023,SE,3.903308,0.31,51.57,99.525599,94.12,99.98\r\n2024,SE,3.726149,0.25,45.61,99.557928,94.27,99.98\r\n",
-          "datasource": {
-            "type": "yesoreyeram-infinity-datasource",
-            "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
-          },
-          "filterExpression": "country==\"SE\"",
-          "filters": [],
-          "format": "dataframe",
-          "global_query_id": "",
-          "hide": false,
-          "parser": "backend",
-          "refId": "SE",
-          "root_selector": "",
-          "source": "inline",
-          "type": "csv",
-          "url": "",
-          "url_options": {
-            "data": "",
-            "method": "GET"
-          }
-        }
-      ],
-      "title": "Q1 - IT vs SE - CFE Media (dati aggregati su base annua)",
-      "type": "barchart"
-    },
-    {
-      "datasource": {
-        "type": "yesoreyeram-infinity-datasource",
-        "uid": "P93246661838A09EA"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "red",
             "mode": "continuous-GrYlRd"
           },
           "custom": {
@@ -238,7 +72,7 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 12,
+        "x": 0,
         "y": 0
       },
       "id": 2,
@@ -361,6 +195,172 @@
       "fieldConfig": {
         "defaults": {
           "color": {
+            "fixedColor": "red",
+            "mode": "continuous-RdYlGr"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "CFE (%)",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "text": {
+          "valueSize": 15
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xField": "year",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "country",
+              "text": "country",
+              "type": "string"
+            },
+            {
+              "selector": "year",
+              "text": "year",
+              "timestampFormat": "",
+              "type": "timestamp"
+            },
+            {
+              "selector": "cfe-avg",
+              "text": "cfe-avg",
+              "type": "number"
+            }
+          ],
+          "data": "year,country,carbon-avg,carbon-min,carbon-max,cfe-avg,cfe-min,cfe-max\r\n2021,IT,280.084245,121.24,439.06,46.305932,15.41,77.02\r\n2022,IT,321.617976,121.38,447.33,41.244127,13.93,77.44\r\n2023,IT,251.819465,74.44,429.93,51.596057,20.39,85.02\r\n2024,IT,207.299189,50.18,345.65,57.431828,20.9,90.26\r\n2021,SE,5.946325,1.5,55.07,98.962411,92.8,99.65\r\n2022,SE,3.875823,0.54,50.58,99.551723,94.16,99.97\r\n2023,SE,3.903308,0.31,51.57,99.525599,94.12,99.98\r\n2024,SE,3.726149,0.25,45.61,99.557928,94.27,99.98\r\n",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+          },
+          "filterExpression": "country==\"IT\"",
+          "filters": [],
+          "format": "dataframe",
+          "global_query_id": "",
+          "parser": "backend",
+          "refId": "IT",
+          "root_selector": "",
+          "source": "inline",
+          "type": "csv",
+          "url": "",
+          "url_options": {
+            "data": "",
+            "method": "GET"
+          }
+        },
+        {
+          "columns": [
+            {
+              "selector": "country",
+              "text": "country",
+              "type": "string"
+            },
+            {
+              "selector": "year",
+              "text": "year",
+              "timestampFormat": "",
+              "type": "timestamp"
+            },
+            {
+              "selector": "cfe-avg",
+              "text": "cfe-avg",
+              "type": "number"
+            }
+          ],
+          "data": "year,country,carbon-avg,carbon-min,carbon-max,cfe-avg,cfe-min,cfe-max\r\n2021,IT,280.084245,121.24,439.06,46.305932,15.41,77.02\r\n2022,IT,321.617976,121.38,447.33,41.244127,13.93,77.44\r\n2023,IT,251.819465,74.44,429.93,51.596057,20.39,85.02\r\n2024,IT,207.299189,50.18,345.65,57.431828,20.9,90.26\r\n2021,SE,5.946325,1.5,55.07,98.962411,92.8,99.65\r\n2022,SE,3.875823,0.54,50.58,99.551723,94.16,99.97\r\n2023,SE,3.903308,0.31,51.57,99.525599,94.12,99.98\r\n2024,SE,3.726149,0.25,45.61,99.557928,94.27,99.98\r\n",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+          },
+          "filterExpression": "country==\"SE\"",
+          "filters": [],
+          "format": "dataframe",
+          "global_query_id": "",
+          "hide": false,
+          "parser": "backend",
+          "refId": "SE",
+          "root_selector": "",
+          "source": "inline",
+          "type": "csv",
+          "url": "",
+          "url_options": {
+            "data": "",
+            "method": "GET"
+          }
+        }
+      ],
+      "title": "Q1 - IT vs SE - CFE Media (dati aggregati su base annua)",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "P93246661838A09EA"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
             "fixedColor": "#808080",
             "mode": "fixed"
           },
@@ -452,7 +452,8 @@
         "showUnfilled": false,
         "sizing": "auto",
         "text": {
-          "titleSize": 15
+          "titleSize": 13,
+          "valueSize": 13
         },
         "valueMode": "text"
       },
@@ -692,7 +693,8 @@
         "showUnfilled": false,
         "sizing": "auto",
         "text": {
-          "titleSize": 15
+          "titleSize": 13,
+          "valueSize": 13
         },
         "valueMode": "text"
       },
@@ -1137,7 +1139,7 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisBorderShow": false,
+            "axisBorderShow": true,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -1200,7 +1202,7 @@
               }
             },
             "name": {
-              "fixed": "Cluster_0"
+              "fixed": "Cluster 0"
             },
             "size": {
               "matcher": {
@@ -1229,7 +1231,7 @@
               }
             },
             "name": {
-              "fixed": "Cluster_1"
+              "fixed": "Cluster 1"
             },
             "size": {
               "matcher": {
@@ -1258,7 +1260,7 @@
               }
             },
             "name": {
-              "fixed": "Cluster_2"
+              "fixed": "Cluster 2"
             },
             "size": {
               "matcher": {
@@ -1287,7 +1289,7 @@
               }
             },
             "name": {
-              "fixed": "Cluster_3"
+              "fixed": "Cluster 3"
             },
             "size": {
               "matcher": {
@@ -1316,7 +1318,7 @@
               }
             },
             "name": {
-              "fixed": "Cluster_4"
+              "fixed": "Cluster 4"
             },
             "size": {
               "matcher": {
@@ -1345,7 +1347,7 @@
               }
             },
             "name": {
-              "fixed": "Cluster_5"
+              "fixed": "Cluster 5"
             },
             "size": {
               "matcher": {
@@ -1374,7 +1376,7 @@
               }
             },
             "name": {
-              "fixed": "Cluster_6"
+              "fixed": "Cluster 6"
             },
             "size": {
               "matcher": {
