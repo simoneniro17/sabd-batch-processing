@@ -1,47 +1,4 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_YESOREYERAM-INFINITY-DATASOURCE",
-      "label": "yesoreyeram-infinity-datasource",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "yesoreyeram-infinity-datasource",
-      "pluginName": "Infinity"
-    }
-  ],
-  "__elements": {},
-  "__requires": [
-    {
-      "type": "panel",
-      "id": "barchart",
-      "name": "Bar chart",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "bargauge",
-      "name": "Bar gauge",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "geomap",
-      "name": "Geomap",
-      "version": ""
-    },
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "12.0.0+security-01"
-    },
-    {
-      "type": "datasource",
-      "id": "yesoreyeram-infinity-datasource",
-      "name": "Infinity",
-      "version": "3.2.2"
-    }
-  ],
   "annotations": {
     "list": [
       {
@@ -61,179 +18,13 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": null,
+  "id": 2,
   "links": [],
   "panels": [
     {
       "datasource": {
         "type": "yesoreyeram-infinity-datasource",
-        "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "red",
-            "mode": "continuous-GrYlRd"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "Carbon Intensity (gCO2eq/kWh)",
-            "axisPlacement": "auto",
-            "fillOpacity": 80,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineWidth": 1,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 0
-      },
-      "id": 2,
-      "options": {
-        "barRadius": 0,
-        "barWidth": 0.97,
-        "fullHighlight": false,
-        "groupWidth": 0.7,
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "orientation": "auto",
-        "showValue": "auto",
-        "stacking": "none",
-        "text": {
-          "valueSize": 15
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        },
-        "xField": "year",
-        "xTickLabelRotation": 0,
-        "xTickLabelSpacing": 0
-      },
-      "pluginVersion": "12.0.0+security-01",
-      "targets": [
-        {
-          "columns": [
-            {
-              "selector": "country",
-              "text": "country",
-              "type": "string"
-            },
-            {
-              "selector": "year",
-              "text": "year",
-              "timestampFormat": "",
-              "type": "timestamp"
-            },
-            {
-              "selector": "carbon-avg",
-              "text": "carbon-avg",
-              "type": "number"
-            }
-          ],
-          "data": "year,country,carbon-avg,carbon-min,carbon-max,cfe-avg,cfe-min,cfe-max\r\n2021,IT,280.084245,121.24,439.06,46.305932,15.41,77.02\r\n2022,IT,321.617976,121.38,447.33,41.244127,13.93,77.44\r\n2023,IT,251.819465,74.44,429.93,51.596057,20.39,85.02\r\n2024,IT,207.299189,50.18,345.65,57.431828,20.9,90.26\r\n2021,SE,5.946325,1.5,55.07,98.962411,92.8,99.65\r\n2022,SE,3.875823,0.54,50.58,99.551723,94.16,99.97\r\n2023,SE,3.903308,0.31,51.57,99.525599,94.12,99.98\r\n2024,SE,3.726149,0.25,45.61,99.557928,94.27,99.98\r\n",
-          "datasource": {
-            "type": "yesoreyeram-infinity-datasource",
-            "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
-          },
-          "filterExpression": "country==\"IT\"",
-          "filters": [],
-          "format": "dataframe",
-          "global_query_id": "",
-          "parser": "backend",
-          "refId": "IT",
-          "root_selector": "",
-          "source": "inline",
-          "type": "csv",
-          "url": "",
-          "url_options": {
-            "data": "",
-            "method": "GET"
-          }
-        },
-        {
-          "columns": [
-            {
-              "selector": "country",
-              "text": "country",
-              "type": "string"
-            },
-            {
-              "selector": "year",
-              "text": "year",
-              "timestampFormat": "",
-              "type": "timestamp"
-            },
-            {
-              "selector": "carbon-avg",
-              "text": "carbon-avg",
-              "type": "number"
-            }
-          ],
-          "data": "year,country,carbon-avg,carbon-min,carbon-max,cfe-avg,cfe-min,cfe-max\r\n2021,IT,280.084245,121.24,439.06,46.305932,15.41,77.02\r\n2022,IT,321.617976,121.38,447.33,41.244127,13.93,77.44\r\n2023,IT,251.819465,74.44,429.93,51.596057,20.39,85.02\r\n2024,IT,207.299189,50.18,345.65,57.431828,20.9,90.26\r\n2021,SE,5.946325,1.5,55.07,98.962411,92.8,99.65\r\n2022,SE,3.875823,0.54,50.58,99.551723,94.16,99.97\r\n2023,SE,3.903308,0.31,51.57,99.525599,94.12,99.98\r\n2024,SE,3.726149,0.25,45.61,99.557928,94.27,99.98\r\n",
-          "datasource": {
-            "type": "yesoreyeram-infinity-datasource",
-            "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
-          },
-          "filterExpression": "country==\"SE\"",
-          "filters": [],
-          "format": "dataframe",
-          "global_query_id": "",
-          "hide": false,
-          "parser": "backend",
-          "refId": "SE",
-          "root_selector": "",
-          "source": "inline",
-          "type": "csv",
-          "url": "",
-          "url_options": {
-            "data": "",
-            "method": "GET"
-          }
-        }
-      ],
-      "title": "Q1 - IT vs SE - Intensità di Carbonio Media  (dati aggregati su base annua)",
-      "type": "barchart"
-    },
-    {
-      "datasource": {
-        "type": "yesoreyeram-infinity-datasource",
-        "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+        "uid": "P93246661838A09EA"
       },
       "fieldConfig": {
         "defaults": {
@@ -281,7 +72,7 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 12,
+        "x": 0,
         "y": 0
       },
       "id": 1,
@@ -311,7 +102,7 @@
         "xTickLabelRotation": 0,
         "xTickLabelSpacing": 0
       },
-      "pluginVersion": "12.0.0+security-01",
+      "pluginVersion": "12.0.0",
       "targets": [
         {
           "columns": [
@@ -399,7 +190,173 @@
     {
       "datasource": {
         "type": "yesoreyeram-infinity-datasource",
-        "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+        "uid": "P93246661838A09EA"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "red",
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Carbon Intensity (gCO2eq/kWh)",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "text": {
+          "valueSize": 15
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xField": "year",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "country",
+              "text": "country",
+              "type": "string"
+            },
+            {
+              "selector": "year",
+              "text": "year",
+              "timestampFormat": "",
+              "type": "timestamp"
+            },
+            {
+              "selector": "carbon-avg",
+              "text": "carbon-avg",
+              "type": "number"
+            }
+          ],
+          "data": "year,country,carbon-avg,carbon-min,carbon-max,cfe-avg,cfe-min,cfe-max\r\n2021,IT,280.084245,121.24,439.06,46.305932,15.41,77.02\r\n2022,IT,321.617976,121.38,447.33,41.244127,13.93,77.44\r\n2023,IT,251.819465,74.44,429.93,51.596057,20.39,85.02\r\n2024,IT,207.299189,50.18,345.65,57.431828,20.9,90.26\r\n2021,SE,5.946325,1.5,55.07,98.962411,92.8,99.65\r\n2022,SE,3.875823,0.54,50.58,99.551723,94.16,99.97\r\n2023,SE,3.903308,0.31,51.57,99.525599,94.12,99.98\r\n2024,SE,3.726149,0.25,45.61,99.557928,94.27,99.98\r\n",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+          },
+          "filterExpression": "country==\"IT\"",
+          "filters": [],
+          "format": "dataframe",
+          "global_query_id": "",
+          "parser": "backend",
+          "refId": "IT",
+          "root_selector": "",
+          "source": "inline",
+          "type": "csv",
+          "url": "",
+          "url_options": {
+            "data": "",
+            "method": "GET"
+          }
+        },
+        {
+          "columns": [
+            {
+              "selector": "country",
+              "text": "country",
+              "type": "string"
+            },
+            {
+              "selector": "year",
+              "text": "year",
+              "timestampFormat": "",
+              "type": "timestamp"
+            },
+            {
+              "selector": "carbon-avg",
+              "text": "carbon-avg",
+              "type": "number"
+            }
+          ],
+          "data": "year,country,carbon-avg,carbon-min,carbon-max,cfe-avg,cfe-min,cfe-max\r\n2021,IT,280.084245,121.24,439.06,46.305932,15.41,77.02\r\n2022,IT,321.617976,121.38,447.33,41.244127,13.93,77.44\r\n2023,IT,251.819465,74.44,429.93,51.596057,20.39,85.02\r\n2024,IT,207.299189,50.18,345.65,57.431828,20.9,90.26\r\n2021,SE,5.946325,1.5,55.07,98.962411,92.8,99.65\r\n2022,SE,3.875823,0.54,50.58,99.551723,94.16,99.97\r\n2023,SE,3.903308,0.31,51.57,99.525599,94.12,99.98\r\n2024,SE,3.726149,0.25,45.61,99.557928,94.27,99.98\r\n",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+          },
+          "filterExpression": "country==\"SE\"",
+          "filters": [],
+          "format": "dataframe",
+          "global_query_id": "",
+          "hide": false,
+          "parser": "backend",
+          "refId": "SE",
+          "root_selector": "",
+          "source": "inline",
+          "type": "csv",
+          "url": "",
+          "url_options": {
+            "data": "",
+            "method": "GET"
+          }
+        }
+      ],
+      "title": "Q1 - IT vs SE - Intensità di Carbonio Media  (dati aggregati su base annua)",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "P93246661838A09EA"
       },
       "fieldConfig": {
         "defaults": {
@@ -499,7 +456,7 @@
         },
         "valueMode": "text"
       },
-      "pluginVersion": "12.0.0+security-01",
+      "pluginVersion": "12.0.0",
       "targets": [
         {
           "columns": [
@@ -639,7 +596,7 @@
     {
       "datasource": {
         "type": "yesoreyeram-infinity-datasource",
-        "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+        "uid": "P93246661838A09EA"
       },
       "fieldConfig": {
         "defaults": {
@@ -739,7 +696,7 @@
         },
         "valueMode": "text"
       },
-      "pluginVersion": "12.0.0+security-01",
+      "pluginVersion": "12.0.0",
       "targets": [
         {
           "columns": [
@@ -879,7 +836,7 @@
     {
       "datasource": {
         "type": "yesoreyeram-infinity-datasource",
-        "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+        "uid": "P93246661838A09EA"
       },
       "fieldConfig": {
         "defaults": {
@@ -930,7 +887,7 @@
         "x": 0,
         "y": 16
       },
-      "id": 3,
+      "id": 8,
       "options": {
         "barRadius": 0,
         "barWidth": 0.97,
@@ -954,7 +911,7 @@
         "xTickLabelRotation": 0,
         "xTickLabelSpacing": 0
       },
-      "pluginVersion": "12.0.0+security-01",
+      "pluginVersion": "12.0.0",
       "targets": [
         {
           "columns": [
@@ -1024,7 +981,7 @@
     {
       "datasource": {
         "type": "yesoreyeram-infinity-datasource",
-        "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+        "uid": "P93246661838A09EA"
       },
       "fieldConfig": {
         "defaults": {
@@ -1102,7 +1059,7 @@
         "xTickLabelRotation": 0,
         "xTickLabelSpacing": 0
       },
-      "pluginVersion": "12.0.0+security-01",
+      "pluginVersion": "12.0.0",
       "targets": [
         {
           "columns": [
@@ -1172,7 +1129,717 @@
     {
       "datasource": {
         "type": "yesoreyeram-infinity-datasource",
-        "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+        "uid": "P93246661838A09EA"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 50,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "pointShape": "circle",
+            "pointSize": {
+              "fixed": 5
+            },
+            "pointStrokeWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "show": "points"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 24
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "mapping": "manual",
+        "series": [
+          {
+            "frame": {
+              "matcher": {
+                "id": "byIndex",
+                "options": 0
+              }
+            },
+            "name": {
+              "fixed": "Cluster_0"
+            },
+            "size": {
+              "matcher": {
+                "id": "byName",
+                "options": "cluster_center"
+              }
+            },
+            "x": {
+              "matcher": {
+                "id": "byName",
+                "options": "carbon-intensity"
+              }
+            },
+            "y": {
+              "matcher": {
+                "id": "byName",
+                "options": "distance_from_center"
+              }
+            }
+          },
+          {
+            "frame": {
+              "matcher": {
+                "id": "byIndex",
+                "options": 1
+              }
+            },
+            "name": {
+              "fixed": "Cluster_1"
+            },
+            "size": {
+              "matcher": {
+                "id": "byName",
+                "options": "Cluster 1 cluster_center"
+              }
+            },
+            "x": {
+              "matcher": {
+                "id": "byName",
+                "options": "Cluster 1 carbon-intensity"
+              }
+            },
+            "y": {
+              "matcher": {
+                "id": "byName",
+                "options": "Cluster 1 distance_from_center"
+              }
+            }
+          },
+          {
+            "frame": {
+              "matcher": {
+                "id": "byIndex",
+                "options": 2
+              }
+            },
+            "name": {
+              "fixed": "Cluster_2"
+            },
+            "size": {
+              "matcher": {
+                "id": "byName",
+                "options": "Cluster 2 cluster_center"
+              }
+            },
+            "x": {
+              "matcher": {
+                "id": "byName",
+                "options": "Cluster 2 carbon-intensity"
+              }
+            },
+            "y": {
+              "matcher": {
+                "id": "byName",
+                "options": "Cluster 2 distance_from_center"
+              }
+            }
+          },
+          {
+            "frame": {
+              "matcher": {
+                "id": "byIndex",
+                "options": 3
+              }
+            },
+            "name": {
+              "fixed": "Cluster_3"
+            },
+            "size": {
+              "matcher": {
+                "id": "byName",
+                "options": "Cluster 3 cluster_center"
+              }
+            },
+            "x": {
+              "matcher": {
+                "id": "byName",
+                "options": "Cluster 3 carbon-intensity"
+              }
+            },
+            "y": {
+              "matcher": {
+                "id": "byName",
+                "options": "Cluster 3 distance_from_center"
+              }
+            }
+          },
+          {
+            "frame": {
+              "matcher": {
+                "id": "byIndex",
+                "options": 4
+              }
+            },
+            "name": {
+              "fixed": "Cluster_4"
+            },
+            "size": {
+              "matcher": {
+                "id": "byName",
+                "options": "Cluster 4 cluster_center"
+              }
+            },
+            "x": {
+              "matcher": {
+                "id": "byName",
+                "options": "Cluster 4 carbon-intensity"
+              }
+            },
+            "y": {
+              "matcher": {
+                "id": "byName",
+                "options": "Cluster 4 distance_from_center"
+              }
+            }
+          },
+          {
+            "frame": {
+              "matcher": {
+                "id": "byIndex",
+                "options": 5
+              }
+            },
+            "name": {
+              "fixed": "Cluster_5"
+            },
+            "size": {
+              "matcher": {
+                "id": "byName",
+                "options": "Cluster 5 cluster_center"
+              }
+            },
+            "x": {
+              "matcher": {
+                "id": "byName",
+                "options": "Cluster 5 carbon-intensity"
+              }
+            },
+            "y": {
+              "matcher": {
+                "id": "byName",
+                "options": "Cluster 5 distance_from_center"
+              }
+            }
+          },
+          {
+            "frame": {
+              "matcher": {
+                "id": "byIndex",
+                "options": 6
+              }
+            },
+            "name": {
+              "fixed": "Cluster_6"
+            },
+            "size": {
+              "matcher": {
+                "id": "byName",
+                "options": "Cluster 6 cluster_center"
+              }
+            },
+            "x": {
+              "matcher": {
+                "id": "byName",
+                "options": "Cluster 6 carbon-intensity"
+              }
+            },
+            "y": {
+              "matcher": {
+                "id": "byName",
+                "options": "Cluster 6 distance_from_center"
+              }
+            }
+          },
+          {
+            "frame": {
+              "matcher": {
+                "id": "byIndex",
+                "options": 7
+              }
+            },
+            "name": {
+              "fixed": "Cluster_7"
+            },
+            "size": {
+              "matcher": {
+                "id": "byName",
+                "options": "Cluster 7 cluster_center"
+              }
+            },
+            "x": {
+              "matcher": {
+                "id": "byName",
+                "options": "Cluster 7 carbon-intensity"
+              }
+            },
+            "y": {
+              "matcher": {
+                "id": "byName",
+                "options": "Cluster 7 distance_from_center"
+              }
+            }
+          }
+        ],
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "  carbon-intensity",
+              "text": "carbon-intensity",
+              "type": "number"
+            },
+            {
+              "selector": "cluster_center",
+              "text": "cluster_center",
+              "type": "number"
+            },
+            {
+              "selector": "cluster_id",
+              "text": "cluster_id",
+              "type": "number"
+            },
+            {
+              "selector": "distance_from_center",
+              "text": "distance_from_center",
+              "type": "number"
+            },
+            {
+              "selector": "country",
+              "text": "country",
+              "type": "string"
+            }
+          ],
+          "data": "country,carbon-intensity,cluster_id,cluster_center,distance_from_center\nIndonesia,567.04,0,617.91,50.87\nMainland India,605.69,0,617.91,12.22\nPoland,643.02,0,617.91,25.11\nSouth Africa,655.89,0,617.91,37.98\nBrazil,57.45,1,25.12,32.33\nFinland,43.35,1,25.12,18.23\nFrance,18.4,1,25.12,6.72\nNorway,8.78,1,25.12,16.34\nSweden,4.09,1,25.12,21.03\nSwitzerland,18.63,1,25.12,6.49\nJapan,382.18,2,369.84,12.34\nSingapore,366.37,2,369.84,3.47\nSouth Korea,360.97,2,369.84,8.87\nArgentina,302.79,3,290.29,12.5\nGermany,276.61,3,290.29,13.68\nMexico,296.31,3,290.29,6.02\nUnited Arab Emirates,285.44,3,290.29,4.85\nAustralia,435.48,4,451.78,16.3\nChina,480.48,4,451.78,28.7\nCzechia,439.39,4,451.78,12.39\nAustria,100.1,5,98.7,1.4\nBelgium,109.93,5,98.7,11.23\nCanada,87.85,5,98.7,10.85\nGreat Britain,106.68,5,98.7,7.98\nSpain,88.95,5,98.7,9.75\nItaly,210.41,6,209.07,1.34\nSlovenia,207.72,6,209.07,1.35\nEgypt,342.83,7,332.72,10.11\nIreland,322.48,7,332.72,10.24\nUSA,332.84,7,332.72,0.12\n",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "P93246661838A09EA"
+          },
+          "filterExpression": "cluster_id==0",
+          "filters": [],
+          "format": "dataframe",
+          "global_query_id": "",
+          "hide": false,
+          "parser": "backend",
+          "refId": "Cluster 0",
+          "root_selector": "",
+          "source": "inline",
+          "type": "csv",
+          "uql": "parse-csv",
+          "url": "",
+          "url_options": {
+            "data": "",
+            "method": "GET"
+          }
+        },
+        {
+          "columns": [
+            {
+              "selector": "  carbon-intensity",
+              "text": "carbon-intensity",
+              "type": "number"
+            },
+            {
+              "selector": "cluster_center",
+              "text": "cluster_center",
+              "type": "number"
+            },
+            {
+              "selector": "cluster_id",
+              "text": "cluster_id",
+              "type": "number"
+            },
+            {
+              "selector": "distance_from_center",
+              "text": "distance_from_center",
+              "type": "number"
+            },
+            {
+              "selector": "country",
+              "text": "country",
+              "type": "string"
+            }
+          ],
+          "data": "country,carbon-intensity,cluster_id,cluster_center,distance_from_center\nIndonesia,567.04,0,617.91,50.87\nMainland India,605.69,0,617.91,12.22\nPoland,643.02,0,617.91,25.11\nSouth Africa,655.89,0,617.91,37.98\nBrazil,57.45,1,25.12,32.33\nFinland,43.35,1,25.12,18.23\nFrance,18.4,1,25.12,6.72\nNorway,8.78,1,25.12,16.34\nSweden,4.09,1,25.12,21.03\nSwitzerland,18.63,1,25.12,6.49\nJapan,382.18,2,369.84,12.34\nSingapore,366.37,2,369.84,3.47\nSouth Korea,360.97,2,369.84,8.87\nArgentina,302.79,3,290.29,12.5\nGermany,276.61,3,290.29,13.68\nMexico,296.31,3,290.29,6.02\nUnited Arab Emirates,285.44,3,290.29,4.85\nAustralia,435.48,4,451.78,16.3\nChina,480.48,4,451.78,28.7\nCzechia,439.39,4,451.78,12.39\nAustria,100.1,5,98.7,1.4\nBelgium,109.93,5,98.7,11.23\nCanada,87.85,5,98.7,10.85\nGreat Britain,106.68,5,98.7,7.98\nSpain,88.95,5,98.7,9.75\nItaly,210.41,6,209.07,1.34\nSlovenia,207.72,6,209.07,1.35\nEgypt,342.83,7,332.72,10.11\nIreland,322.48,7,332.72,10.24\nUSA,332.84,7,332.72,0.12\n",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "P93246661838A09EA"
+          },
+          "filterExpression": "cluster_id==1",
+          "filters": [],
+          "format": "dataframe",
+          "global_query_id": "",
+          "hide": false,
+          "parser": "backend",
+          "refId": "Cluster 1",
+          "root_selector": "",
+          "source": "inline",
+          "type": "csv",
+          "uql": "parse-csv",
+          "url": "",
+          "url_options": {
+            "data": "",
+            "method": "GET"
+          }
+        },
+        {
+          "columns": [
+            {
+              "selector": "  carbon-intensity",
+              "text": "carbon-intensity",
+              "type": "number"
+            },
+            {
+              "selector": "cluster_center",
+              "text": "cluster_center",
+              "type": "number"
+            },
+            {
+              "selector": "cluster_id",
+              "text": "cluster_id",
+              "type": "number"
+            },
+            {
+              "selector": "distance_from_center",
+              "text": "distance_from_center",
+              "type": "number"
+            },
+            {
+              "selector": "country",
+              "text": "country",
+              "type": "string"
+            }
+          ],
+          "data": "country,carbon-intensity,cluster_id,cluster_center,distance_from_center\nIndonesia,567.04,0,617.91,50.87\nMainland India,605.69,0,617.91,12.22\nPoland,643.02,0,617.91,25.11\nSouth Africa,655.89,0,617.91,37.98\nBrazil,57.45,1,25.12,32.33\nFinland,43.35,1,25.12,18.23\nFrance,18.4,1,25.12,6.72\nNorway,8.78,1,25.12,16.34\nSweden,4.09,1,25.12,21.03\nSwitzerland,18.63,1,25.12,6.49\nJapan,382.18,2,369.84,12.34\nSingapore,366.37,2,369.84,3.47\nSouth Korea,360.97,2,369.84,8.87\nArgentina,302.79,3,290.29,12.5\nGermany,276.61,3,290.29,13.68\nMexico,296.31,3,290.29,6.02\nUnited Arab Emirates,285.44,3,290.29,4.85\nAustralia,435.48,4,451.78,16.3\nChina,480.48,4,451.78,28.7\nCzechia,439.39,4,451.78,12.39\nAustria,100.1,5,98.7,1.4\nBelgium,109.93,5,98.7,11.23\nCanada,87.85,5,98.7,10.85\nGreat Britain,106.68,5,98.7,7.98\nSpain,88.95,5,98.7,9.75\nItaly,210.41,6,209.07,1.34\nSlovenia,207.72,6,209.07,1.35\nEgypt,342.83,7,332.72,10.11\nIreland,322.48,7,332.72,10.24\nUSA,332.84,7,332.72,0.12\n",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "P93246661838A09EA"
+          },
+          "filterExpression": "cluster_id==2",
+          "filters": [],
+          "format": "dataframe",
+          "global_query_id": "",
+          "hide": false,
+          "parser": "backend",
+          "refId": "Cluster 2",
+          "root_selector": "",
+          "source": "inline",
+          "type": "csv",
+          "uql": "parse-csv",
+          "url": "",
+          "url_options": {
+            "data": "",
+            "method": "GET"
+          }
+        },
+        {
+          "columns": [
+            {
+              "selector": "  carbon-intensity",
+              "text": "carbon-intensity",
+              "type": "number"
+            },
+            {
+              "selector": "cluster_center",
+              "text": "cluster_center",
+              "type": "number"
+            },
+            {
+              "selector": "cluster_id",
+              "text": "cluster_id",
+              "type": "number"
+            },
+            {
+              "selector": "distance_from_center",
+              "text": "distance_from_center",
+              "type": "number"
+            },
+            {
+              "selector": "country",
+              "text": "country",
+              "type": "string"
+            }
+          ],
+          "data": "country,carbon-intensity,cluster_id,cluster_center,distance_from_center\nIndonesia,567.04,0,617.91,50.87\nMainland India,605.69,0,617.91,12.22\nPoland,643.02,0,617.91,25.11\nSouth Africa,655.89,0,617.91,37.98\nBrazil,57.45,1,25.12,32.33\nFinland,43.35,1,25.12,18.23\nFrance,18.4,1,25.12,6.72\nNorway,8.78,1,25.12,16.34\nSweden,4.09,1,25.12,21.03\nSwitzerland,18.63,1,25.12,6.49\nJapan,382.18,2,369.84,12.34\nSingapore,366.37,2,369.84,3.47\nSouth Korea,360.97,2,369.84,8.87\nArgentina,302.79,3,290.29,12.5\nGermany,276.61,3,290.29,13.68\nMexico,296.31,3,290.29,6.02\nUnited Arab Emirates,285.44,3,290.29,4.85\nAustralia,435.48,4,451.78,16.3\nChina,480.48,4,451.78,28.7\nCzechia,439.39,4,451.78,12.39\nAustria,100.1,5,98.7,1.4\nBelgium,109.93,5,98.7,11.23\nCanada,87.85,5,98.7,10.85\nGreat Britain,106.68,5,98.7,7.98\nSpain,88.95,5,98.7,9.75\nItaly,210.41,6,209.07,1.34\nSlovenia,207.72,6,209.07,1.35\nEgypt,342.83,7,332.72,10.11\nIreland,322.48,7,332.72,10.24\nUSA,332.84,7,332.72,0.12\n",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "P93246661838A09EA"
+          },
+          "filterExpression": "cluster_id==3",
+          "filters": [],
+          "format": "dataframe",
+          "global_query_id": "",
+          "hide": false,
+          "parser": "backend",
+          "refId": "Cluster 3",
+          "root_selector": "",
+          "source": "inline",
+          "type": "csv",
+          "uql": "parse-csv",
+          "url": "",
+          "url_options": {
+            "data": "",
+            "method": "GET"
+          }
+        },
+        {
+          "columns": [
+            {
+              "selector": "  carbon-intensity",
+              "text": "carbon-intensity",
+              "type": "number"
+            },
+            {
+              "selector": "cluster_center",
+              "text": "cluster_center",
+              "type": "number"
+            },
+            {
+              "selector": "cluster_id",
+              "text": "cluster_id",
+              "type": "number"
+            },
+            {
+              "selector": "distance_from_center",
+              "text": "distance_from_center",
+              "type": "number"
+            },
+            {
+              "selector": "country",
+              "text": "country",
+              "type": "string"
+            }
+          ],
+          "data": "country,carbon-intensity,cluster_id,cluster_center,distance_from_center\nIndonesia,567.04,0,617.91,50.87\nMainland India,605.69,0,617.91,12.22\nPoland,643.02,0,617.91,25.11\nSouth Africa,655.89,0,617.91,37.98\nBrazil,57.45,1,25.12,32.33\nFinland,43.35,1,25.12,18.23\nFrance,18.4,1,25.12,6.72\nNorway,8.78,1,25.12,16.34\nSweden,4.09,1,25.12,21.03\nSwitzerland,18.63,1,25.12,6.49\nJapan,382.18,2,369.84,12.34\nSingapore,366.37,2,369.84,3.47\nSouth Korea,360.97,2,369.84,8.87\nArgentina,302.79,3,290.29,12.5\nGermany,276.61,3,290.29,13.68\nMexico,296.31,3,290.29,6.02\nUnited Arab Emirates,285.44,3,290.29,4.85\nAustralia,435.48,4,451.78,16.3\nChina,480.48,4,451.78,28.7\nCzechia,439.39,4,451.78,12.39\nAustria,100.1,5,98.7,1.4\nBelgium,109.93,5,98.7,11.23\nCanada,87.85,5,98.7,10.85\nGreat Britain,106.68,5,98.7,7.98\nSpain,88.95,5,98.7,9.75\nItaly,210.41,6,209.07,1.34\nSlovenia,207.72,6,209.07,1.35\nEgypt,342.83,7,332.72,10.11\nIreland,322.48,7,332.72,10.24\nUSA,332.84,7,332.72,0.12\n",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "P93246661838A09EA"
+          },
+          "filterExpression": "cluster_id==4",
+          "filters": [],
+          "format": "dataframe",
+          "global_query_id": "",
+          "hide": false,
+          "parser": "backend",
+          "refId": "Cluster 4",
+          "root_selector": "",
+          "source": "inline",
+          "type": "csv",
+          "uql": "parse-csv",
+          "url": "",
+          "url_options": {
+            "data": "",
+            "method": "GET"
+          }
+        },
+        {
+          "columns": [
+            {
+              "selector": "  carbon-intensity",
+              "text": "carbon-intensity",
+              "type": "number"
+            },
+            {
+              "selector": "cluster_center",
+              "text": "cluster_center",
+              "type": "number"
+            },
+            {
+              "selector": "cluster_id",
+              "text": "cluster_id",
+              "type": "number"
+            },
+            {
+              "selector": "distance_from_center",
+              "text": "distance_from_center",
+              "type": "number"
+            },
+            {
+              "selector": "country",
+              "text": "country",
+              "type": "string"
+            }
+          ],
+          "data": "country,carbon-intensity,cluster_id,cluster_center,distance_from_center\nIndonesia,567.04,0,617.91,50.87\nMainland India,605.69,0,617.91,12.22\nPoland,643.02,0,617.91,25.11\nSouth Africa,655.89,0,617.91,37.98\nBrazil,57.45,1,25.12,32.33\nFinland,43.35,1,25.12,18.23\nFrance,18.4,1,25.12,6.72\nNorway,8.78,1,25.12,16.34\nSweden,4.09,1,25.12,21.03\nSwitzerland,18.63,1,25.12,6.49\nJapan,382.18,2,369.84,12.34\nSingapore,366.37,2,369.84,3.47\nSouth Korea,360.97,2,369.84,8.87\nArgentina,302.79,3,290.29,12.5\nGermany,276.61,3,290.29,13.68\nMexico,296.31,3,290.29,6.02\nUnited Arab Emirates,285.44,3,290.29,4.85\nAustralia,435.48,4,451.78,16.3\nChina,480.48,4,451.78,28.7\nCzechia,439.39,4,451.78,12.39\nAustria,100.1,5,98.7,1.4\nBelgium,109.93,5,98.7,11.23\nCanada,87.85,5,98.7,10.85\nGreat Britain,106.68,5,98.7,7.98\nSpain,88.95,5,98.7,9.75\nItaly,210.41,6,209.07,1.34\nSlovenia,207.72,6,209.07,1.35\nEgypt,342.83,7,332.72,10.11\nIreland,322.48,7,332.72,10.24\nUSA,332.84,7,332.72,0.12\n",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "P93246661838A09EA"
+          },
+          "filterExpression": "cluster_id==5",
+          "filters": [],
+          "format": "dataframe",
+          "global_query_id": "",
+          "hide": false,
+          "parser": "backend",
+          "refId": "Cluster 5",
+          "root_selector": "",
+          "source": "inline",
+          "type": "csv",
+          "uql": "parse-csv",
+          "url": "",
+          "url_options": {
+            "data": "",
+            "method": "GET"
+          }
+        },
+        {
+          "columns": [
+            {
+              "selector": "  carbon-intensity",
+              "text": "carbon-intensity",
+              "type": "number"
+            },
+            {
+              "selector": "cluster_center",
+              "text": "cluster_center",
+              "type": "number"
+            },
+            {
+              "selector": "cluster_id",
+              "text": "cluster_id",
+              "type": "number"
+            },
+            {
+              "selector": "distance_from_center",
+              "text": "distance_from_center",
+              "type": "number"
+            },
+            {
+              "selector": "country",
+              "text": "country",
+              "type": "string"
+            }
+          ],
+          "data": "country,carbon-intensity,cluster_id,cluster_center,distance_from_center\nIndonesia,567.04,0,617.91,50.87\nMainland India,605.69,0,617.91,12.22\nPoland,643.02,0,617.91,25.11\nSouth Africa,655.89,0,617.91,37.98\nBrazil,57.45,1,25.12,32.33\nFinland,43.35,1,25.12,18.23\nFrance,18.4,1,25.12,6.72\nNorway,8.78,1,25.12,16.34\nSweden,4.09,1,25.12,21.03\nSwitzerland,18.63,1,25.12,6.49\nJapan,382.18,2,369.84,12.34\nSingapore,366.37,2,369.84,3.47\nSouth Korea,360.97,2,369.84,8.87\nArgentina,302.79,3,290.29,12.5\nGermany,276.61,3,290.29,13.68\nMexico,296.31,3,290.29,6.02\nUnited Arab Emirates,285.44,3,290.29,4.85\nAustralia,435.48,4,451.78,16.3\nChina,480.48,4,451.78,28.7\nCzechia,439.39,4,451.78,12.39\nAustria,100.1,5,98.7,1.4\nBelgium,109.93,5,98.7,11.23\nCanada,87.85,5,98.7,10.85\nGreat Britain,106.68,5,98.7,7.98\nSpain,88.95,5,98.7,9.75\nItaly,210.41,6,209.07,1.34\nSlovenia,207.72,6,209.07,1.35\nEgypt,342.83,7,332.72,10.11\nIreland,322.48,7,332.72,10.24\nUSA,332.84,7,332.72,0.12\n",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "P93246661838A09EA"
+          },
+          "filterExpression": "cluster_id==6",
+          "filters": [],
+          "format": "dataframe",
+          "global_query_id": "",
+          "hide": false,
+          "parser": "backend",
+          "refId": "Cluster 6",
+          "root_selector": "",
+          "source": "inline",
+          "type": "csv",
+          "uql": "parse-csv",
+          "url": "",
+          "url_options": {
+            "data": "",
+            "method": "GET"
+          }
+        },
+        {
+          "columns": [
+            {
+              "selector": "  carbon-intensity",
+              "text": "carbon-intensity",
+              "type": "number"
+            },
+            {
+              "selector": "cluster_center",
+              "text": "cluster_center",
+              "type": "number"
+            },
+            {
+              "selector": "cluster_id",
+              "text": "cluster_id",
+              "type": "number"
+            },
+            {
+              "selector": "distance_from_center",
+              "text": "distance_from_center",
+              "type": "number"
+            },
+            {
+              "selector": "country",
+              "text": "country",
+              "type": "string"
+            }
+          ],
+          "data": "country,carbon-intensity,cluster_id,cluster_center,distance_from_center\nIndonesia,567.04,0,617.91,50.87\nMainland India,605.69,0,617.91,12.22\nPoland,643.02,0,617.91,25.11\nSouth Africa,655.89,0,617.91,37.98\nBrazil,57.45,1,25.12,32.33\nFinland,43.35,1,25.12,18.23\nFrance,18.4,1,25.12,6.72\nNorway,8.78,1,25.12,16.34\nSweden,4.09,1,25.12,21.03\nSwitzerland,18.63,1,25.12,6.49\nJapan,382.18,2,369.84,12.34\nSingapore,366.37,2,369.84,3.47\nSouth Korea,360.97,2,369.84,8.87\nArgentina,302.79,3,290.29,12.5\nGermany,276.61,3,290.29,13.68\nMexico,296.31,3,290.29,6.02\nUnited Arab Emirates,285.44,3,290.29,4.85\nAustralia,435.48,4,451.78,16.3\nChina,480.48,4,451.78,28.7\nCzechia,439.39,4,451.78,12.39\nAustria,100.1,5,98.7,1.4\nBelgium,109.93,5,98.7,11.23\nCanada,87.85,5,98.7,10.85\nGreat Britain,106.68,5,98.7,7.98\nSpain,88.95,5,98.7,9.75\nItaly,210.41,6,209.07,1.34\nSlovenia,207.72,6,209.07,1.35\nEgypt,342.83,7,332.72,10.11\nIreland,322.48,7,332.72,10.24\nUSA,332.84,7,332.72,0.12\n",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "P93246661838A09EA"
+          },
+          "filterExpression": "cluster_id==7",
+          "filters": [],
+          "format": "dataframe",
+          "global_query_id": "",
+          "hide": false,
+          "parser": "backend",
+          "refId": "Cluster 7",
+          "root_selector": "",
+          "source": "inline",
+          "type": "csv",
+          "uql": "parse-csv",
+          "url": "",
+          "url_options": {
+            "data": "",
+            "method": "GET"
+          }
+        }
+      ],
+      "title": "Q4 - Analisi Clustering K-Means (Intensità di Carbonio, dati su base annua, 2024)",
+      "type": "xychart"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "P93246661838A09EA"
       },
       "fieldConfig": {
         "defaults": {
@@ -1202,7 +1869,7 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 0,
+        "x": 12,
         "y": 24
       },
       "id": 5,
@@ -1290,7 +1957,7 @@
           "zoom": 15
         }
       },
-      "pluginVersion": "12.0.0+security-01",
+      "pluginVersion": "12.0.0",
       "targets": [
         {
           "columns": [
@@ -1348,6 +2015,7 @@
       "type": "geomap"
     }
   ],
+  "preload": false,
   "schemaVersion": 41,
   "tags": [],
   "templating": {
@@ -1361,6 +2029,5 @@
   "timezone": "browser",
   "title": "SABD",
   "uid": "5892f45a-545c-4e1f-9716-54b234dd9e82",
-  "version": 14,
-  "weekStart": ""
+  "version": 1
 }
