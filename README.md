@@ -13,7 +13,7 @@ Per eseguire il progetto, è necessario avere installato **Python 3.8+** e **Doc
 **Clonare il repository**
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/simoneniro17/sabd-batch-processing
 cd sabd-batch-processing
 ```
 
