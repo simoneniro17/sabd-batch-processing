@@ -1,0 +1,17 @@
+apiVersion: 1
+
+datasources:
+  - name: YESOREYERAM-INFINITY-DATASOURCE
+    type: yesoreyeram-infinity-datasource
+    access: proxy
+    editable: true
+    isDefault: true
+    jsonData:
+      dataSourceType: csv
+      url: /var/lib/grafana/csv/
+      allowGraphql: false
+      allowCsv: true
+      allowXml: false
+      allowJson: false
+      httpMethod: GET
+      local_mode: true
