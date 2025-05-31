@@ -87,7 +87,9 @@ services:
 
   # Spark master
   spark-master:
-    image: apache/spark:3.5.5
+    build:
+      context: .
+      dockerfile: spark/Dockerfile.spark
     container_name: spark-master
     hostname: spark-master
     environment:
@@ -113,7 +115,9 @@ services:
 
   # Spark worker
   spark-worker-1:
-    image: apache/spark:3.5.5
+    build:
+      context: .
+      dockerfile: spark/Dockerfile.spark
     container_name: spark-worker-1
     hostname: spark-worker-1
     environment:
@@ -130,7 +134,9 @@ services:
       - spark-master
 
   spark-worker-2:
-    image: apache/spark:3.5.5
+    build:
+      context: .
+      dockerfile: spark/Dockerfile.spark
     container_name: spark-worker-2
     hostname: spark-worker-2
     environment:
