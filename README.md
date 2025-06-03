@@ -8,13 +8,18 @@ In questo progetto abbiamo utilizzato **Apache Spark** per analizzare dati stori
 
 ### Installazione
 
-Per eseguire il progetto, è necessario avere installato **Python 3.8+** e **Docker**.
+Per eseguire il progetto, è necessario avere installato **Python 3.8+** e **Docker**. Dopodiché, seguire i passaggi seguenti:
 
 **Clonare il repository**
 
 ```bash
 git clone https://github.com/simoneniro17/sabd-batch-processing
 cd sabd-batch-processing
+```
+
+**Installare le dipendenze**
+```bash
+pip install -r requirements.txt
 ```
 
 ### CLI Interattiva
