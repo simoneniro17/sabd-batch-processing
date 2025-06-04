@@ -17,7 +17,7 @@ def main_menu() -> None:
         print_header("MENU PRINCIPALE")
         print("1. Esegui Query Spark")
         print("2. Gestisci Redis")
-        print("3. Configura NiFi")
+        print("3. Gestisci NiFi")
         print("4. Gestisci HDFS")
         print("5. Gestisci Container Docker")
         print("6. Help / Informazioni")

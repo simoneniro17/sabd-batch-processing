@@ -6,6 +6,7 @@ def docker_compose_up() -> bool:
     """Avvia i container Docker utilizzando docker-compose."""
     print_header("AVVIO CONTAINER DOCKER")
     print_info("Avvio dei container in corso...")
+    print_warning("Se è la prima volta, potrebbe essere necessario scaricare le immagini Docker, il che potrebbe richiedere del tempo.")
     
     try:
         result = subprocess.run(
@@ -21,7 +22,7 @@ def docker_compose_up() -> bool:
             return True
         else:
             print_error(f"Errore durante l'avvio dei container (codice {result.returncode}).")
-            print_warning("Assicurarsi che Dcoker Engine sia in esecuzione.")
+            print_warning("Assicurarsi che il Docker Engine sia in esecuzione.")
             print_info("Dettagli errore:")
             for line in result.stderr.splitlines():
                 print(f"  {line}")

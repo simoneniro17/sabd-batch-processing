@@ -12,9 +12,9 @@ Questo strumento consente di eseguire l'intero workflow del progetto SABD:
     
     commands = [
         ("1", "Esegui Query Spark", "Esegue una delle query implementate (1-4)"),
-        ("2", "Gestisci Redis", "Carica o scarica dati da Redis"),
-        ("3", "Configura NiFi", "Importa template e invia dati a NiFi"),
-        ("4", "Gestisci HDFS", "Mostra lo stato e il contenuto di HDFS"),
+        ("2", "Gestisci Redis", "Carica o scarica dati in e da Redis"),
+        ("3", "Gestisci NiFi", "Importa template e invia dati a NiFi"),
+        ("4", "Gestisci HDFS", "Mostra lo stato e il contenuto di HDFS, con l'opzione di resettarlo"),
         ("5", "Gestisci Docker", "Avvia o arresta i container Docker"),
         ("6", "Help", "Mostra questa guida"),
         ("0", "Esci", "Termina l'applicazione")
