@@ -63,6 +63,7 @@ def process_clustering(spark, input_path):
     
     df_scaled = df_scaled.select("country", "carbon-intensity", "features")
 
+    df_scaled.cache()
     # Determiniamo il k ottimale
     num_distinct_points = df_scaled.select("carbon-intensity").distinct().count()
     if num_distinct_points < 2:

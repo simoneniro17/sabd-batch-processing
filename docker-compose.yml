@@ -96,12 +96,14 @@ services:
       - SPARK_MODE=master
       - HDFS_BASE=hdfs://namenode:9000
     ports:
-      - "7077:7077"   
+      - "7077:7077"
+      - "4040:4040"
       - "8080:8080"   # Web UI
     volumes:
       - ./hdfs/conf:/opt/hadoop/etc/hadoop  # Per accedere ai file core-site.xml e hdfs-site.xml di HDFS
       - ./spark/app:/app                    # Per i job Spark
       - ./spark/conf/spark-defaults.conf:/opt/spark/conf/spark-defaults.conf
+      - ./spark/events:/spark-events
     command: >
       bash -c "/opt/spark/bin/spark-class org.apache.spark.deploy.master.Master --host spark-master"
     networks:
@@ -125,6 +127,7 @@ services:
     volumes:
       - ./hdfs/conf:/opt/hadoop/etc/hadoop
       - ./spark/app:/app
+      - ./spark/events:/spark-events
     command: >
       bash -c "/opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077"
     networks:
@@ -144,6 +147,7 @@ services:
     volumes:
       - ./hdfs/conf:/opt/hadoop/etc/hadoop
       - ./spark/app:/app
+      - ./spark/events:/spark-events
     command: >
       bash -c "/opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077"
     networks:
@@ -152,6 +156,27 @@ services:
     depends_on:
       - spark-master
 
+  spark-history-server:
+    build:
+      context: .
+      dockerfile: spark/Dockerfile.spark
+    container_name: spark-history
+    hostname: spark-history
+    environment:
+      - SPARK_MODE=history-server
+    ports:
+      - "18080:18080"
+    volumes:
+      - ./hdfs/conf:/opt/hadoop/etc/hadoop
+      - ./spark/conf/spark-defaults.conf:/opt/spark/conf/spark-defaults.conf
+      - ./spark/events:/spark-events
+    command: >
+      bash -c "/opt/spark/bin/spark-class org.apache.spark.deploy.history.HistoryServer"
+    networks:
+      sabd_network:
+        ipv4_address: 172.20.0.19
+    depends_on:
+      - namenode
 
   # Redis
   redis:
